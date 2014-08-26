@@ -19,3 +19,16 @@
 *.exe
 *.out
 *.app
+*.sdf
+*.bsc
+*.map
+*.pch
+*.pdb
+*.sbr
+*.lastbuildstate
+*.tlog
+*.log
+*.idb
+*.opensdf
+*.exp
+*.suo
