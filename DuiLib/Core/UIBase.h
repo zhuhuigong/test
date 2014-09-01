@@ -1,21 +1,25 @@
 #ifndef __UIBASE_H__
 #define __UIBASE_H__
 
-
 #pragma once
+
+#include "UIConfig.h"
 
 namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
 //
 
-#define UI_WNDSTYLE_CONTAINER  (0)
-#define UI_WNDSTYLE_FRAME      (WS_VISIBLE | WS_OVERLAPPEDWINDOW)
-#define UI_WNDSTYLE_CHILD      (WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
-#define UI_WNDSTYLE_DIALOG     (WS_VISIBLE | WS_POPUPWINDOW | WS_CAPTION | WS_DLGFRAME | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
+// 窗口风格/样式
+#define UI_WNDSTYLE_CONTAINER    (0)
+#define UI_WNDSTYLE_FRAME        (WS_VISIBLE | WS_OVERLAPPEDWINDOW)
+#define UI_WNDSTYLE_CHILD        (WS_VISIBLE | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
+#define UI_WNDSTYLE_DIALOG       (WS_VISIBLE | WS_POPUPWINDOW | WS_CAPTION | WS_DLGFRAME | WS_CLIPSIBLINGS | WS_CLIPCHILDREN)
 
-#define UI_WNDSTYLE_EX_FRAME   (WS_EX_WINDOWEDGE)
-#define UI_WNDSTYLE_EX_DIALOG  (WS_EX_TOOLWINDOW | WS_EX_DLGMODALFRAME)
+// 窗口扩展风格/样式
+#define UI_WNDSTYLE_EX_FRAME     (WS_EX_WINDOWEDGE)
+#define UI_WNDSTYLE_EX_DIALOG    (WS_EX_TOOLWINDOW | WS_EX_DLGMODALFRAME)
 
+// 窗口类风格/样式
 #define UI_CLASSSTYLE_CONTAINER  (0)
 #define UI_CLASSSTYLE_FRAME      (CS_VREDRAW | CS_HREDRAW)
 #define UI_CLASSSTYLE_CHILD      (CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS | CS_SAVEBITS)
@@ -40,6 +44,20 @@ namespace DuiLib {
 #define DUITRACEMSG _T("")
 #endif
 
+
+#ifdef UILIB_USE_ATL_CENTERWINDOW
+// 从ATL中复制过来的宏，CenterWindow函数会用到
+#ifndef ATLENSURE_RETURN_VAL
+#define ATLENSURE_RETURN_VAL(expr, val)        \
+do {                                           \
+    int __atl_condVal=!!(expr);                \
+    ASSERT(__atl_condVal);                     \
+    if(!(__atl_condVal)) return val;           \
+} while (0) 
+#endif // ATLENSURE_RETURN_VAL
+#endif
+
+
 void UILIB_API DUI__Trace(LPCTSTR pstrFormat, ...);
 LPCTSTR UILIB_API DUI__TraceMsg(UINT uMsg);
 
@@ -58,6 +76,8 @@ private:
 	CStdStringPtrMap m_VirtualWndMap;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////
+// duilib窗口基类，窗口类应从此类派生
 class UILIB_API CWindowWnd
 {
 public:
@@ -77,7 +97,11 @@ public:
     void ShowWindow(bool bShow = true, bool bTakeFocus = true);
     UINT ShowModal();
     void Close(UINT nRet = IDOK);
+#ifdef UILIB_USE_ATL_CENTERWINDOW
+    BOOL CenterWindow(HWND hWndCenter = NULL);
+#else
     void CenterWindow();	// 居中，支持扩展屏幕
+#endif
     void SetIcon(UINT nRes);
 
     LRESULT SendMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L);

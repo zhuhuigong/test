@@ -180,6 +180,7 @@
     <ClInclude Include="..\DuiLib\Layout\UITileLayout.h" />
     <ClInclude Include="..\DuiLib\Layout\UIVerticalLayout.h" />
     <ClInclude Include="..\DuiLib\StdAfx.h" />
+    <ClInclude Include="..\DuiLib\UIConfig.h" />
     <ClInclude Include="..\DuiLib\UIlib.h" />
     <ClInclude Include="..\DuiLib\Utils\downloadmgr.h" />
     <ClInclude Include="..\DuiLib\Utils\FlashEventHandler.h" />

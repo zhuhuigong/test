@@ -209,9 +209,13 @@ void CNotifyPump::NotifyPump(TNotifyUI& msg)
 }
 
 //////////////////////////////////////////////////////////////////////////
-///
-CWindowWnd::CWindowWnd() : m_hWnd(NULL), m_OldWndProc(::DefWindowProc), m_bSubclassed(false)
+/// duilib窗口基类
+CWindowWnd::CWindowWnd()
+    : m_hWnd(NULL)
+    , m_OldWndProc(::DefWindowProc)
+    , m_bSubclassed(false)
 {
+
 }
 
 HWND CWindowWnd::GetHWND() const 
@@ -234,9 +238,9 @@ CWindowWnd::operator HWND() const
     return m_hWnd;
 }
 
-HWND CWindowWnd::CreateDuiWindow( HWND hwndParent, LPCTSTR pstrWindowName,DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/ )
+HWND CWindowWnd::CreateDuiWindow(HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle /*=0*/, DWORD dwExStyle /*=0*/)
 {
-	return Create(hwndParent,pstrWindowName,dwStyle,dwExStyle,0,0,0,0,NULL);
+    return Create(hwndParent, pstrWindowName, dwStyle, dwExStyle, 0, 0, 0, 0, NULL);
 }
 
 HWND CWindowWnd::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu)
@@ -246,10 +250,22 @@ HWND CWindowWnd::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD 
 
 HWND CWindowWnd::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu)
 {
-    if( GetSuperClassName() != NULL && !RegisterSuperclass() ) return NULL;
-    if( GetSuperClassName() == NULL && !RegisterWindowClass() ) return NULL;
+    // 如果有超类化的类名，则优先注册超类窗口类
+    if (GetSuperClassName() != NULL && !RegisterSuperclass())
+    {
+        return NULL;
+    }
+
+    // 没有则注册普通窗口类
+    if (GetSuperClassName() == NULL && !RegisterWindowClass())
+    {
+        return NULL;
+    }
+
+    // 开始创建窗口
     m_hWnd = ::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
-    ASSERT(m_hWnd!=NULL);
+    ASSERT(m_hWnd != NULL);
+
     return m_hWnd;
 }
 
@@ -315,6 +331,120 @@ void CWindowWnd::Close(UINT nRet)
     PostMessage(WM_CLOSE, (WPARAM)nRet, 0L);
 }
 
+#ifdef UILIB_USE_ATL_CENTERWINDOW
+BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
+{
+    ASSERT(::IsWindow(m_hWnd));
+
+    // 确定要居中的窗口的owner窗口
+    DWORD dwStyle = (DWORD) ::GetWindowLong(m_hWnd, GWL_STYLE);
+    if (hWndCenter == NULL)
+    {
+        // 如果是子窗口，则hWndCenter是它的父窗口，否则是owner窗口
+        if (dwStyle & WS_CHILD)
+        {
+            hWndCenter = ::GetParent(m_hWnd);
+        }
+        else
+        {
+            hWndCenter = ::GetWindow(m_hWnd, GW_OWNER);
+        }
+    }
+
+    // 获取窗口相对于它的父窗口的坐标
+    RECT rcDlg;
+    ::GetWindowRect(m_hWnd, &rcDlg);
+
+    RECT rcArea;
+    RECT rcCenter;
+    HWND hWndParent;
+    if (!(dwStyle & WS_CHILD))
+    {
+        // 不要对一个hWndCenter不可见或最小化的窗口居中
+        if (hWndCenter != NULL)
+        {
+            DWORD dwStyleCenter = ::GetWindowLong(hWndCenter, GWL_STYLE);
+            if (!(dwStyleCenter & WS_VISIBLE) || (dwStyleCenter & WS_MINIMIZE))
+            {
+                hWndCenter = NULL;
+            }
+        }
+
+        // 使用屏幕坐标来居中
+#if WINVER < 0x0500
+        ::SystemParametersInfo(SPI_GETWORKAREA, NULL, &rcArea, NULL);
+#else
+        HMONITOR hMonitor = NULL;
+        if (hWndCenter != NULL)
+        {
+            hMonitor = ::MonitorFromWindow(hWndCenter, MONITOR_DEFAULTTONEAREST);
+        }
+        else
+        {
+            hMonitor = ::MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST);
+        }
+        ATLENSURE_RETURN_VAL(hMonitor != NULL, FALSE);
+
+        MONITORINFO minfo;
+        minfo.cbSize = sizeof(MONITORINFO);
+        BOOL bResult = ::GetMonitorInfo(hMonitor, &minfo);
+        ATLENSURE_RETURN_VAL(bResult, FALSE);
+
+        rcArea = minfo.rcWork;
+#endif
+        if (hWndCenter == NULL)
+        {
+            rcCenter = rcArea;
+        }
+        else
+        {
+            ::GetWindowRect(hWndCenter, &rcCenter);
+        }
+}
+    else
+    {
+        // 使用父窗口客户区域坐标居中
+        hWndParent = ::GetParent(m_hWnd);
+        ASSERT(::IsWindow(hWndParent));
+
+        ::GetClientRect(hWndParent, &rcArea);
+        ASSERT(::IsWindow(hWndCenter));
+        ::GetClientRect(hWndCenter, &rcCenter);
+        ::MapWindowPoints(hWndCenter, hWndParent, (POINT*)&rcCenter, 2);
+    }
+
+    int DlgWidth = rcDlg.right - rcDlg.left;
+    int DlgHeight = rcDlg.bottom - rcDlg.top;
+
+    // 计算窗口的左上角坐标（基于rcCenter）
+    int xLeft = (rcCenter.left + rcCenter.right) / 2 - DlgWidth / 2;
+    int yTop = (rcCenter.top + rcCenter.bottom) / 2 - DlgHeight / 2;
+
+    // 如果窗口在屏幕外面，则移动它到屏幕里面
+    if (xLeft + DlgWidth > rcArea.right)
+    {
+        xLeft = rcArea.right - DlgWidth;
+    }
+
+    if (xLeft < rcArea.left)
+    {
+        xLeft = rcArea.left;
+    }
+
+    if (yTop + DlgHeight > rcArea.bottom)
+    {
+        yTop = rcArea.bottom - DlgHeight;
+    }
+
+    if (yTop < rcArea.top)
+    {
+        yTop = rcArea.top;
+    }
+
+    // 移动窗口位置在屏幕中间！
+    return ::SetWindowPos(m_hWnd, NULL, xLeft, yTop, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+}
+#else
 void CWindowWnd::CenterWindow()
 {
     ASSERT(::IsWindow(m_hWnd));
@@ -354,6 +484,7 @@ void CWindowWnd::CenterWindow()
     else if( yTop + DlgHeight > rcArea.bottom ) yTop = rcArea.bottom - DlgHeight;
     ::SetWindowPos(m_hWnd, NULL, xLeft, yTop, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
+#endif
 
 void CWindowWnd::SetIcon(UINT nRes)
 {
