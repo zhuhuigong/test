@@ -50,7 +50,8 @@
 #include "stdafx.h"
 #include "UIlib.h"
 
-
+// 静态库项目不需要DllMain函数！！
+#ifndef UILIB_STATIC
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID /*lpReserved*/)
 {
     switch (dwReason)
@@ -65,4 +66,5 @@ BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID /*lpReserved*/)
 
     return TRUE;
 }
+#endif
 
