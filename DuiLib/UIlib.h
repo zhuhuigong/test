@@ -67,6 +67,9 @@
 #include <crtdbg.h>
 #include <malloc.h>
 
+// duilib≈‰÷√£°£°£°
+#include "UIConfig.h"
+
 #include "Utils/Utils.h"
 #include "Utils/UIDelegate.h"
 #include "Core/UIDefine.h"

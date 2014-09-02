@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "UIConfig.h"
 
 namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
@@ -61,20 +60,23 @@ do {                                           \
 void UILIB_API DUI__Trace(LPCTSTR pstrFormat, ...);
 LPCTSTR UILIB_API DUI__TraceMsg(UINT uMsg);
 
-/////////////////////////////////////////////////////////////////////////////////////
-//
 
+/////////////////////////////////////////////////////////////////////////////////////
+// DUI消息处理类
 class UILIB_API CNotifyPump
 {
 public:
-	bool AddVirtualWnd(CDuiString strName,CNotifyPump* pObject);
-	bool RemoveVirtualWnd(CDuiString strName);
-	void NotifyPump(TNotifyUI& msg);
-	bool LoopDispatch(TNotifyUI& msg);
-	DUI_DECLARE_MESSAGE_MAP()
+    bool AddVirtualWnd(CDuiString strName,CNotifyPump* pObject);
+    bool RemoveVirtualWnd(CDuiString strName);
+    void NotifyPump(TNotifyUI& msg);
+    bool LoopDispatch(TNotifyUI& msg);
+
+    DUI_DECLARE_MESSAGE_MAP()
+
 private:
-	CStdStringPtrMap m_VirtualWndMap;
+    CStdStringPtrMap m_VirtualWndMap;
 };
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 // duilib窗口基类，窗口类应从此类派生
@@ -91,7 +93,7 @@ public:
 
     HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, const RECT rc, HMENU hMenu = NULL);
     HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x = CW_USEDEFAULT, int y = CW_USEDEFAULT, int cx = CW_USEDEFAULT, int cy = CW_USEDEFAULT, HMENU hMenu = NULL);
-    HWND CreateDuiWindow(HWND hwndParent, LPCTSTR pstrWindowName,DWORD dwStyle =0, DWORD dwExStyle =0);
+    HWND CreateDuiWindow(HWND hwndParent, LPCTSTR pstrWindowName, DWORD dwStyle = 0, DWORD dwExStyle = 0);
     HWND Subclass(HWND hWnd);
     void Unsubclass();
     void ShowWindow(bool bShow = true, bool bTakeFocus = true);
@@ -100,7 +102,7 @@ public:
 #ifdef UILIB_USE_ATL_CENTERWINDOW
     BOOL CenterWindow(HWND hWndCenter = NULL);
 #else
-    void CenterWindow();	// 居中，支持扩展屏幕
+    void CenterWindow();    // 居中，支持扩展屏幕
 #endif
     void SetIcon(UINT nRes);
 

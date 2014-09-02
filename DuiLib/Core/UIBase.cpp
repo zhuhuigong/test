@@ -18,7 +18,7 @@ void UILIB_API DUI__Trace(LPCTSTR pstrFormat, ...)
     va_list args;
     va_start(args, pstrFormat);
     ::wvnsprintf(szBuffer, lengthof(szBuffer) - 2, pstrFormat, args);
-    _tcscat(szBuffer, _T("\n"));
+    lstrcat(szBuffer, _T("\n"));
     va_end(args);
     ::OutputDebugString(szBuffer);
 #endif
@@ -91,121 +91,132 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
 //
 
 //////////////////////////////////////////////////////////////////////////
-//
+// 这里可以处理消息！！！
 DUI_BASE_BEGIN_MESSAGE_MAP(CNotifyPump)
 DUI_END_MESSAGE_MAP()
 
-static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEntry,TNotifyUI& msg )
+
+static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEntry, TNotifyUI& msg)
 {
-	CDuiString sMsgType = msg.sType;
-	CDuiString sCtrlName = msg.pSender->GetName();
-	const DUI_MSGMAP_ENTRY* pMsgTypeEntry = NULL;
-	while (lpEntry->nSig != DuiSig_end)
-	{
-		if(lpEntry->sMsgType==sMsgType)
-		{
-			if(!lpEntry->sCtrlName.IsEmpty())
-			{
-				if(lpEntry->sCtrlName==sCtrlName)
-				{
-					return lpEntry;
-				}
-			}
-			else
-			{
-				pMsgTypeEntry = lpEntry;
-			}
-		}
-		lpEntry++;
-	}
-	return pMsgTypeEntry;
+    CDuiString sMsgType = msg.sType;
+    CDuiString sCtrlName = msg.pSender->GetName();
+    const DUI_MSGMAP_ENTRY* pMsgTypeEntry = NULL;
+
+    while (lpEntry->nSig != DuiSig_end)
+    {
+        if (lpEntry->sMsgType == sMsgType)
+        {
+            if (!lpEntry->sCtrlName.IsEmpty())
+            {
+                if (lpEntry->sCtrlName == sCtrlName)
+                {
+                    return lpEntry;
+                }
+            }
+            else
+            {
+                pMsgTypeEntry = lpEntry;
+            }
+        }
+        lpEntry++;
+    }
+
+    return pMsgTypeEntry;
 }
 
-bool CNotifyPump::AddVirtualWnd(CDuiString strName,CNotifyPump* pObject)
+bool CNotifyPump::AddVirtualWnd(CDuiString strName, CNotifyPump* pObject)
 {
-	if( m_VirtualWndMap.Find(strName) == NULL )
-	{
-		m_VirtualWndMap.Insert(strName.GetData(),(LPVOID)pObject);
-		return true;
-	}
-	return false;
+    if (m_VirtualWndMap.Find(strName) == NULL)
+    {
+        m_VirtualWndMap.Insert(strName.GetData(), (LPVOID)pObject);
+        return true;
+    }
+
+    return false;
 }
 
 bool CNotifyPump::RemoveVirtualWnd(CDuiString strName)
 {
-	if( m_VirtualWndMap.Find(strName) != NULL )
-	{
-		m_VirtualWndMap.Remove(strName);
-		return true;
-	}
-	return false;
+    if (m_VirtualWndMap.Find(strName) != NULL)
+    {
+        m_VirtualWndMap.Remove(strName);
+        return true;
+    }
+
+    return false;
 }
 
 bool CNotifyPump::LoopDispatch(TNotifyUI& msg)
 {
-	const DUI_MSGMAP_ENTRY* lpEntry = NULL;
-	const DUI_MSGMAP* pMessageMap = NULL;
+    const DUI_MSGMAP_ENTRY* lpEntry = NULL;
+    const DUI_MSGMAP* pMessageMap = NULL;
+    bool bLoopDispatch = false;
 
 #ifndef UILIB_STATIC
-	for(pMessageMap = GetMessageMap(); pMessageMap!=NULL; pMessageMap = (*pMessageMap->pfnGetBaseMap)())
+    for (pMessageMap = GetMessageMap(); pMessageMap != NULL; pMessageMap = (*pMessageMap->pfnGetBaseMap)())
 #else
-	for(pMessageMap = GetMessageMap(); pMessageMap!=NULL; pMessageMap = pMessageMap->pBaseMap)
+    for (pMessageMap = GetMessageMap(); pMessageMap != NULL; pMessageMap = pMessageMap->pBaseMap)
 #endif
-	{
+    {
 #ifndef UILIB_STATIC
-		ASSERT(pMessageMap != (*pMessageMap->pfnGetBaseMap)());
+        ASSERT(pMessageMap != (*pMessageMap->pfnGetBaseMap)());
 #else
-		ASSERT(pMessageMap != pMessageMap->pBaseMap);
+        ASSERT(pMessageMap != pMessageMap->pBaseMap);
 #endif
-		if ((lpEntry = DuiFindMessageEntry(pMessageMap->lpEntries,msg)) != NULL)
-		{
-			goto LDispatch;
-		}
-	}
-	return false;
+        if ((lpEntry = DuiFindMessageEntry(pMessageMap->lpEntries, msg)) != NULL)
+        {
+            bLoopDispatch = true;
+            break;
+        }
+    }
 
-LDispatch:
-	union DuiMessageMapFunctions mmf;
-	mmf.pfn = lpEntry->pfn;
+    if (!bLoopDispatch)
+        return false;
 
-	bool bRet = false;
-	int nSig;
-	nSig = lpEntry->nSig;
-	switch (nSig)
-	{
-	default:
-		ASSERT(FALSE);
-		break;
-	case DuiSig_lwl:
-		(this->*mmf.pfn_Notify_lwl)(msg.wParam,msg.lParam);
-		bRet = true;
-		break;
-	case DuiSig_vn:
-		(this->*mmf.pfn_Notify_vn)(msg);
-		bRet = true;
-		break;
-	}
-	return bRet;
+    union DuiMessageMapFunctions mmf;
+    mmf.pfn = lpEntry->pfn;
+
+    bool bRet = false;
+    switch (lpEntry->nSig)
+    {
+    case DuiSig_lwl:
+        (this->*mmf.pfn_Notify_lwl)(msg.wParam,msg.lParam);
+        bRet = true;
+        break;
+    case DuiSig_vn:
+        (this->*mmf.pfn_Notify_vn)(msg);
+        bRet = true;
+        break;
+    default:
+        ASSERT(FALSE);
+        break;
+    }
+
+    return bRet;
 }
 
 void CNotifyPump::NotifyPump(TNotifyUI& msg)
 {
-	///遍历虚拟窗口
-	if( !msg.sVirtualWnd.IsEmpty() ){
-		for( int i = 0; i< m_VirtualWndMap.GetSize(); i++ ) {
-			if( LPCTSTR key = m_VirtualWndMap.GetAt(i) ) {
-				if( _tcsicmp(key, msg.sVirtualWnd.GetData()) == 0 ){
-					CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find(key, false));
-					if( pObject && pObject->LoopDispatch(msg) )
-						return;
-				}
-			}
-		}
-	}
+    ///遍历虚拟窗口
+    if (!msg.sVirtualWnd.IsEmpty())
+    {
+        for (int i = 0; i < m_VirtualWndMap.GetSize(); i++)
+        {
+            if (LPCTSTR key = m_VirtualWndMap.GetAt(i))
+            {
+                if (lstrcmpi(key, msg.sVirtualWnd.GetData()) == 0)
+                {
+                    CNotifyPump* pObject = static_cast<CNotifyPump*>(m_VirtualWndMap.Find(key, false));
+                    if (pObject && pObject->LoopDispatch(msg))
+                        return;
+                }
+            }
+        }
+    }
 
-	///
-	//遍历主窗口
-	LoopDispatch( msg );
+    ///
+    //遍历主窗口
+    LoopDispatch( msg );
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -453,22 +464,22 @@ void CWindowWnd::CenterWindow()
     ::GetWindowRect(m_hWnd, &rcDlg);
     RECT rcArea = { 0 };
     RECT rcCenter = { 0 };
-	HWND hWnd=*this;
+    HWND hWnd=*this;
     HWND hWndParent = ::GetParent(m_hWnd);
     HWND hWndCenter = ::GetWindowOwner(m_hWnd);
-	if (hWndCenter!=NULL)
-		hWnd=hWndCenter;
+    if (hWndCenter!=NULL)
+        hWnd=hWndCenter;
 
-	// 处理多显示器模式下屏幕居中
-	MONITORINFO oMonitor = {};
-	oMonitor.cbSize = sizeof(oMonitor);
-	::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
-	rcArea = oMonitor.rcWork;
+    // 处理多显示器模式下屏幕居中
+    MONITORINFO oMonitor = {};
+    oMonitor.cbSize = sizeof(oMonitor);
+    ::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
+    rcArea = oMonitor.rcWork;
 
     if( hWndCenter == NULL )
-		rcCenter = rcArea;
-	else
-		::GetWindowRect(hWndCenter, &rcCenter);
+        rcCenter = rcArea;
+    else
+        ::GetWindowRect(hWndCenter, &rcCenter);
 
     int DlgWidth = rcDlg.right - rcDlg.left;
     int DlgHeight = rcDlg.bottom - rcDlg.top;
