@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 
 #ifdef _DEBUG
 #include <shlwapi.h>
@@ -91,7 +91,7 @@ LPCTSTR DUI__TraceMsg(UINT uMsg)
 //
 
 //////////////////////////////////////////////////////////////////////////
-// ÕâÀï¿ÉÒÔ´¦ÀíÏûÏ¢£¡£¡£¡
+// è¿™é‡Œå¯ä»¥å¤„ç†æ¶ˆæ¯ï¼ï¼ï¼
 DUI_BASE_BEGIN_MESSAGE_MAP(CNotifyPump)
 DUI_END_MESSAGE_MAP()
 
@@ -197,7 +197,7 @@ bool CNotifyPump::LoopDispatch(TNotifyUI& msg)
 
 void CNotifyPump::NotifyPump(TNotifyUI& msg)
 {
-    ///±éÀúĞéÄâ´°¿Ú
+    ///éå†è™šæ‹Ÿçª—å£
     if (!msg.sVirtualWnd.IsEmpty())
     {
         for (int i = 0; i < m_VirtualWndMap.GetSize(); i++)
@@ -215,12 +215,12 @@ void CNotifyPump::NotifyPump(TNotifyUI& msg)
     }
 
     ///
-    //±éÀúÖ÷´°¿Ú
+    //éå†ä¸»çª—å£
     LoopDispatch( msg );
 }
 
 //////////////////////////////////////////////////////////////////////////
-/// duilib´°¿Ú»ùÀà
+/// duilibçª—å£åŸºç±»
 CWindowWnd::CWindowWnd()
     : m_hWnd(NULL)
     , m_OldWndProc(::DefWindowProc)
@@ -261,19 +261,19 @@ HWND CWindowWnd::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD 
 
 HWND CWindowWnd::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, int x, int y, int cx, int cy, HMENU hMenu)
 {
-    // Èç¹ûÓĞ³¬Àà»¯µÄÀàÃû£¬ÔòÓÅÏÈ×¢²á³¬Àà´°¿ÚÀà
+    // å¦‚æœæœ‰è¶…ç±»åŒ–çš„ç±»åï¼Œåˆ™ä¼˜å…ˆæ³¨å†Œè¶…ç±»çª—å£ç±»
     if (GetSuperClassName() != NULL && !RegisterSuperclass())
     {
         return NULL;
     }
 
-    // Ã»ÓĞÔò×¢²áÆÕÍ¨´°¿ÚÀà
+    // æ²¡æœ‰åˆ™æ³¨å†Œæ™®é€šçª—å£ç±»
     if (GetSuperClassName() == NULL && !RegisterWindowClass())
     {
         return NULL;
     }
 
-    // ¿ªÊ¼´´½¨´°¿Ú
+    // å¼€å§‹åˆ›å»ºçª—å£
     m_hWnd = ::CreateWindowEx(dwExStyle, GetWindowClassName(), pstrName, dwStyle, x, y, cx, cy, hwndParent, hMenu, CPaintManagerUI::GetInstance(), this);
     ASSERT(m_hWnd != NULL);
 
@@ -347,11 +347,11 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
 {
     ASSERT(::IsWindow(m_hWnd));
 
-    // È·¶¨Òª¾ÓÖĞµÄ´°¿ÚµÄowner´°¿Ú
+    // ç¡®å®šè¦å±…ä¸­çš„çª—å£çš„ownerçª—å£
     DWORD dwStyle = (DWORD) ::GetWindowLong(m_hWnd, GWL_STYLE);
     if (hWndCenter == NULL)
     {
-        // Èç¹ûÊÇ×Ó´°¿Ú£¬ÔòhWndCenterÊÇËüµÄ¸¸´°¿Ú£¬·ñÔòÊÇowner´°¿Ú
+        // å¦‚æœæ˜¯å­çª—å£ï¼Œåˆ™hWndCenteræ˜¯å®ƒçš„çˆ¶çª—å£ï¼Œå¦åˆ™æ˜¯ownerçª—å£
         if (dwStyle & WS_CHILD)
         {
             hWndCenter = ::GetParent(m_hWnd);
@@ -362,7 +362,7 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
         }
     }
 
-    // »ñÈ¡´°¿ÚÏà¶ÔÓÚËüµÄ¸¸´°¿ÚµÄ×ø±ê
+    // è·å–çª—å£ç›¸å¯¹äºå®ƒçš„çˆ¶çª—å£çš„åæ ‡
     RECT rcDlg;
     ::GetWindowRect(m_hWnd, &rcDlg);
 
@@ -371,7 +371,7 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
     HWND hWndParent;
     if (!(dwStyle & WS_CHILD))
     {
-        // ²»Òª¶ÔÒ»¸öhWndCenter²»¿É¼û»ò×îĞ¡»¯µÄ´°¿Ú¾ÓÖĞ
+        // ä¸è¦å¯¹ä¸€ä¸ªhWndCenterä¸å¯è§æˆ–æœ€å°åŒ–çš„çª—å£å±…ä¸­
         if (hWndCenter != NULL)
         {
             DWORD dwStyleCenter = ::GetWindowLong(hWndCenter, GWL_STYLE);
@@ -381,7 +381,7 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
             }
         }
 
-        // Ê¹ÓÃÆÁÄ»×ø±êÀ´¾ÓÖĞ
+        // ä½¿ç”¨å±å¹•åæ ‡æ¥å±…ä¸­
 #if WINVER < 0x0500
         ::SystemParametersInfo(SPI_GETWORKAREA, NULL, &rcArea, NULL);
 #else
@@ -414,7 +414,7 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
 }
     else
     {
-        // Ê¹ÓÃ¸¸´°¿Ú¿Í»§ÇøÓò×ø±ê¾ÓÖĞ
+        // ä½¿ç”¨çˆ¶çª—å£å®¢æˆ·åŒºåŸŸåæ ‡å±…ä¸­
         hWndParent = ::GetParent(m_hWnd);
         ASSERT(::IsWindow(hWndParent));
 
@@ -427,11 +427,11 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
     int DlgWidth = rcDlg.right - rcDlg.left;
     int DlgHeight = rcDlg.bottom - rcDlg.top;
 
-    // ¼ÆËã´°¿ÚµÄ×óÉÏ½Ç×ø±ê£¨»ùÓÚrcCenter£©
+    // è®¡ç®—çª—å£çš„å·¦ä¸Šè§’åæ ‡ï¼ˆåŸºäºrcCenterï¼‰
     int xLeft = (rcCenter.left + rcCenter.right) / 2 - DlgWidth / 2;
     int yTop = (rcCenter.top + rcCenter.bottom) / 2 - DlgHeight / 2;
 
-    // Èç¹û´°¿ÚÔÚÆÁÄ»ÍâÃæ£¬ÔòÒÆ¶¯Ëüµ½ÆÁÄ»ÀïÃæ
+    // å¦‚æœçª—å£åœ¨å±å¹•å¤–é¢ï¼Œåˆ™ç§»åŠ¨å®ƒåˆ°å±å¹•é‡Œé¢
     if (xLeft + DlgWidth > rcArea.right)
     {
         xLeft = rcArea.right - DlgWidth;
@@ -452,7 +452,7 @@ BOOL CWindowWnd::CenterWindow(HWND hWndCenter /*= NULL*/)
         yTop = rcArea.top;
     }
 
-    // ÒÆ¶¯´°¿ÚÎ»ÖÃÔÚÆÁÄ»ÖĞ¼ä£¡
+    // ç§»åŠ¨çª—å£ä½ç½®åœ¨å±å¹•ä¸­é—´ï¼
     return ::SetWindowPos(m_hWnd, NULL, xLeft, yTop, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 #else
@@ -470,7 +470,7 @@ void CWindowWnd::CenterWindow()
     if (hWndCenter!=NULL)
         hWnd=hWndCenter;
 
-    // ´¦Àí¶àÏÔÊ¾Æ÷Ä£Ê½ÏÂÆÁÄ»¾ÓÖĞ
+    // å¤„ç†å¤šæ˜¾ç¤ºå™¨æ¨¡å¼ä¸‹å±å¹•å±…ä¸­
     MONITORINFO oMonitor = {};
     oMonitor.cbSize = sizeof(oMonitor);
     ::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
