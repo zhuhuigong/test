@@ -2,30 +2,30 @@
 
 namespace DuiLib {
 
-CControlUI::CControlUI() : 
-m_pManager(NULL), 
-m_pParent(NULL), 
-m_bUpdateNeeded(true),
-m_bMenuUsed(false),
-m_bVisible(true), 
-m_bInternVisible(true),
-m_bFocused(false),
-m_bEnabled(true),
-m_bMouseEnabled(true),
-m_bKeyboardEnabled(true),
-m_bFloat(false),
-m_bSetPos(false),
-m_chShortcut('\0'),
-m_pTag(NULL),
-m_dwBackColor(0),
-m_dwBackColor2(0),
-m_dwBackColor3(0),
-m_dwBorderColor(0),
-m_dwFocusBorderColor(0),
-m_bColorHSL(false),
-m_nBorderSize(0),
-m_nBorderStyle(PS_SOLID),
-m_nTooltipWidth(300)
+CControlUI::CControlUI()
+    : m_pManager(NULL)
+    , m_pParent(NULL)
+    , m_bUpdateNeeded(true)
+    , m_bMenuUsed(false)
+    , m_bVisible(true)
+    , m_bInternVisible(true)
+    , m_bFocused(false)
+    , m_bEnabled(true)
+    , m_bMouseEnabled(true)
+    , m_bKeyboardEnabled(true)
+    , m_bFloat(false)
+    , m_bSetPos(false)
+    , m_chShortcut('\0')
+    , m_pTag(NULL)
+    , m_dwBackColor(0)
+    , m_dwBackColor2(0)
+    , m_dwBackColor3(0)
+    , m_dwBorderColor(0)
+    , m_dwFocusBorderColor(0)
+    , m_bColorHSL(false)
+    , m_nBorderSize(0)
+    , m_nBorderStyle(PS_SOLID)
+    , m_nTooltipWidth(300)
 {
     m_cXY.cx = m_cXY.cy = 0;
     m_cxyFixed.cx = m_cxyFixed.cy = 0;
