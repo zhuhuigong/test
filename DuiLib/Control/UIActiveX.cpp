@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+Ôªø#include "StdAfx.h"
 
 namespace DuiLib {
 
@@ -600,11 +600,11 @@ STDMETHODIMP CActiveXCtrl::GetWindowContext(IOleInPlaceFrame** ppFrame, IOleInPl
     if( ppFrame == NULL ) return E_POINTER;
     if( lprcPosRect == NULL ) return E_POINTER;
     if( lprcClipRect == NULL ) return E_POINTER;
-	if (m_pWindow)
-	{
-		::GetClientRect(m_pWindow->GetHWND(),lprcPosRect);
-		::GetClientRect(m_pWindow->GetHWND(),lprcClipRect);
-	}
+    if (m_pWindow)
+    {
+        ::GetClientRect(m_pWindow->GetHWND(),lprcPosRect);
+        ::GetClientRect(m_pWindow->GetHWND(),lprcClipRect);
+    }
     *ppFrame = new CActiveXFrameWnd(m_pOwner);
     *ppDoc = NULL;
     ACCEL ac = { 0 };
@@ -767,7 +767,7 @@ LPCTSTR CActiveXWnd::GetWindowClassName() const
 
 void CActiveXWnd::OnFinalMessage(HWND hWnd)
 {
-    //delete this; // ’‚¿Ô≤ª–Ë“™«Â¿Ì£¨CActiveXUIª·«Â¿Ìµƒ
+    //delete this; // ËøôÈáå‰∏çÈúÄË¶ÅÊ∏ÖÁêÜÔºåCActiveXUI‰ºöÊ∏ÖÁêÜÁöÑ
 }
 
 void CActiveXWnd::DoVerb(LONG iVerb)
@@ -794,7 +794,7 @@ LRESULT CActiveXWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_KILLFOCUS:     lRes = OnKillFocus(uMsg, wParam, lParam, bHandled); break;
     case WM_ERASEBKGND:    lRes = OnEraseBkgnd(uMsg, wParam, lParam, bHandled); break;
     case WM_MOUSEACTIVATE: lRes = OnMouseActivate(uMsg, wParam, lParam, bHandled); break;
-	case WM_MOUSEWHEEL: break;
+    case WM_MOUSEWHEEL: break;
     default:
         bHandled = FALSE;
     }
@@ -867,8 +867,8 @@ LPCTSTR CActiveXUI::GetClass() const
 
 LPVOID CActiveXUI::GetInterface(LPCTSTR pstrName)
 {
-	if( _tcscmp(pstrName, DUI_CTR_ACTIVEX) == 0 ) return static_cast<CActiveXUI*>(this);
-	return CControlUI::GetInterface(pstrName);
+    if( _tcscmp(pstrName, DUI_CTR_ACTIVEX) == 0 ) return static_cast<CActiveXUI*>(this);
+    return CControlUI::GetInterface(pstrName);
 }
 
 HWND CActiveXUI::GetHostWindow() const
@@ -1136,7 +1136,7 @@ HRESULT CActiveXUI::GetControl(const IID iid, LPVOID* ppRet)
 
 CLSID CActiveXUI::GetClisd() const
 {
-	return m_clsid;
+    return m_clsid;
 }
 
 CDuiString CActiveXUI::GetModuleName() const

@@ -1,4 +1,4 @@
-#ifndef __UILIST_H__
+Ôªø#ifndef __UILIST_H__
 #define __UILIST_H__
 
 #pragma once
@@ -144,21 +144,21 @@ public:
     void SetItemLineColor(DWORD dwLineColor);
     bool IsItemShowHtml();
     void SetItemShowHtml(bool bShowHtml = true);
-	RECT GetItemTextPadding() const;
-	DWORD GetItemTextColor() const;
-	DWORD GetItemBkColor() const;
-	LPCTSTR GetItemBkImage() const;
+    RECT GetItemTextPadding() const;
+    DWORD GetItemTextColor() const;
+    DWORD GetItemBkColor() const;
+    LPCTSTR GetItemBkImage() const;
     bool IsAlternateBk() const;
-	DWORD GetSelectedItemTextColor() const;
-	DWORD GetSelectedItemBkColor() const;
-	LPCTSTR GetSelectedItemImage() const;
-	DWORD GetHotItemTextColor() const;
-	DWORD GetHotItemBkColor() const;
-	LPCTSTR GetHotItemImage() const;
-	DWORD GetDisabledItemTextColor() const;
-	DWORD GetDisabledItemBkColor() const;
-	LPCTSTR GetDisabledItemImage() const;
-	DWORD GetItemLineColor() const;
+    DWORD GetSelectedItemTextColor() const;
+    DWORD GetSelectedItemBkColor() const;
+    LPCTSTR GetSelectedItemImage() const;
+    DWORD GetHotItemTextColor() const;
+    DWORD GetHotItemBkColor() const;
+    LPCTSTR GetHotItemImage() const;
+    DWORD GetDisabledItemTextColor() const;
+    DWORD GetDisabledItemBkColor() const;
+    LPCTSTR GetDisabledItemImage() const;
+    DWORD GetItemLineColor() const;
 
     void SetMultiExpanding(bool bMultiExpandable); 
     int GetExpandedItem() const;
@@ -214,12 +214,12 @@ public:
     void DoEvent(TEventUI& event);
     BOOL SortItems(PULVCompareFunc pfnCompare, UINT_PTR dwData);
 protected:
-	static int __cdecl ItemComareFunc(void *pvlocale, const void *item1, const void *item2);
-	int __cdecl ItemComareFunc(const void *item1, const void *item2);
+    static int __cdecl ItemComareFunc(void *pvlocale, const void *item1, const void *item2);
+    int __cdecl ItemComareFunc(const void *item1, const void *item2);
 protected:
     CListUI* m_pOwner;
-	PULVCompareFunc m_pCompareFunc;
-	UINT_PTR m_compareData;
+    PULVCompareFunc m_pCompareFunc;
+    UINT_PTR m_compareData;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -251,16 +251,16 @@ public:
 
     void SetEnabled(bool bEnable = true);
 
-	bool IsDragable() const;
+    bool IsDragable() const;
     void SetDragable(bool bDragable);
-	DWORD GetSepWidth() const;
+    DWORD GetSepWidth() const;
     void SetSepWidth(int iWidth);
-	DWORD GetTextStyle() const;
+    DWORD GetTextStyle() const;
     void SetTextStyle(UINT uStyle);
-	DWORD GetTextColor() const;
+    DWORD GetTextColor() const;
     void SetTextColor(DWORD dwTextColor);
-	void SetTextPadding(RECT rc);
-	RECT GetTextPadding() const;
+    void SetTextPadding(RECT rc);
+    RECT GetTextPadding() const;
     void SetFont(int index);
     bool IsShowHtml();
     void SetShowHtml(bool bShowHtml = true);
@@ -292,7 +292,7 @@ protected:
     int m_iFont;
     UINT m_uTextStyle;
     bool m_bShowHtml;
-	RECT m_rcTextPadding;
+    RECT m_rcTextPadding;
     CDuiString m_sNormalImage;
     CDuiString m_sHotImage;
     CDuiString m_sPushedImage;
@@ -328,7 +328,7 @@ public:
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // ÷±Ω”CControl::Invalidateª·µº÷¬πˆ∂ØÃıÀ¢–¬£¨÷ÿ–¥ºı…ŸÀ¢–¬«¯”Ú
+    void Invalidate(); // Áõ¥Êé•CControl::Invalidate‰ºöÂØºËá¥ÊªöÂä®Êù°Âà∑Êñ∞ÔºåÈáçÂÜôÂáèÂ∞ëÂà∑Êñ∞Âå∫Âüü
     bool Activate();
 
     void DoEvent(TEventUI& event);
@@ -422,7 +422,7 @@ public:
     bool IsExpanded() const;
     bool Expand(bool bExpand = true);
 
-    void Invalidate(); // ÷±Ω”CControl::Invalidateª·µº÷¬πˆ∂ØÃıÀ¢–¬£¨÷ÿ–¥ºı…ŸÀ¢–¬«¯”Ú
+    void Invalidate(); // Áõ¥Êé•CControl::Invalidate‰ºöÂØºËá¥ÊªöÂä®Êù°Âà∑Êñ∞ÔºåÈáçÂÜôÂáèÂ∞ëÂà∑Êñ∞Âå∫Âüü
     bool Activate();
 
     void DoEvent(TEventUI& event);

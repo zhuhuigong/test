@@ -1,22 +1,22 @@
-#ifndef __UICHECKBOX_H__
+ï»¿#ifndef __UICHECKBOX_H__
 #define __UICHECKBOX_H__
 
 #pragma once
 
 namespace DuiLib
 {
-	/// ×îÆÕÍ¨µÄµ¥Ñ¡°´Å¥¿Ø¼ş£¬Ö»ÓĞÊÇ¡¢·ñÁ½ÖÖ½á¹û
-	/// ÅÉÉúÓÚCOptionUI£¬Ö»ÊÇÃ¿×éÖ»ÓĞÒ»¸ö°´Å¥¶øÒÑ£¬×éÃûÎª¿Õ£¬ÅäÖÃÎÄ¼şÄ¬ÈÏÊôĞÔ¾ÙÀı£º
-	/// <CheckBox name="CheckBox" value="height='20' align='left' textpadding='24,0,0,0' normalimage='file='sys_check_btn.png' source='0,0,20,20' dest='0,0,20,20'' selectedimage='file='sys_check_btn.png' source='20,0,40,20' dest='0,0,20,20'' disabledimage='file='sys_check_btn.png' source='40,0,60,20' dest='0,0,20,20''"/>
+    /// æœ€æ™®é€šçš„å•é€‰æŒ‰é’®æ§ä»¶ï¼Œåªæœ‰æ˜¯ã€å¦ä¸¤ç§ç»“æœ
+    /// æ´¾ç”ŸäºCOptionUIï¼Œåªæ˜¯æ¯ç»„åªæœ‰ä¸€ä¸ªæŒ‰é’®è€Œå·²ï¼Œç»„åä¸ºç©ºï¼Œé…ç½®æ–‡ä»¶é»˜è®¤å±æ€§ä¸¾ä¾‹ï¼š
+    /// <CheckBox name="CheckBox" value="height='20' align='left' textpadding='24,0,0,0' normalimage='file='sys_check_btn.png' source='0,0,20,20' dest='0,0,20,20'' selectedimage='file='sys_check_btn.png' source='20,0,40,20' dest='0,0,20,20'' disabledimage='file='sys_check_btn.png' source='40,0,60,20' dest='0,0,20,20''"/>
 
-	class UILIB_API CCheckBoxUI : public COptionUI
-	{
-	public:
-		LPCTSTR GetClass() const;
+    class UILIB_API CCheckBoxUI : public COptionUI
+    {
+    public:
+        LPCTSTR GetClass() const;
 
-		void SetCheck(bool bCheck);
-		bool GetCheck() const;
-	};
+        void SetCheck(bool bCheck);
+        bool GetCheck() const;
+    };
 }
 
 #endif // __UICHECKBOX_H__

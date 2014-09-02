@@ -1,4 +1,4 @@
-#ifndef __UICONTAINER_H__
+Ôªø#ifndef __UICONTAINER_H__
 #define __UICONTAINER_H__
 
 #pragma once
@@ -52,7 +52,7 @@ public:
     void SetMouseEnabled(bool bEnable = true);
 
     virtual RECT GetInset() const;
-    virtual void SetInset(RECT rcInset); // …Ë÷√ƒ⁄±ﬂæ‡£¨œ‡µ±”⁄…Ë÷√øÕªß«¯
+    virtual void SetInset(RECT rcInset); // ËÆæÁΩÆÂÜÖËæπË∑ùÔºåÁõ∏ÂΩì‰∫éËÆæÁΩÆÂÆ¢Êà∑Âå∫
     virtual int GetChildPadding() const;
     virtual void SetChildPadding(int iPadding);
     virtual bool IsAutoDestroy() const;
@@ -72,16 +72,16 @@ public:
     void SetManager(CPaintManagerUI* pManager, CControlUI* pParent, bool bInit = true);
     CControlUI* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags);
 
-	bool SetSubControlText(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
-	bool SetSubControlFixedHeight(LPCTSTR pstrSubControlName,int cy);
-	bool SetSubControlFixedWdith(LPCTSTR pstrSubControlName,int cx);
-	bool SetSubControlUserData(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
+    bool SetSubControlText(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
+    bool SetSubControlFixedHeight(LPCTSTR pstrSubControlName,int cy);
+    bool SetSubControlFixedWdith(LPCTSTR pstrSubControlName,int cx);
+    bool SetSubControlUserData(LPCTSTR pstrSubControlName,LPCTSTR pstrText);
 
-	CDuiString GetSubControlText(LPCTSTR pstrSubControlName);
-	int GetSubControlFixedHeight(LPCTSTR pstrSubControlName);
-	int GetSubControlFixedWdith(LPCTSTR pstrSubControlName);
-	const CDuiString GetSubControlUserData(LPCTSTR pstrSubControlName);
-	CControlUI* FindSubControl(LPCTSTR pstrSubControlName);
+    CDuiString GetSubControlText(LPCTSTR pstrSubControlName);
+    int GetSubControlFixedHeight(LPCTSTR pstrSubControlName);
+    int GetSubControlFixedWdith(LPCTSTR pstrSubControlName);
+    const CDuiString GetSubControlUserData(LPCTSTR pstrSubControlName);
+    CControlUI* FindSubControl(LPCTSTR pstrSubControlName);
 
     virtual SIZE GetScrollPos() const;
     virtual SIZE GetScrollRange() const;
@@ -113,7 +113,7 @@ protected:
     bool m_bAutoDestroy;
     bool m_bDelayedDestroy;
     bool m_bMouseChildEnabled;
-    bool m_bScrollProcess; // ∑¿÷πSetPos—≠ª∑µ˜”√
+    bool m_bScrollProcess; // Èò≤Ê≠¢SetPosÂæ™ÁéØË∞ÉÁî®
 
     CScrollBarUI* m_pVerticalScrollBar;
     CScrollBarUI* m_pHorizontalScrollBar;

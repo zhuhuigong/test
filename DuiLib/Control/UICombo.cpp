@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 
 namespace DuiLib {
 
@@ -19,7 +19,7 @@ public:
     void Scroll(int dx, int dy);
 
 #if(_WIN32_WINNT >= 0x0501)
-	virtual UINT GetClassStyle() const;
+    virtual UINT GetClassStyle() const;
 #endif
 
 public:
@@ -40,9 +40,9 @@ void CComboWnd::Init(CComboUI* pOwner)
     SIZE szDrop = m_pOwner->GetDropBoxSize();
     RECT rcOwner = pOwner->GetPos();
     RECT rc = rcOwner;
-    rc.top = rc.bottom;		// ¸¸´°¿Úleft¡¢bottomÎ»ÖÃ×÷Îªµ¯³ö´°¿ÚÆðµã
-    rc.bottom = rc.top + szDrop.cy;	// ¼ÆËãµ¯³ö´°¿Ú¸ß¶È
-    if( szDrop.cx > 0 ) rc.right = rc.left + szDrop.cx;	// ¼ÆËãµ¯³ö´°¿Ú¿í¶È
+    rc.top = rc.bottom;     // çˆ¶çª—å£leftã€bottomä½ç½®ä½œä¸ºå¼¹å‡ºçª—å£èµ·ç‚¹
+    rc.bottom = rc.top + szDrop.cy; // è®¡ç®—å¼¹å‡ºçª—å£é«˜åº¦
+    if( szDrop.cx > 0 ) rc.right = rc.left + szDrop.cx; // è®¡ç®—å¼¹å‡ºçª—å£å®½åº¦
 
     SIZE szAvailable = { rc.right - rc.left, rc.bottom - rc.top };
     int cyFixed = 0;
@@ -52,7 +52,7 @@ void CComboWnd::Init(CComboUI* pOwner)
         SIZE sz = pControl->EstimateSize(szAvailable);
         cyFixed += sz.cy;
     }
-    cyFixed += 4; // CVerticalLayoutUI Ä¬ÈÏµÄInset µ÷Õû
+    cyFixed += 4; // CVerticalLayoutUI é»˜è®¤çš„Inset è°ƒæ•´
     rc.bottom = rc.top + MIN(cyFixed, szDrop.cy);
 
     ::MapWindowRect(pOwner->GetManager()->GetPaintWindow(), HWND_DESKTOP, &rc);
@@ -195,7 +195,7 @@ void CComboWnd::Scroll(int dx, int dy)
 #if(_WIN32_WINNT >= 0x0501)
 UINT CComboWnd::GetClassStyle() const
 {
-	return __super::GetClassStyle() | CS_DROPSHADOW;
+    return __super::GetClassStyle() | CS_DROPSHADOW;
 }
 #endif
 ////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ LPCTSTR CComboUI::GetClass() const
 
 LPVOID CComboUI::GetInterface(LPCTSTR pstrName)
 {
-	if( _tcscmp(pstrName, DUI_CTR_COMBO) == 0 ) return static_cast<CComboUI*>(this);
+    if( _tcscmp(pstrName, DUI_CTR_COMBO) == 0 ) return static_cast<CComboUI*>(this);
     if( _tcscmp(pstrName, _T("IListOwner")) == 0 ) return static_cast<IListOwnerUI*>(this);
     return CContainerUI::GetInterface(pstrName);
 }
@@ -606,13 +606,13 @@ void CComboUI::SetItemFont(int index)
 
 void CComboUI::SetItemTextStyle(UINT uStyle)
 {
-	m_ListInfo.uTextStyle = uStyle;
-	Invalidate();
+    m_ListInfo.uTextStyle = uStyle;
+    Invalidate();
 }
 
 RECT CComboUI::GetItemTextPadding() const
 {
-	return m_ListInfo.rcTextPadding;
+    return m_ListInfo.rcTextPadding;
 }
 
 void CComboUI::SetItemTextPadding(RECT rc)
@@ -639,17 +639,17 @@ void CComboUI::SetItemBkImage(LPCTSTR pStrImage)
 
 DWORD CComboUI::GetItemTextColor() const
 {
-	return m_ListInfo.dwTextColor;
+    return m_ListInfo.dwTextColor;
 }
 
 DWORD CComboUI::GetItemBkColor() const
 {
-	return m_ListInfo.dwBkColor;
+    return m_ListInfo.dwBkColor;
 }
 
 LPCTSTR CComboUI::GetItemBkImage() const
 {
-	return m_ListInfo.sBkImage;
+    return m_ListInfo.sBkImage;
 }
 
 bool CComboUI::IsAlternateBk() const
@@ -674,22 +674,22 @@ void CComboUI::SetSelectedItemBkColor(DWORD dwBkColor)
 
 void CComboUI::SetSelectedItemImage(LPCTSTR pStrImage)
 {
-	m_ListInfo.sSelectedImage = pStrImage;
+    m_ListInfo.sSelectedImage = pStrImage;
 }
 
 DWORD CComboUI::GetSelectedItemTextColor() const
 {
-	return m_ListInfo.dwSelectedTextColor;
+    return m_ListInfo.dwSelectedTextColor;
 }
 
 DWORD CComboUI::GetSelectedItemBkColor() const
 {
-	return m_ListInfo.dwSelectedBkColor;
+    return m_ListInfo.dwSelectedBkColor;
 }
 
 LPCTSTR CComboUI::GetSelectedItemImage() const
 {
-	return m_ListInfo.sSelectedImage;
+    return m_ListInfo.sSelectedImage;
 }
 
 void CComboUI::SetHotItemTextColor(DWORD dwTextColor)
@@ -709,16 +709,16 @@ void CComboUI::SetHotItemImage(LPCTSTR pStrImage)
 
 DWORD CComboUI::GetHotItemTextColor() const
 {
-	return m_ListInfo.dwHotTextColor;
+    return m_ListInfo.dwHotTextColor;
 }
 DWORD CComboUI::GetHotItemBkColor() const
 {
-	return m_ListInfo.dwHotBkColor;
+    return m_ListInfo.dwHotBkColor;
 }
 
 LPCTSTR CComboUI::GetHotItemImage() const
 {
-	return m_ListInfo.sHotImage;
+    return m_ListInfo.sHotImage;
 }
 
 void CComboUI::SetDisabledItemTextColor(DWORD dwTextColor)
@@ -738,22 +738,22 @@ void CComboUI::SetDisabledItemImage(LPCTSTR pStrImage)
 
 DWORD CComboUI::GetDisabledItemTextColor() const
 {
-	return m_ListInfo.dwDisabledTextColor;
+    return m_ListInfo.dwDisabledTextColor;
 }
 
 DWORD CComboUI::GetDisabledItemBkColor() const
 {
-	return m_ListInfo.dwDisabledBkColor;
+    return m_ListInfo.dwDisabledBkColor;
 }
 
 LPCTSTR CComboUI::GetDisabledItemImage() const
 {
-	return m_ListInfo.sDisabledImage;
+    return m_ListInfo.sDisabledImage;
 }
 
 DWORD CComboUI::GetItemLineColor() const
 {
-	return m_ListInfo.dwLineColor;
+    return m_ListInfo.dwLineColor;
 }
 
 void CComboUI::SetItemLineColor(DWORD dwLineColor)
@@ -800,14 +800,14 @@ void CComboUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     else if( _tcscmp(pstrName, _T("focusedimage")) == 0 ) SetFocusedImage(pstrValue);
     else if( _tcscmp(pstrName, _T("disabledimage")) == 0 ) SetDisabledImage(pstrValue);
     else if( _tcscmp(pstrName, _T("dropbox")) == 0 ) SetDropBoxAttributeList(pstrValue);
-	else if( _tcscmp(pstrName, _T("dropboxsize")) == 0)
-	{
-		SIZE szDropBoxSize = { 0 };
-		LPTSTR pstr = NULL;
-		szDropBoxSize.cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-		szDropBoxSize.cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-		SetDropBoxSize(szDropBoxSize);
-	}
+    else if( _tcscmp(pstrName, _T("dropboxsize")) == 0)
+    {
+        SIZE szDropBoxSize = { 0 };
+        LPTSTR pstr = NULL;
+        szDropBoxSize.cx = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
+        szDropBoxSize.cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
+        SetDropBoxSize(szDropBoxSize);
+    }
     else if( _tcscmp(pstrName, _T("itemfont")) == 0 ) m_ListInfo.nFont = _ttoi(pstrValue);
     else if( _tcscmp(pstrName, _T("itemalign")) == 0 ) {
         if( _tcsstr(pstrValue, _T("left")) != NULL ) {

@@ -1,4 +1,4 @@
-#ifndef __UICOMBO_H__
+﻿#ifndef __UICOMBO_H__
 #define __UICOMBO_H__
 
 #pragma once
@@ -57,35 +57,35 @@ public:
     TListInfoUI* GetListInfo();
     void SetItemFont(int index);
     void SetItemTextStyle(UINT uStyle);
-	RECT GetItemTextPadding() const;
+    RECT GetItemTextPadding() const;
     void SetItemTextPadding(RECT rc);
-	DWORD GetItemTextColor() const;
+    DWORD GetItemTextColor() const;
     void SetItemTextColor(DWORD dwTextColor);
-	DWORD GetItemBkColor() const;
+    DWORD GetItemBkColor() const;
     void SetItemBkColor(DWORD dwBkColor);
-	LPCTSTR GetItemBkImage() const;
+    LPCTSTR GetItemBkImage() const;
     void SetItemBkImage(LPCTSTR pStrImage);
     bool IsAlternateBk() const;
     void SetAlternateBk(bool bAlternateBk);
-	DWORD GetSelectedItemTextColor() const;
+    DWORD GetSelectedItemTextColor() const;
     void SetSelectedItemTextColor(DWORD dwTextColor);
-	DWORD GetSelectedItemBkColor() const;
+    DWORD GetSelectedItemBkColor() const;
     void SetSelectedItemBkColor(DWORD dwBkColor);
-	LPCTSTR GetSelectedItemImage() const;
+    LPCTSTR GetSelectedItemImage() const;
     void SetSelectedItemImage(LPCTSTR pStrImage);
-	DWORD GetHotItemTextColor() const;
+    DWORD GetHotItemTextColor() const;
     void SetHotItemTextColor(DWORD dwTextColor);
-	DWORD GetHotItemBkColor() const;
+    DWORD GetHotItemBkColor() const;
     void SetHotItemBkColor(DWORD dwBkColor);
-	LPCTSTR GetHotItemImage() const;
+    LPCTSTR GetHotItemImage() const;
     void SetHotItemImage(LPCTSTR pStrImage);
-	DWORD GetDisabledItemTextColor() const;
+    DWORD GetDisabledItemTextColor() const;
     void SetDisabledItemTextColor(DWORD dwTextColor);
-	DWORD GetDisabledItemBkColor() const;
+    DWORD GetDisabledItemBkColor() const;
     void SetDisabledItemBkColor(DWORD dwBkColor);
-	LPCTSTR GetDisabledItemImage() const;
+    LPCTSTR GetDisabledItemImage() const;
     void SetDisabledItemImage(LPCTSTR pStrImage);
-	DWORD GetItemLineColor() const;
+    DWORD GetItemLineColor() const;
     void SetItemLineColor(DWORD dwLineColor);
     bool IsItemShowHtml();
     void SetItemShowHtml(bool bShowHtml = true);

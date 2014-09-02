@@ -1,4 +1,4 @@
-
+﻿
 #pragma warning( disable: 4049 )  /* more than 64k source lines */
 
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
@@ -42,7 +42,7 @@
 #ifndef __IDownloadManager_FWD_DEFINED__
 #define __IDownloadManager_FWD_DEFINED__
 typedef interface IDownloadManager IDownloadManager;
-#endif 	/* __IDownloadManager_FWD_DEFINED__ */
+#endif  /* __IDownloadManager_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -114,7 +114,7 @@ EXTERN_C const IID IID_IDownloadManager;
         
     };
     
-#else 	/* C style interface */
+#else   /* C style interface */
 
     typedef struct IDownloadManagerVtbl
     {
@@ -155,23 +155,23 @@ EXTERN_C const IID IID_IDownloadManager;
 #ifdef COBJMACROS
 
 
-#define IDownloadManager_QueryInterface(This,riid,ppvObject)	\
+#define IDownloadManager_QueryInterface(This,riid,ppvObject)    \
     (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
 
-#define IDownloadManager_AddRef(This)	\
+#define IDownloadManager_AddRef(This)   \
     (This)->lpVtbl -> AddRef(This)
 
-#define IDownloadManager_Release(This)	\
+#define IDownloadManager_Release(This)  \
     (This)->lpVtbl -> Release(This)
 
 
-#define IDownloadManager_Download(This,pmk,pbc,dwBindVerb,grfBINDF,pBindInfo,pszHeaders,pszRedir,uiCP)	\
+#define IDownloadManager_Download(This,pmk,pbc,dwBindVerb,grfBINDF,pBindInfo,pszHeaders,pszRedir,uiCP)  \
     (This)->lpVtbl -> Download(This,pmk,pbc,dwBindVerb,grfBINDF,pBindInfo,pszHeaders,pszRedir,uiCP)
 
 #endif /* COBJMACROS */
 
 
-#endif 	/* C style interface */
+#endif  /* C style interface */
 
 
 
@@ -195,7 +195,7 @@ void __RPC_STUB IDownloadManager_Download_Stub(
 
 
 
-#endif 	/* __IDownloadManager_INTERFACE_DEFINED__ */
+#endif  /* __IDownloadManager_INTERFACE_DEFINED__ */
 
 
 /* Additional Prototypes for ALL interfaces */

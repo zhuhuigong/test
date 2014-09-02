@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 // These constants are for backward compatibility. They are the 
 // sizes used for initialization and reset in RichEdit 1.0
@@ -77,14 +77,14 @@ public:
     void SetParaFormat(PARAFORMAT2 &p);
 
     // -----------------------------
-    //	IUnknown interface
+    //  IUnknown interface
     // -----------------------------
     virtual HRESULT _stdcall QueryInterface(REFIID riid, void **ppvObject);
     virtual ULONG _stdcall AddRef(void);
     virtual ULONG _stdcall Release(void);
 
     // -----------------------------
-    //	ITextHost interface
+    //  ITextHost interface
     // -----------------------------
     virtual HDC TxGetDC();
     virtual INT TxReleaseDC(HDC hdc);
@@ -128,33 +128,33 @@ public:
 
 private:
     CRichEditUI *m_re;
-    ULONG	cRefs;					// Reference Count
-    ITextServices	*pserv;		    // pointer to Text Services object
+    ULONG   cRefs;                  // Reference Count
+    ITextServices   *pserv;         // pointer to Text Services object
     // Properties
 
-    DWORD		dwStyle;				// style bits
+    DWORD       dwStyle;                // style bits
 
-    unsigned	fEnableAutoWordSel	:1;	// enable Word style auto word selection?
-    unsigned	fWordWrap			:1;	// Whether control should word wrap
-    unsigned	fAllowBeep			:1;	// Whether beep is allowed
-    unsigned	fRich				:1;	// Whether control is rich text
-    unsigned	fSaveSelection		:1;	// Whether to save the selection when inactive
-    unsigned	fInplaceActive		:1; // Whether control is inplace active
-    unsigned	fTransparent		:1; // Whether control is transparent
-    unsigned	fTimer				:1;	// A timer is set
+    unsigned    fEnableAutoWordSel  :1; // enable Word style auto word selection?
+    unsigned    fWordWrap           :1; // Whether control should word wrap
+    unsigned    fAllowBeep          :1; // Whether beep is allowed
+    unsigned    fRich               :1; // Whether control is rich text
+    unsigned    fSaveSelection      :1; // Whether to save the selection when inactive
+    unsigned    fInplaceActive      :1; // Whether control is inplace active
+    unsigned    fTransparent        :1; // Whether control is transparent
+    unsigned    fTimer              :1; // A timer is set
     unsigned    fCaptured           :1;
 
-    LONG		lSelBarWidth;			// Width of the selection bar
-    LONG  		cchTextMost;			// maximum text size
-    DWORD		dwEventMask;			// DoEvent mask to pass on to parent window
-    LONG		icf;
-    LONG		ipf;
-    RECT		rcClient;				// Client Rect for this control
-    SIZEL		sizelExtent;			// Extent array
-    CHARFORMAT2W cf;					// Default character format
-    PARAFORMAT2	pf;					    // Default paragraph format
-    LONG		laccelpos;				// Accelerator position
-    WCHAR		chPasswordChar;		    // Password character
+    LONG        lSelBarWidth;           // Width of the selection bar
+    LONG        cchTextMost;            // maximum text size
+    DWORD       dwEventMask;            // DoEvent mask to pass on to parent window
+    LONG        icf;
+    LONG        ipf;
+    RECT        rcClient;               // Client Rect for this control
+    SIZEL       sizelExtent;            // Extent array
+    CHARFORMAT2W cf;                    // Default character format
+    PARAFORMAT2 pf;                     // Default paragraph format
+    LONG        laccelpos;              // Accelerator position
+    WCHAR       chPasswordChar;         // Password character
 };
 
 // Convert Pixels on the X axis to Himetric
@@ -204,7 +204,7 @@ HRESULT InitDefaultCharFormat(CRichEditUI* re, CHARFORMAT2W* pcf, HFONT hfont)
 }
 
 HRESULT InitDefaultParaFormat(CRichEditUI* re, PARAFORMAT2* ppf) 
-{	
+{   
     memset(ppf, 0, sizeof(PARAFORMAT2));
     ppf->cbSize = sizeof(PARAFORMAT2);
     ppf->dwMask = PFM_ALL;
@@ -303,17 +303,17 @@ BOOL CTxtWinHost::Init(CRichEditUI *re, const CREATESTRUCT *pcs)
     //if(FAILED(CreateTextServices(NULL, this, &pUnk)))
     //    goto err;
 
-	PCreateTextServices TextServicesProc;
-	HMODULE hmod = LoadLibrary(_T("msftedit.dll"));
-	if (hmod)
-	{
-		TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices");
-	}
+    PCreateTextServices TextServicesProc;
+    HMODULE hmod = LoadLibrary(_T("msftedit.dll"));
+    if (hmod)
+    {
+        TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices");
+    }
 
-	if (TextServicesProc)
-	{
-		HRESULT hr = TextServicesProc(NULL, this, &pUnk);
-	}
+    if (TextServicesProc)
+    {
+        HRESULT hr = TextServicesProc(NULL, this, &pUnk);
+    }
 
     hr = pUnk->QueryInterface(IID_ITextServices,(void **)&pserv);
 
@@ -329,7 +329,7 @@ BOOL CTxtWinHost::Init(CRichEditUI *re, const CREATESTRUCT *pcs)
     // Set window text
     if(pcs && pcs->lpszName)
     {
-#ifdef _UNICODE		
+#ifdef _UNICODE     
         if(FAILED(pserv->TxSetText((TCHAR *)pcs->lpszName)))
             goto err;
 #else
@@ -529,7 +529,7 @@ void CTxtWinHost::TxKillTimer(UINT idTimer)
     fTimer = FALSE;
 }
 
-void CTxtWinHost::TxScrollWindowEx (INT dx, INT dy, LPCRECT lprcScroll,	LPCRECT lprcClip,	HRGN hrgnUpdate, LPRECT lprcUpdate,	UINT fuScroll)	
+void CTxtWinHost::TxScrollWindowEx (INT dx, INT dy, LPCRECT lprcScroll, LPCRECT lprcClip,   HRGN hrgnUpdate, LPRECT lprcUpdate, UINT fuScroll)  
 {
     return;
 }
@@ -546,14 +546,14 @@ void CTxtWinHost::TxSetFocus()
     m_re->SetFocus();
 }
 
-void CTxtWinHost::TxSetCursor(HCURSOR hcur,	BOOL fText)
+void CTxtWinHost::TxSetCursor(HCURSOR hcur, BOOL fText)
 {
     ::SetCursor(hcur);
 }
 
 BOOL CTxtWinHost::TxScreenToClient(LPPOINT lppt)
 {
-    return ::ScreenToClient(m_re->GetManager()->GetPaintWindow(), lppt);	
+    return ::ScreenToClient(m_re->GetManager()->GetPaintWindow(), lppt);    
 }
 
 BOOL CTxtWinHost::TxClientToScreen(LPPOINT lppt)
@@ -581,7 +581,7 @@ HRESULT CTxtWinHost::TxGetClientRect(LPRECT prc)
 HRESULT CTxtWinHost::TxGetViewInset(LPRECT prc) 
 {
     prc->left = prc->right = prc->top = prc->bottom = 0;
-    return NOERROR;	
+    return NOERROR; 
 }
 
 HRESULT CTxtWinHost::TxGetCharFormat(const CHARFORMATW **ppCF)
@@ -635,7 +635,7 @@ HRESULT CTxtWinHost::TxGetAcceleratorPos(LONG *pcp)
 {
     *pcp = laccelpos;
     return S_OK;
-} 										   
+}                                          
 
 HRESULT CTxtWinHost::OnTxCharFormatChange(const CHARFORMATW *pcf)
 {
@@ -721,7 +721,7 @@ HRESULT CTxtWinHost::TxGetExtent(LPSIZEL lpExtent)
     return S_OK;
 }
 
-HRESULT	CTxtWinHost::TxGetSelectionBarWidth (LONG *plSelBarWidth)
+HRESULT CTxtWinHost::TxGetSelectionBarWidth (LONG *plSelBarWidth)
 {
     *plSelBarWidth = lSelBarWidth;
     return S_OK;
@@ -865,7 +865,7 @@ void CTxtWinHost::SetClientRect(RECT *prc)
     rcClient = *prc;
 
     LONG xPerInch = ::GetDeviceCaps(m_re->GetManager()->GetPaintDC(), LOGPIXELSX); 
-    LONG yPerInch =	::GetDeviceCaps(m_re->GetManager()->GetPaintDC(), LOGPIXELSY); 
+    LONG yPerInch = ::GetDeviceCaps(m_re->GetManager()->GetPaintDC(), LOGPIXELSY); 
     sizelExtent.cx = DXtoHimetricX(rcClient.right - rcClient.left, xPerInch);
     sizelExtent.cy = DYtoHimetricY(rcClient.bottom - rcClient.top, yPerInch);
 
@@ -882,10 +882,10 @@ BOOL CTxtWinHost::SetSaveSelection(BOOL f_SaveSelection)
     pserv->OnTxPropertyBitsChange(TXTBIT_SAVESELECTION, 
         fSaveSelection ? TXTBIT_SAVESELECTION : 0);
 
-    return fResult;		
+    return fResult;     
 }
 
-HRESULT	CTxtWinHost::OnTxInPlaceDeactivate()
+HRESULT CTxtWinHost::OnTxInPlaceDeactivate()
 {
     HRESULT hr = pserv->OnTxInPlaceDeactivate();
 
@@ -897,7 +897,7 @@ HRESULT	CTxtWinHost::OnTxInPlaceDeactivate()
     return hr;
 }
 
-HRESULT	CTxtWinHost::OnTxInPlaceActivate(LPCRECT prcClient)
+HRESULT CTxtWinHost::OnTxInPlaceActivate(LPCRECT prcClient)
 {
     fInplaceActive = TRUE;
 
@@ -919,7 +919,7 @@ BOOL CTxtWinHost::DoSetCursor(RECT *prc, POINT *pt)
     if (PtInRect(&rc, *pt))
     {
         RECT *prcClient = (!fInplaceActive || prc) ? &rc : NULL;
-        pserv->OnTxSetCursor(DVASPECT_CONTENT,	-1, NULL, NULL,  m_re->GetManager()->GetPaintDC(),
+        pserv->OnTxSetCursor(DVASPECT_CONTENT,  -1, NULL, NULL,  m_re->GetManager()->GetPaintDC(),
             NULL, prcClient, pt->x, pt->y);
 
         return TRUE;
@@ -971,7 +971,7 @@ WCHAR CTxtWinHost::SetPasswordChar(WCHAR ch_PasswordChar)
 
 void CTxtWinHost::SetDisabled(BOOL fOn)
 {
-    cf.dwMask	 |= CFM_COLOR | CFM_DISABLED;
+    cf.dwMask    |= CFM_COLOR | CFM_DISABLED;
     cf.dwEffects |= CFE_AUTOCOLOR | CFE_DISABLED;
 
     if( !fOn )
@@ -1276,7 +1276,7 @@ int CRichEditUI::SetSel(long nStartChar, long nEndChar)
 
 void CRichEditUI::ReplaceSel(LPCTSTR lpszNewText, bool bCanUndo)
 {
-#ifdef _UNICODE		
+#ifdef _UNICODE     
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText, 0); 
 #else
     int iLen = _tcslen(lpszNewText);
@@ -1628,8 +1628,8 @@ long CRichEditUI::StreamOut(int nFormat, EDITSTREAM &es)
 
 void CRichEditUI::DoInit()
 {
-	if(m_bInited)
-		return ;
+    if(m_bInited)
+        return ;
 
     CREATESTRUCT cs;
     cs.style = m_lTwhStyle;
@@ -1647,7 +1647,7 @@ void CRichEditUI::DoInit()
         m_pManager->AddMessageFilter(this);
     }
 
-	m_bInited= true;
+    m_bInited= true;
 }
 
 HRESULT CRichEditUI::TxSendMessage(UINT msg, WPARAM wparam, LPARAM lparam, LRESULT *plresult) const
@@ -1678,47 +1678,47 @@ bool CRichEditUI::OnTxViewChanged()
 
 bool CRichEditUI::SetDropAcceptFile(bool bAccept) 
 {
-	LRESULT lResult;
-	TxSendMessage(EM_SETEVENTMASK, 0,ENM_DROPFILES|ENM_LINK, // ENM_CHANGE| ENM_CORRECTTEXT | ENM_DRAGDROPDONE | ENM_DROPFILES | ENM_IMECHANGE | ENM_LINK | ENM_OBJECTPOSITIONS | ENM_PROTECTED | ENM_REQUESTRESIZE | ENM_SCROLL | ENM_SELCHANGE | ENM_UPDATE,
-		&lResult);
-	return (BOOL)lResult == FALSE;
+    LRESULT lResult;
+    TxSendMessage(EM_SETEVENTMASK, 0,ENM_DROPFILES|ENM_LINK, // ENM_CHANGE| ENM_CORRECTTEXT | ENM_DRAGDROPDONE | ENM_DROPFILES | ENM_IMECHANGE | ENM_LINK | ENM_OBJECTPOSITIONS | ENM_PROTECTED | ENM_REQUESTRESIZE | ENM_SCROLL | ENM_SELCHANGE | ENM_UPDATE,
+        &lResult);
+    return (BOOL)lResult == FALSE;
 }
 
 void CRichEditUI::OnTxNotify(DWORD iNotify, void *pv)
 {
-	switch(iNotify)
-	{ 
-	case EN_DROPFILES:   
-	case EN_MSGFILTER:   
-	case EN_OLEOPFAILED:   
-	case EN_PROTECTED:   
-	case EN_SAVECLIPBOARD:   
-	case EN_SELCHANGE:   
-	case EN_STOPNOUNDO:   
-	case EN_LINK:   
-	case EN_OBJECTPOSITIONS:   
-	case EN_DRAGDROPDONE:   
-		{
-			if(pv)                        // Fill out NMHDR portion of pv   
-			{   
-				LONG nId =  GetWindowLong(this->GetManager()->GetPaintWindow(), GWL_ID);   
-				NMHDR  *phdr = (NMHDR *)pv;   
-				phdr->hwndFrom = this->GetManager()->GetPaintWindow();   
-				phdr->idFrom = nId;   
-				phdr->code = iNotify;  
+    switch(iNotify)
+    { 
+    case EN_DROPFILES:   
+    case EN_MSGFILTER:   
+    case EN_OLEOPFAILED:   
+    case EN_PROTECTED:   
+    case EN_SAVECLIPBOARD:   
+    case EN_SELCHANGE:   
+    case EN_STOPNOUNDO:   
+    case EN_LINK:   
+    case EN_OBJECTPOSITIONS:   
+    case EN_DRAGDROPDONE:   
+        {
+            if(pv)                        // Fill out NMHDR portion of pv   
+            {   
+                LONG nId =  GetWindowLong(this->GetManager()->GetPaintWindow(), GWL_ID);   
+                NMHDR  *phdr = (NMHDR *)pv;   
+                phdr->hwndFrom = this->GetManager()->GetPaintWindow();   
+                phdr->idFrom = nId;   
+                phdr->code = iNotify;  
 
-				if(SendMessage(this->GetManager()->GetPaintWindow(), WM_NOTIFY, (WPARAM) nId, (LPARAM) pv))   
-				{   
-					//hr = S_FALSE;   
-				}   
-			}    
-		}
-		break;
-	}
+                if(SendMessage(this->GetManager()->GetPaintWindow(), WM_NOTIFY, (WPARAM) nId, (LPARAM) pv))   
+                {   
+                    //hr = S_FALSE;   
+                }   
+            }    
+        }
+        break;
+    }
 }
 
-// ¶àÐÐ·Çrich¸ñÊ½µÄricheditÓÐÒ»¸ö¹ö¶¯Ìõbug£¬ÔÚ×îºóÒ»ÐÐÊÇ¿ÕÐÐÊ±£¬LineDownºÍSetScrollPosÎÞ·¨¹ö¶¯µ½×îºó
-// ÒýÈëiPos¾ÍÊÇÎªÁËÐÞÕýÕâ¸öbug
+// å¤šè¡Œéžrichæ ¼å¼çš„richeditæœ‰ä¸€ä¸ªæ»šåŠ¨æ¡bugï¼Œåœ¨æœ€åŽä¸€è¡Œæ˜¯ç©ºè¡Œæ—¶ï¼ŒLineDownå’ŒSetScrollPosæ— æ³•æ»šåŠ¨åˆ°æœ€åŽ
+// å¼•å…¥iPoså°±æ˜¯ä¸ºäº†ä¿®æ­£è¿™ä¸ªbug
 void CRichEditUI::SetScrollPos(SIZE szPos)
 {
     int cx = 0;
@@ -1836,18 +1836,18 @@ void CRichEditUI::DoEvent(TEventUI& event)
             m_pTwh->OnTxInPlaceActivate(NULL);
             m_pTwh->GetTextServices()->TxSendMessage(WM_SETFOCUS, 0, 0, 0);
         }
-		m_bFocused = true;
-		Invalidate();
-		return;
+        m_bFocused = true;
+        Invalidate();
+        return;
     }
     if( event.Type == UIEVENT_KILLFOCUS )  {
         if( m_pTwh ) {
             m_pTwh->OnTxInPlaceActivate(NULL);
             m_pTwh->GetTextServices()->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
         }
-		m_bFocused = false;
-		Invalidate();
-		return;
+        m_bFocused = false;
+        Invalidate();
+        return;
     }
     if( event.Type == UIEVENT_TIMER ) {
         if( m_pTwh ) {
@@ -1888,7 +1888,7 @@ void CRichEditUI::DoEvent(TEventUI& event)
 
 SIZE CRichEditUI::EstimateSize(SIZE szAvailable)
 {
-    //return CSize(m_rcItem); // ÕâÖÖ·½Ê½ÔÚµÚÒ»´ÎÉèÖÃ´óÐ¡Ö®ºó¾Í´óÐ¡²»±äÁË
+    //return CSize(m_rcItem); // è¿™ç§æ–¹å¼åœ¨ç¬¬ä¸€æ¬¡è®¾ç½®å¤§å°ä¹‹åŽå°±å¤§å°ä¸å˜äº†
     return CContainerUI::EstimateSize(szAvailable);
 }
 
@@ -1955,7 +1955,7 @@ void CRichEditUI::SetPos(RECT rc)
             SetFloatPos(it);
         }
         else {
-            pControl->SetPos(rc); // ËùÓÐ·Çfloat×Ó¿Ø¼þ·Å´óµ½Õû¸ö¿Í»§Çø
+            pControl->SetPos(rc); // æ‰€æœ‰éžfloatå­æŽ§ä»¶æ”¾å¤§åˆ°æ•´ä¸ªå®¢æˆ·åŒº
         }
     }
 }
@@ -1975,18 +1975,18 @@ void CRichEditUI::DoPaint(HDC hDC, const RECT& rcPaint)
         // Remember wparam is actually the hdc and lparam is the update
         // rect because this message has been preprocessed by the window.
         m_pTwh->GetTextServices()->TxDraw(
-            DVASPECT_CONTENT,  		// Draw Aspect
-            /*-1*/0,				// Lindex
-            NULL,					// Info for drawing optimazation
-            NULL,					// target device information
-            hDC,			        // Draw device HDC
-            NULL, 				   	// Target device HDC
-            (RECTL*)&rc,			// Bounding client rectangle
-            NULL, 		            // Clipping rectangle for metafiles
-            (RECT*)&rcPaint,		// Update rectangle
-            NULL, 	   				// Call back function
-            NULL,					// Call back parameter
-            0);				        // What view of the object
+            DVASPECT_CONTENT,       // Draw Aspect
+            /*-1*/0,                // Lindex
+            NULL,                   // Info for drawing optimazation
+            NULL,                   // target device information
+            hDC,                    // Draw device HDC
+            NULL,                   // Target device HDC
+            (RECTL*)&rc,            // Bounding client rectangle
+            NULL,                   // Clipping rectangle for metafiles
+            (RECT*)&rcPaint,        // Update rectangle
+            NULL,                   // Call back function
+            NULL,                   // Call back parameter
+            0);                     // What view of the object
         if( m_bVScrollBarFixing ) {
             LONG lWidth = rc.right - rc.left + m_pVerticalScrollBar->GetFixedWidth();
             LONG lHeight = 0;

@@ -1,16 +1,16 @@
-/*!
+ï»¿/*!
 * \file UIConfig.h
 *
 * \author Administrator
-* \date ¾ÅÔÂ 2014
+* \date ä¹æœˆ 2014
 *
-* DuilibÅäÖÃÍ·ÎÄ¼ş£¬¶¼ÊÇÒ»Ğ©ºê¶¨Òå£¬ÓÃÓÚ¿ØÖÆÄÄĞ©ĞèÒª£¬ÄÄÀï²»ĞèÒªµÈ
+* Duilibé…ç½®å¤´æ–‡ä»¶ï¼Œéƒ½æ˜¯ä¸€äº›å®å®šä¹‰ï¼Œç”¨äºæ§åˆ¶å“ªäº›éœ€è¦ï¼Œå“ªé‡Œä¸éœ€è¦ç­‰
 */
 
 #ifndef __UICONFIG_H__
 #define __UICONFIG_H__
 
-// ÊÇ·ñÊ¹ÓÃATLÖĞµÄCenterWindow
+// æ˜¯å¦ä½¿ç”¨ATLä¸­çš„CenterWindow
 #define UILIB_USE_ATL_CENTERWINDOW 1
 
 #endif

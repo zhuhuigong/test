@@ -1,4 +1,4 @@
-#ifndef __UIACTIVEX_H__
+﻿#ifndef __UIACTIVEX_H__
 #define __UIACTIVEX_H__
 
 #pragma once
@@ -33,7 +33,7 @@ public:
     virtual ~CActiveXUI();
 
     LPCTSTR GetClass() const;
-	LPVOID GetInterface(LPCTSTR pstrName);
+    LPVOID GetInterface(LPCTSTR pstrName);
 
     HWND GetHostWindow() const;
 
@@ -43,7 +43,7 @@ public:
     bool CreateControl(const CLSID clsid);
     bool CreateControl(LPCTSTR pstrCLSID);
     HRESULT GetControl(const IID iid, LPVOID* ppRet);
-	CLSID GetClisd() const;
+    CLSID GetClisd() const;
     CDuiString GetModuleName() const;
     void SetModuleName(LPCTSTR pstrText);
 

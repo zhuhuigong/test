@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2011, duilib develop team(www.duilib.com).
+ï»¿// Copyright (c) 2010-2011, duilib develop team(www.duilib.com).
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or 
@@ -50,7 +50,7 @@
 #include "stdafx.h"
 #include "UIlib.h"
 
-// ¾²Ì¬¿âÏîÄ¿²»ĞèÒªDllMainº¯Êı£¡£¡
+// é™æ€åº“é¡¹ç›®ä¸éœ€è¦DllMainå‡½æ•°ï¼ï¼
 #ifndef UILIB_STATIC
 BOOL APIENTRY DllMain(HANDLE hModule, DWORD  dwReason, LPVOID /*lpReserved*/)
 {

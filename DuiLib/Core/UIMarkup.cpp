@@ -1,11 +1,11 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 
 #ifndef TRACE
 #define TRACE
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////////////
-DECLARE_HANDLE(HZIP);	// An HZIP identifies a zip file that has been opened
+DECLARE_HANDLE(HZIP);   // An HZIP identifies a zip file that has been opened
 typedef DWORD ZRESULT;
 typedef struct
 { 
@@ -561,13 +561,13 @@ void CMarkup::_SkipWhitespace(LPTSTR& pstr) const
 
 void CMarkup::_SkipIdentifier(LPCTSTR& pstr) const
 {
-    // ÊôĞÔÖ»ÄÜÓÃÓ¢ÎÄ£¬ËùÒÔÕâÑù´¦ÀíÃ»ÓĞÎÊÌâ
+    // å±æ€§åªèƒ½ç”¨è‹±æ–‡ï¼Œæ‰€ä»¥è¿™æ ·å¤„ç†æ²¡æœ‰é—®é¢˜
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 
 void CMarkup::_SkipIdentifier(LPTSTR& pstr) const
 {
-    // ÊôĞÔÖ»ÄÜÓÃÓ¢ÎÄ£¬ËùÒÔÕâÑù´¦ÀíÃ»ÓĞÎÊÌâ
+    // å±æ€§åªèƒ½ç”¨è‹±æ–‡ï¼Œæ‰€ä»¥è¿™æ ·å¤„ç†æ²¡æœ‰é—®é¢˜
     while( *pstr != _T('\0') && (*pstr == _T('_') || *pstr == _T(':') || _istalnum(*pstr)) ) pstr = ::CharNext(pstr);
 }
 
@@ -599,13 +599,13 @@ bool CMarkup::_ParseAttributes(LPTSTR& pstrText)
 bool CMarkup::_ParseData(LPTSTR& pstrText, LPTSTR& pstrDest, char cEnd)
 {
     while( *pstrText != _T('\0') && *pstrText != cEnd ) {
-		if( *pstrText == _T('&') ) {
-			while( *pstrText == _T('&') ) {
-				_ParseMetaChar(++pstrText, pstrDest);
-			}
-			if (*pstrText == cEnd)
-				break;
-		}
+        if( *pstrText == _T('&') ) {
+            while( *pstrText == _T('&') ) {
+                _ParseMetaChar(++pstrText, pstrDest);
+            }
+            if (*pstrText == cEnd)
+                break;
+        }
 
         if( *pstrText == _T(' ') ) {
             *pstrDest++ = *pstrText++;

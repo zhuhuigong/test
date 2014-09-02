@@ -1,37 +1,37 @@
-#ifndef __UIDATETIME_H__
+﻿#ifndef __UIDATETIME_H__
 #define __UIDATETIME_H__
 
 #pragma once
 
 namespace DuiLib
 {
-	class CDateTimeWnd;
+    class CDateTimeWnd;
 
-	/// ʱ��ѡ��ؼ�
-	class UILIB_API CDateTimeUI : public CLabelUI
-	{
-		friend class CDateTimeWnd;
-	public:
-		CDateTimeUI();
-		LPCTSTR GetClass() const;
-		LPVOID GetInterface(LPCTSTR pstrName);
+    /// 时间选择控件
+    class UILIB_API CDateTimeUI : public CLabelUI
+    {
+        friend class CDateTimeWnd;
+    public:
+        CDateTimeUI();
+        LPCTSTR GetClass() const;
+        LPVOID GetInterface(LPCTSTR pstrName);
 
-		SYSTEMTIME& GetTime();
-		void SetTime(SYSTEMTIME* pst);
+        SYSTEMTIME& GetTime();
+        void SetTime(SYSTEMTIME* pst);
 
-		void SetReadOnly(bool bReadOnly);
-		bool IsReadOnly() const;
+        void SetReadOnly(bool bReadOnly);
+        bool IsReadOnly() const;
 
-		void UpdateText();
+        void UpdateText();
 
-		void DoEvent(TEventUI& event);
+        void DoEvent(TEventUI& event);
 
-	protected:
-		SYSTEMTIME m_sysTime;
-		int        m_nDTUpdateFlag;
-		bool       m_bReadOnly;
+    protected:
+        SYSTEMTIME m_sysTime;
+        int        m_nDTUpdateFlag;
+        bool       m_bReadOnly;
 
-		CDateTimeWnd* m_pWindow;
-	};
+        CDateTimeWnd* m_pWindow;
+    };
 }
 #endif // __UIDATETIME_H__

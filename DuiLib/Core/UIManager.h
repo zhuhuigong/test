@@ -1,4 +1,4 @@
-#ifndef __UIMANAGER_H__
+﻿#ifndef __UIMANAGER_H__
 #define __UIMANAGER_H__
 
 #pragma once
@@ -120,12 +120,12 @@ typedef struct tagTEventUI
 // Structure for relative position to the parent
 typedef struct tagTRelativePosUI
 {
-	bool bRelative;
-	SIZE szParent;
-	int nMoveXPercent;
-	int nMoveYPercent;
-	int nZoomXPercent;
-	int nZoomYPercent;
+    bool bRelative;
+    SIZE szParent;
+    int nMoveXPercent;
+    int nMoveYPercent;
+    int nZoomXPercent;
+    int nZoomYPercent;
 }TRelativePosUI;
 
 // Listener interface
@@ -145,7 +145,7 @@ public:
 class ITranslateAccelerator
 {
 public:
-	virtual LRESULT TranslateAccelerator(MSG *pMsg) = 0;
+    virtual LRESULT TranslateAccelerator(MSG *pMsg) = 0;
 };
 
 
@@ -183,7 +183,7 @@ public:
     void SetMinInfo(int cx, int cy);
     SIZE GetMaxInfo() const;
     void SetMaxInfo(int cx, int cy);
-	int GetTransparent() const;
+    int GetTransparent() const;
     void SetTransparent(int nOpacity);
     void SetBackgroundTransparent(bool bTrans);
     bool IsShowUpdateRect() const;
@@ -201,7 +201,7 @@ public:
     static void SetCurrentPath(LPCTSTR pStrPath);
     static void SetResourceDll(HINSTANCE hInst);
     static void SetResourcePath(LPCTSTR pStrPath);
-	static void SetResourceZip(LPVOID pVoid, unsigned int len);
+    static void SetResourceZip(LPVOID pVoid, unsigned int len);
     static void SetResourceZip(LPCTSTR pstrZip, bool bCachedResourceZip = false);
     static void GetHSL(short* H, short* S, short* L);
     static void SetHSL(bool bUseHSL, short H, short S, short L); // H:0~360, S:0~200, L:0~200 
@@ -295,9 +295,9 @@ public:
 
     void AddDelayedCleanup(CControlUI* pControl);
 
-	bool AddTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
-	bool RemoveTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
-	bool TranslateAccelerator(LPMSG pMsg);
+    bool AddTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
+    bool RemoveTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
+    bool TranslateAccelerator(LPMSG pMsg);
 
     CControlUI* GetRoot() const;
     CControlUI* FindControl(POINT pt) const;
@@ -310,11 +310,11 @@ public:
 
     static void MessageLoop();
     static bool TranslateMessage(const LPMSG pMsg);
-	static void Term();
+    static void Term();
 
     bool MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
     bool PreMessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lRes);
-	void UsedVirtualWnd(bool bUsed);
+    void UsedVirtualWnd(bool bUsed);
 
 private:
     static CControlUI* CALLBACK __FindControlFromNameHash(CControlUI* pThis, LPVOID pData);
@@ -329,7 +329,7 @@ private:
 
 private:
     HWND m_hWndPaint;
-	int m_nOpacity;
+    int m_nOpacity;
     HDC m_hDcPaint;
     HDC m_hDcOffscreen;
     HDC m_hDcBackground;
@@ -360,7 +360,7 @@ private:
     bool m_bAlphaBackground;
     bool m_bMouseTracking;
     bool m_bMouseCapture;
-	bool m_bUsedVirtualWnd;
+    bool m_bUsedVirtualWnd;
 
     //
     CStdPtrArray m_aNotifiers;
@@ -399,8 +399,8 @@ private:
     static CStdPtrArray m_aPlugins;
 
 public:
-	static CDuiString m_pStrDefaultFontName;
-	CStdPtrArray m_aTranslateAccelerator;
+    static CDuiString m_pStrDefaultFontName;
+    CStdPtrArray m_aTranslateAccelerator;
 };
 
 } // namespace DuiLib
