@@ -28,10 +28,10 @@ namespace DuiLib
         else
         {
             // get index
-            if( IsFocused() ) m_uButtonState |= UISTATE_FOCUSED;
-            else m_uButtonState &= ~ UISTATE_FOCUSED;
-            if( !IsEnabled() ) m_uButtonState |= UISTATE_DISABLED;
-            else m_uButtonState &= ~ UISTATE_DISABLED;
+            if (IsFocused()) m_uButtonState |= UISTATE_FOCUSED;
+            else m_uButtonState &= ~UISTATE_FOCUSED;
+            if (!IsEnabled()) m_uButtonState |= UISTATE_DISABLED;
+            else m_uButtonState &= ~UISTATE_DISABLED;
 
             int nIndex = 0;
             if ((m_uButtonState & UISTATE_DISABLED) != 0)
@@ -54,10 +54,10 @@ namespace DuiLib
 
             CDuiRect rcBmpPart;
             LPTSTR lpszValue = NULL;
-            rcBmpPart.left = _tcstol(sModify.GetData() + nPos2 + 1, &lpszValue, 10);  ASSERT(lpszValue);    
-            rcBmpPart.top = _tcstol(lpszValue + 1, &lpszValue, 10);    ASSERT(lpszValue);    
-            rcBmpPart.right = _tcstol(lpszValue + 1, &lpszValue, 10);  ASSERT(lpszValue);    
-            rcBmpPart.bottom = _tcstol(lpszValue + 1, &lpszValue, 10); ASSERT(lpszValue); 
+            rcBmpPart.left = _tcstol(sModify.GetData() + nPos2 + 1, &lpszValue, 10);  ASSERT(lpszValue);
+            rcBmpPart.top = _tcstol(lpszValue + 1, &lpszValue, 10);    ASSERT(lpszValue);
+            rcBmpPart.right = _tcstol(lpszValue + 1, &lpszValue, 10);  ASSERT(lpszValue);
+            rcBmpPart.bottom = _tcstol(lpszValue + 1, &lpszValue, 10); ASSERT(lpszValue);
 
             m_nArrowWidth = rcBmpPart.GetWidth() / 5;
             rcBmpPart.left += nIndex * m_nArrowWidth;
@@ -91,10 +91,10 @@ namespace DuiLib
 
         rcText.right -= m_nArrowWidth; // add this line than CComboUI::PaintText(HDC hDC)
 
-        if( m_iCurSel >= 0 ) {
+        if (m_iCurSel >= 0) {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[m_iCurSel]);
             IListItemUI* pElement = static_cast<IListItemUI*>(pControl->GetInterface(_T("ListItem")));
-            if( pElement != NULL ) {
+            if (pElement != NULL) {
                 pElement->DrawItemText(hDC, rcText);
             }
             else {

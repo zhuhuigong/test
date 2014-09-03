@@ -70,11 +70,11 @@ namespace DuiLib
         CTreeNodeUI* GetLastNode();
         CTreeNodeUI* CalLocation(CTreeNodeUI* _pTreeNodeUI);
     public:
-        CHorizontalLayoutUI*    GetTreeNodeHoriznotal() const {return pHoriz;};
-        CCheckBoxUI*            GetFolderButton() const {return pFolderButton;};
-        CLabelUI*               GetDottedLine() const {return pDottedLine;};
-        CCheckBoxUI*            GetCheckBox() const {return pCheckBox;};
-        COptionUI*              GetItemButton() const {return pItemButton;};
+        CHorizontalLayoutUI*    GetTreeNodeHoriznotal() const { return pHoriz; };
+        CCheckBoxUI*            GetFolderButton() const { return pFolderButton; };
+        CLabelUI*               GetDottedLine() const { return pDottedLine; };
+        CCheckBoxUI*            GetCheckBox() const { return pCheckBox; };
+        COptionUI*              GetItemButton() const { return pItemButton; };
 
     private:
         long    m_iTreeLavel;
@@ -97,7 +97,7 @@ namespace DuiLib
         CStdPtrArray            mTreeNodes;
     };
 
-    class UILIB_API CTreeViewUI : public CListUI,public INotifyUI
+    class UILIB_API CTreeViewUI : public CListUI, public INotifyUI
     {
     public:
         CTreeViewUI(void);
@@ -106,17 +106,17 @@ namespace DuiLib
     public:
         virtual LPCTSTR GetClass() const;
         virtual LPVOID  GetInterface(LPCTSTR pstrName);
-        virtual bool Add(CTreeNodeUI* pControl );
-        virtual long AddAt(CTreeNodeUI* pControl, int iIndex );
-        virtual bool AddAt(CTreeNodeUI* pControl,CTreeNodeUI* _IndexNode);
+        virtual bool Add(CTreeNodeUI* pControl);
+        virtual long AddAt(CTreeNodeUI* pControl, int iIndex);
+        virtual bool AddAt(CTreeNodeUI* pControl, CTreeNodeUI* _IndexNode);
         virtual bool Remove(CTreeNodeUI* pControl);
         virtual bool RemoveAt(int iIndex);
         virtual void RemoveAll();
         virtual bool OnCheckBoxChanged(void* param);
         virtual bool OnFolderChanged(void* param);
         virtual bool OnDBClickItem(void* param);
-        virtual bool SetItemCheckBox(bool _Selected,CTreeNodeUI* _TreeNode = NULL);
-        virtual void SetItemExpand(bool _Expanded,CTreeNodeUI* _TreeNode = NULL);
+        virtual bool SetItemCheckBox(bool _Selected, CTreeNodeUI* _TreeNode = NULL);
+        virtual void SetItemExpand(bool _Expanded, CTreeNodeUI* _TreeNode = NULL);
         virtual void Notify(TNotifyUI& msg);
         virtual void SetVisibleFolderBtn(bool _IsVisibled);
         virtual bool GetVisibleFolderBtn();
@@ -128,7 +128,7 @@ namespace DuiLib
         virtual void SetItemHotTextColor(DWORD _dwItemHotTextColor);
         virtual void SetSelItemTextColor(DWORD _dwSelItemTextColor);
         virtual void SetSelItemHotTextColor(DWORD _dwSelHotItemTextColor);
-        
+
         virtual void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
     private:
         UINT m_uItemMinWidth;

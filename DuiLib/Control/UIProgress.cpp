@@ -16,7 +16,7 @@ namespace DuiLib
 
     LPVOID CProgressUI::GetInterface(LPCTSTR pstrName)
     {
-        if( _tcscmp(pstrName, DUI_CTR_PROGRESS) == 0 ) return static_cast<CProgressUI*>(this);
+        if (_tcscmp(pstrName, DUI_CTR_PROGRESS) == 0) return static_cast<CProgressUI*>(this);
         return CLabelUI::GetInterface(pstrName);
     }
 
@@ -27,7 +27,7 @@ namespace DuiLib
 
     void CProgressUI::SetHorizontal(bool bHorizontal)
     {
-        if( m_bHorizontal == bHorizontal ) return;
+        if (m_bHorizontal == bHorizontal) return;
 
         m_bHorizontal = bHorizontal;
         Invalidate();
@@ -73,7 +73,7 @@ namespace DuiLib
 
     void CProgressUI::SetForeImage(LPCTSTR pStrImage)
     {
-        if( m_sForeImage == pStrImage ) return;
+        if (m_sForeImage == pStrImage) return;
 
         m_sForeImage = pStrImage;
         Invalidate();
@@ -81,23 +81,23 @@ namespace DuiLib
 
     void CProgressUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if( _tcscmp(pstrName, _T("foreimage")) == 0 ) SetForeImage(pstrValue);
-        else if( _tcscmp(pstrName, _T("hor")) == 0 ) SetHorizontal(_tcscmp(pstrValue, _T("true")) == 0);
-        else if( _tcscmp(pstrName, _T("min")) == 0 ) SetMinValue(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("max")) == 0 ) SetMaxValue(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("value")) == 0 ) SetValue(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("isstretchfore"))==0) SetStretchForeImage(_tcscmp(pstrValue, _T("true")) == 0? true : false);
+        if (_tcscmp(pstrName, _T("foreimage")) == 0) SetForeImage(pstrValue);
+        else if (_tcscmp(pstrName, _T("hor")) == 0) SetHorizontal(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (_tcscmp(pstrName, _T("min")) == 0) SetMinValue(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("max")) == 0) SetMaxValue(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("value")) == 0) SetValue(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("isstretchfore")) == 0) SetStretchForeImage(_tcscmp(pstrValue, _T("true")) == 0 ? true : false);
         else CLabelUI::SetAttribute(pstrName, pstrValue);
     }
 
     void CProgressUI::PaintStatusImage(HDC hDC)
     {
-        if( m_nMax <= m_nMin ) m_nMax = m_nMin + 1;
-        if( m_nValue > m_nMax ) m_nValue = m_nMax;
-        if( m_nValue < m_nMin ) m_nValue = m_nMin;
+        if (m_nMax <= m_nMin) m_nMax = m_nMin + 1;
+        if (m_nValue > m_nMax) m_nValue = m_nMax;
+        if (m_nValue < m_nMin) m_nValue = m_nMin;
 
-        RECT rc = {0};
-        if( m_bHorizontal ) {
+        RECT rc = { 0 };
+        if (m_bHorizontal) {
             rc.right = (m_nValue - m_nMin) * (m_rcItem.right - m_rcItem.left) / (m_nMax - m_nMin);
             rc.bottom = m_rcItem.bottom - m_rcItem.top;
         }
@@ -107,7 +107,7 @@ namespace DuiLib
             rc.bottom = m_rcItem.bottom - m_rcItem.top;
         }
 
-        if( !m_sForeImage.IsEmpty() ) {
+        if (!m_sForeImage.IsEmpty()) {
             m_sForeImageModify.Empty();
             if (m_bStretchForeImage)
                 m_sForeImageModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), rc.left, rc.top, rc.right, rc.bottom);
@@ -116,7 +116,7 @@ namespace DuiLib
                 , rc.left, rc.top, rc.right, rc.bottom
                 , rc.left, rc.top, rc.right, rc.bottom);
 
-            if( !DrawImage(hDC, (LPCTSTR)m_sForeImage, (LPCTSTR)m_sForeImageModify) ) m_sForeImage.Empty();
+            if (!DrawImage(hDC, (LPCTSTR)m_sForeImage, (LPCTSTR)m_sForeImageModify)) m_sForeImage.Empty();
             else return;
         }
     }
@@ -126,10 +126,10 @@ namespace DuiLib
         return m_bStretchForeImage;
     }
 
-    void CProgressUI::SetStretchForeImage( bool bStretchForeImage /*= true*/ )
+    void CProgressUI::SetStretchForeImage(bool bStretchForeImage /*= true*/)
     {
-        if (m_bStretchForeImage==bStretchForeImage)     return;
-        m_bStretchForeImage=bStretchForeImage;
+        if (m_bStretchForeImage == bStretchForeImage)     return;
+        m_bStretchForeImage = bStretchForeImage;
         Invalidate();
     }
 }

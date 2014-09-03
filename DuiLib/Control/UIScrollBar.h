@@ -93,7 +93,7 @@ namespace DuiLib
     protected:
 
         enum
-        { 
+        {
             DEFAULT_SCROLLBAR_SIZE = 16,
             DEFAULT_TIMERID = 10,
         };

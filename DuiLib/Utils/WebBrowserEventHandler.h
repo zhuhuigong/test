@@ -11,12 +11,12 @@ namespace DuiLib
         CWebBrowserEventHandler() {}
         ~CWebBrowserEventHandler() {}
 
-        virtual void BeforeNavigate2( IDispatch *pDisp,VARIANT *&url,VARIANT *&Flags,VARIANT *&TargetFrameName,VARIANT *&PostData,VARIANT *&Headers,VARIANT_BOOL *&Cancel ) {}
-        virtual void NavigateError(IDispatch *pDisp,VARIANT * &url,VARIANT *&TargetFrameName,VARIANT *&StatusCode,VARIANT_BOOL *&Cancel) {}
-        virtual void NavigateComplete2(IDispatch *pDisp,VARIANT *&url){}
+        virtual void BeforeNavigate2(IDispatch *pDisp, VARIANT *&url, VARIANT *&Flags, VARIANT *&TargetFrameName, VARIANT *&PostData, VARIANT *&Headers, VARIANT_BOOL *&Cancel) {}
+        virtual void NavigateError(IDispatch *pDisp, VARIANT * &url, VARIANT *&TargetFrameName, VARIANT *&StatusCode, VARIANT_BOOL *&Cancel) {}
+        virtual void NavigateComplete2(IDispatch *pDisp, VARIANT *&url){}
         virtual void ProgressChange(LONG nProgress, LONG nProgressMax){}
         virtual void NewWindow3(IDispatch **pDisp, VARIANT_BOOL *&Cancel, DWORD dwFlags, BSTR bstrUrlContext, BSTR bstrUrl){}
-        virtual void CommandStateChange(long Command,VARIANT_BOOL Enable){};
+        virtual void CommandStateChange(long Command, VARIANT_BOOL Enable){};
 
         // interface IDocHostUIHandler
         virtual HRESULT STDMETHODCALLTYPE ShowContextMenu(
@@ -51,12 +51,12 @@ namespace DuiLib
             return S_FALSE;
         }
 
-        virtual HRESULT STDMETHODCALLTYPE HideUI( void)
+        virtual HRESULT STDMETHODCALLTYPE HideUI(void)
         {
             return S_OK;
         }
 
-        virtual HRESULT STDMETHODCALLTYPE UpdateUI( void)
+        virtual HRESULT STDMETHODCALLTYPE UpdateUI(void)
         {
             return S_OK;
         }
@@ -139,7 +139,7 @@ namespace DuiLib
         //  }
 
         // IDownloadManager
-        virtual HRESULT STDMETHODCALLTYPE Download( 
+        virtual HRESULT STDMETHODCALLTYPE Download(
             /* [in] */ IMoniker *pmk,
             /* [in] */ IBindCtx *pbc,
             /* [in] */ DWORD dwBindVerb,

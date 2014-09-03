@@ -55,7 +55,7 @@ namespace DuiLib
         ::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
         ::SetFocus(m_hWnd);
 
-        m_bInit = true;    
+        m_bInit = true;
     }
 
     RECT CDateTimeWnd::CalPos()
@@ -77,7 +77,7 @@ namespace DuiLib
     void CDateTimeWnd::OnFinalMessage(HWND /*hWnd*/)
     {
         // Clear reference and die
-        if( m_hBkBrush != NULL ) ::DeleteObject(m_hBkBrush);
+        if (m_hBkBrush != NULL) ::DeleteObject(m_hBkBrush);
         m_pOwner->m_pWindow = NULL;
         delete this;
     }
@@ -86,7 +86,7 @@ namespace DuiLib
     {
         LRESULT lRes = 0;
         BOOL bHandled = TRUE;
-        if( uMsg == WM_KILLFOCUS )
+        if (uMsg == WM_KILLFOCUS)
         {
             lRes = OnKillFocus(uMsg, wParam, lParam, bHandled);
         }
@@ -128,7 +128,7 @@ namespace DuiLib
         //          return (LRESULT)m_hBkBrush;
         //      }
         else bHandled = FALSE;
-        if( !bHandled ) return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+        if (!bHandled) return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
         return lRes;
     }
 
@@ -167,7 +167,7 @@ namespace DuiLib
         ::GetLocalTime(&m_sysTime);
         m_bReadOnly = false;
         m_pWindow = NULL;
-        m_nDTUpdateFlag=DT_UPDATE;
+        m_nDTUpdateFlag = DT_UPDATE;
         UpdateText();       // add by:daviyang35 初始化界面时显示时间
         m_nDTUpdateFlag = DT_NONE;
     }
@@ -179,7 +179,7 @@ namespace DuiLib
 
     LPVOID CDateTimeUI::GetInterface(LPCTSTR pstrName)
     {
-        if( _tcscmp(pstrName, DUI_CTR_DATETIME) == 0 ) return static_cast<CDateTimeUI*>(this);
+        if (_tcscmp(pstrName, DUI_CTR_DATETIME) == 0) return static_cast<CDateTimeUI*>(this);
         return CLabelUI::GetInterface(pstrName);
     }
 
@@ -220,47 +220,47 @@ namespace DuiLib
 
     void CDateTimeUI::DoEvent(TEventUI& event)
     {
-        if( !IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND ) {
-            if( m_pParent != NULL ) m_pParent->DoEvent(event);
+        if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
+            if (m_pParent != NULL) m_pParent->DoEvent(event);
             else CLabelUI::DoEvent(event);
             return;
         }
 
-        if( event.Type == UIEVENT_SETCURSOR && IsEnabled() )
+        if (event.Type == UIEVENT_SETCURSOR && IsEnabled())
         {
             ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
             return;
         }
-        if( event.Type == UIEVENT_WINDOWSIZE )
+        if (event.Type == UIEVENT_WINDOWSIZE)
         {
-            if( m_pWindow != NULL ) m_pManager->SetFocusNeeded(this);
+            if (m_pWindow != NULL) m_pManager->SetFocusNeeded(this);
         }
-        if( event.Type == UIEVENT_SCROLLWHEEL )
+        if (event.Type == UIEVENT_SCROLLWHEEL)
         {
-            if( m_pWindow != NULL ) return;
+            if (m_pWindow != NULL) return;
         }
-        if( event.Type == UIEVENT_SETFOCUS && IsEnabled() ) 
+        if (event.Type == UIEVENT_SETFOCUS && IsEnabled())
         {
-            if( m_pWindow ) return;
+            if (m_pWindow) return;
             m_pWindow = new CDateTimeWnd();
             ASSERT(m_pWindow);
             m_pWindow->Init(this);
             m_pWindow->ShowWindow();
         }
-        if( event.Type == UIEVENT_KILLFOCUS && IsEnabled() ) 
+        if (event.Type == UIEVENT_KILLFOCUS && IsEnabled())
         {
             Invalidate();
         }
-        if( event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN) 
+        if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK || event.Type == UIEVENT_RBUTTONDOWN)
         {
-            if( IsEnabled() ) {
+            if (IsEnabled()) {
                 GetManager()->ReleaseCapture();
-                if( IsFocused() && m_pWindow == NULL )
+                if (IsFocused() && m_pWindow == NULL)
                 {
                     m_pWindow = new CDateTimeWnd();
                     ASSERT(m_pWindow);
                 }
-                if( m_pWindow != NULL )
+                if (m_pWindow != NULL)
                 {
                     m_pWindow->Init(this);
                     m_pWindow->ShowWindow();
@@ -268,23 +268,23 @@ namespace DuiLib
             }
             return;
         }
-        if( event.Type == UIEVENT_MOUSEMOVE ) 
+        if (event.Type == UIEVENT_MOUSEMOVE)
         {
             return;
         }
-        if( event.Type == UIEVENT_BUTTONUP ) 
+        if (event.Type == UIEVENT_BUTTONUP)
         {
             return;
         }
-        if( event.Type == UIEVENT_CONTEXTMENU )
+        if (event.Type == UIEVENT_CONTEXTMENU)
         {
             return;
         }
-        if( event.Type == UIEVENT_MOUSEENTER )
+        if (event.Type == UIEVENT_MOUSEENTER)
         {
             return;
         }
-        if( event.Type == UIEVENT_MOUSELEAVE )
+        if (event.Type == UIEVENT_MOUSELEAVE)
         {
             return;
         }

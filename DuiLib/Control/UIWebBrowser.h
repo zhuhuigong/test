@@ -56,27 +56,27 @@ namespace DuiLib
         CWebBrowserEventHandler* m_pWebBrowserEventHandler; //浏览器事件处理
 
         // DWebBrowserEvents2
-        void BeforeNavigate2( IDispatch *pDisp,VARIANT *&url,VARIANT *&Flags,VARIANT *&TargetFrameName,VARIANT *&PostData,VARIANT *&Headers,VARIANT_BOOL *&Cancel );
-        void NavigateError(IDispatch *pDisp,VARIANT * &url,VARIANT *&TargetFrameName,VARIANT *&StatusCode,VARIANT_BOOL *&Cancel);
-        void NavigateComplete2(IDispatch *pDisp,VARIANT *&url);
+        void BeforeNavigate2(IDispatch *pDisp, VARIANT *&url, VARIANT *&Flags, VARIANT *&TargetFrameName, VARIANT *&PostData, VARIANT *&Headers, VARIANT_BOOL *&Cancel);
+        void NavigateError(IDispatch *pDisp, VARIANT * &url, VARIANT *&TargetFrameName, VARIANT *&StatusCode, VARIANT_BOOL *&Cancel);
+        void NavigateComplete2(IDispatch *pDisp, VARIANT *&url);
         void ProgressChange(LONG nProgress, LONG nProgressMax);
         void NewWindow3(IDispatch **pDisp, VARIANT_BOOL *&Cancel, DWORD dwFlags, BSTR bstrUrlContext, BSTR bstrUrl);
-        void CommandStateChange(long Command,VARIANT_BOOL Enable);
+        void CommandStateChange(long Command, VARIANT_BOOL Enable);
 
     public:
         virtual LPCTSTR GetClass() const;
-        virtual LPVOID GetInterface( LPCTSTR pstrName );
+        virtual LPVOID GetInterface(LPCTSTR pstrName);
 
         // IUnknown
-        STDMETHOD_(ULONG,AddRef)();
-        STDMETHOD_(ULONG,Release)();
+        STDMETHOD_(ULONG, AddRef)();
+        STDMETHOD_(ULONG, Release)();
         STDMETHOD(QueryInterface)(REFIID riid, LPVOID *ppvObject);
 
         // IDispatch
-        virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount( __RPC__out UINT *pctinfo );
-        virtual HRESULT STDMETHODCALLTYPE GetTypeInfo( UINT iTInfo, LCID lcid, __RPC__deref_out_opt ITypeInfo **ppTInfo );
-        virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames( __RPC__in REFIID riid, __RPC__in_ecount_full(cNames ) LPOLESTR *rgszNames, UINT cNames, LCID lcid, __RPC__out_ecount_full(cNames) DISPID *rgDispId);
-        virtual HRESULT STDMETHODCALLTYPE Invoke( DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr );
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(__RPC__out UINT *pctinfo);
+        virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT iTInfo, LCID lcid, __RPC__deref_out_opt ITypeInfo **ppTInfo);
+        virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(__RPC__in REFIID riid, __RPC__in_ecount_full(cNames) LPOLESTR *rgszNames, UINT cNames, LCID lcid, __RPC__out_ecount_full(cNames) DISPID *rgDispId);
+        virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr);
 
         // IDocHostUIHandler
         STDMETHOD(ShowContextMenu)(DWORD dwID, POINT* pptPosition, IUnknown* pCommandTarget, IDispatch* pDispatchObjectHit);
@@ -99,11 +99,11 @@ namespace DuiLib
         STDMETHOD(QueryService)(REFGUID guidService, REFIID riid, void** ppvObject);
 
         // IOleCommandTarget
-        virtual HRESULT STDMETHODCALLTYPE QueryStatus( __RPC__in_opt const GUID *pguidCmdGroup, ULONG cCmds, __RPC__inout_ecount_full(cCmds ) OLECMD prgCmds[ ], __RPC__inout_opt OLECMDTEXT *pCmdText);
-        virtual HRESULT STDMETHODCALLTYPE Exec( __RPC__in_opt const GUID *pguidCmdGroup, DWORD nCmdID, DWORD nCmdexecopt, __RPC__in_opt VARIANT *pvaIn, __RPC__inout_opt VARIANT *pvaOut );
+        virtual HRESULT STDMETHODCALLTYPE QueryStatus(__RPC__in_opt const GUID *pguidCmdGroup, ULONG cCmds, __RPC__inout_ecount_full(cCmds) OLECMD prgCmds[], __RPC__inout_opt OLECMDTEXT *pCmdText);
+        virtual HRESULT STDMETHODCALLTYPE Exec(__RPC__in_opt const GUID *pguidCmdGroup, DWORD nCmdID, DWORD nCmdexecopt, __RPC__in_opt VARIANT *pvaIn, __RPC__inout_opt VARIANT *pvaOut);
 
         // IDownloadManager
-        STDMETHOD(Download)( 
+        STDMETHOD(Download)(
             /* [in] */ IMoniker *pmk,
             /* [in] */ IBindCtx *pbc,
             /* [in] */ DWORD dwBindVerb,
@@ -115,7 +115,7 @@ namespace DuiLib
 
         // ITranslateAccelerator
         // Duilib消息分发给WebBrowser
-        virtual LRESULT TranslateAccelerator( MSG *pMsg );
+        virtual LRESULT TranslateAccelerator(MSG *pMsg);
     };
 } // namespace DuiLib
 #endif // __UIWEBBROWSER_H__

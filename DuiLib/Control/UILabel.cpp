@@ -15,7 +15,7 @@ namespace DuiLib
         return Color(255, r, g, b);
     }
 
-    CLabelUI::CLabelUI() : m_uTextStyle(DT_VCENTER), m_dwTextColor(0), 
+    CLabelUI::CLabelUI() : m_uTextStyle(DT_VCENTER), m_dwTextColor(0),
         m_dwDisabledTextColor(0),
         m_iFont(-1),
         m_bShowHtml(false),
@@ -39,11 +39,11 @@ namespace DuiLib
         m_EnabledShadow(false),
         m_GradientLength(0)
     {
-        m_ShadowOffset.X        = 0.0f;
-        m_ShadowOffset.Y        = 0.0f;
-        m_ShadowOffset.Width    = 0.0f;
-        m_ShadowOffset.Height   = 0.0f;
-        GdiplusStartup( &m_gdiplusToken,&m_gdiplusStartupInput, NULL);
+        m_ShadowOffset.X = 0.0f;
+        m_ShadowOffset.Y = 0.0f;
+        m_ShadowOffset.Width = 0.0f;
+        m_ShadowOffset.Height = 0.0f;
+        GdiplusStartup(&m_gdiplusToken, &m_gdiplusStartupInput, NULL);
 
         ::ZeroMemory(&m_rcTextPadding, sizeof(m_rcTextPadding));
     }
@@ -60,7 +60,7 @@ namespace DuiLib
     {
         try
         {
-            GdiplusShutdown( m_gdiplusToken );
+            GdiplusShutdown(m_gdiplusToken);
         }
         catch (...)
         {
@@ -75,7 +75,7 @@ namespace DuiLib
 
     LPVOID CLabelUI::GetInterface(LPCTSTR pstrName)
     {
-        if( _tcscmp(pstrName, _T("Label")) == 0 ) return static_cast<CLabelUI*>(this);
+        if (_tcscmp(pstrName, _T("Label")) == 0) return static_cast<CLabelUI*>(this);
         return CControlUI::GetInterface(pstrName);
     }
 
@@ -141,7 +141,7 @@ namespace DuiLib
 
     void CLabelUI::SetShowHtml(bool bShowHtml)
     {
-        if( m_bShowHtml == bShowHtml ) return;
+        if (m_bShowHtml == bShowHtml) return;
 
         m_bShowHtml = bShowHtml;
         Invalidate();
@@ -149,27 +149,27 @@ namespace DuiLib
 
     SIZE CLabelUI::EstimateSize(SIZE szAvailable)
     {
-        if( m_cxyFixed.cy == 0 ) return CSize(m_cxyFixed.cx, m_pManager->GetFontInfo(GetFont())->tm.tmHeight + 4);
+        if (m_cxyFixed.cy == 0) return CSize(m_cxyFixed.cx, m_pManager->GetFontInfo(GetFont())->tm.tmHeight + 4);
         return CControlUI::EstimateSize(szAvailable);
     }
 
     void CLabelUI::DoEvent(TEventUI& event)
     {
-        if( event.Type == UIEVENT_SETFOCUS ) 
+        if (event.Type == UIEVENT_SETFOCUS)
         {
             m_bFocused = true;
             return;
         }
-        if( event.Type == UIEVENT_KILLFOCUS ) 
+        if (event.Type == UIEVENT_KILLFOCUS)
         {
             m_bFocused = false;
             return;
         }
-        if( event.Type == UIEVENT_MOUSEENTER )
+        if (event.Type == UIEVENT_MOUSEENTER)
         {
             // return;
         }
-        if( event.Type == UIEVENT_MOUSELEAVE )
+        if (event.Type == UIEVENT_MOUSELEAVE)
         {
             // return;
         }
@@ -178,97 +178,97 @@ namespace DuiLib
 
     void CLabelUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if( _tcscmp(pstrName, _T("align")) == 0 ) {
-            if( _tcsstr(pstrValue, _T("left")) != NULL ) {
+        if (_tcscmp(pstrName, _T("align")) == 0) {
+            if (_tcsstr(pstrValue, _T("left")) != NULL) {
                 m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
                 m_uTextStyle |= DT_LEFT;
             }
-            if( _tcsstr(pstrValue, _T("center")) != NULL ) {
-                m_uTextStyle &= ~(DT_LEFT | DT_RIGHT );
+            if (_tcsstr(pstrValue, _T("center")) != NULL) {
+                m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
                 m_uTextStyle |= DT_CENTER;
             }
-            if( _tcsstr(pstrValue, _T("right")) != NULL ) {
+            if (_tcsstr(pstrValue, _T("right")) != NULL) {
                 m_uTextStyle &= ~(DT_LEFT | DT_CENTER | DT_VCENTER | DT_SINGLELINE);
                 m_uTextStyle |= DT_RIGHT;
             }
-            if( _tcsstr(pstrValue, _T("top")) != NULL ) {
+            if (_tcsstr(pstrValue, _T("top")) != NULL) {
                 m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER | DT_VCENTER);
                 m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
             }
-            if( _tcsstr(pstrValue, _T("vcenter")) != NULL ) {
-                m_uTextStyle &= ~(DT_TOP | DT_BOTTOM );         
+            if (_tcsstr(pstrValue, _T("vcenter")) != NULL) {
+                m_uTextStyle &= ~(DT_TOP | DT_BOTTOM);
                 m_uTextStyle |= (DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
-            if( _tcsstr(pstrValue, _T("bottom")) != NULL ) {
+            if (_tcsstr(pstrValue, _T("bottom")) != NULL) {
                 m_uTextStyle &= ~(DT_TOP | DT_VCENTER | DT_VCENTER);
                 m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
             }
         }
-        else if( _tcscmp(pstrName, _T("endellipsis")) == 0 ) {
-            if( _tcscmp(pstrValue, _T("true")) == 0 ) m_uTextStyle |= DT_END_ELLIPSIS;
+        else if (_tcscmp(pstrName, _T("endellipsis")) == 0) {
+            if (_tcscmp(pstrValue, _T("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
             else m_uTextStyle &= ~DT_END_ELLIPSIS;
-        }    
-        else if( _tcscmp(pstrName, _T("font")) == 0 ) SetFont(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("textcolor")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        }
+        else if (_tcscmp(pstrName, _T("font")) == 0) SetFont(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("textcolor")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextColor(clrColor);
         }
-        else if( _tcscmp(pstrName, _T("disabledtextcolor")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (_tcscmp(pstrName, _T("disabledtextcolor")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetDisabledTextColor(clrColor);
         }
-        else if( _tcscmp(pstrName, _T("textpadding")) == 0 ) {
+        else if (_tcscmp(pstrName, _T("textpadding")) == 0) {
             RECT rcTextPadding = { 0 };
             LPTSTR pstr = NULL;
-            rcTextPadding.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);    
-            rcTextPadding.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
-            rcTextPadding.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
-            rcTextPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
+            rcTextPadding.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
+            rcTextPadding.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+            rcTextPadding.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+            rcTextPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
             SetTextPadding(rcTextPadding);
         }
-        else if( _tcscmp(pstrName, _T("showhtml")) == 0 ) SetShowHtml(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (_tcscmp(pstrName, _T("showhtml")) == 0) SetShowHtml(_tcscmp(pstrValue, _T("true")) == 0);
 
-        else if( _tcscmp(pstrName, _T("enabledeffect")) == 0 ) SetEnabledEffect(_tcscmp(pstrValue, _T("true")) == 0);
-        else if( _tcscmp(pstrName, _T("rhaa")) == 0 ) SetTextRenderingHintAntiAlias(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("transshadow")) == 0 ) SetTransShadow(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("transtext")) == 0 ) SetTransText(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("transshadow1")) == 0 ) SetTransShadow1(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("transtext1")) == 0 ) SetTransText1(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("gradientangle")) == 0 ) SetGradientAngle(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("enabledstroke")) == 0 ) SetEnabledStroke(_tcscmp(pstrValue, _T("true")) == 0);
-        else if( _tcscmp(pstrName, _T("enabledshadow")) == 0 ) SetEnabledShadow(_tcscmp(pstrValue, _T("true")) == 0);
-        else if( _tcscmp(pstrName, _T("transstroke")) == 0 ) SetTransStroke(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("gradientlength")) == 0 ) SetGradientLength(_ttoi(pstrValue));
-        else if( _tcscmp(pstrName, _T("shadowoffset")) == 0 ){
+        else if (_tcscmp(pstrName, _T("enabledeffect")) == 0) SetEnabledEffect(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (_tcscmp(pstrName, _T("rhaa")) == 0) SetTextRenderingHintAntiAlias(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("transshadow")) == 0) SetTransShadow(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("transtext")) == 0) SetTransText(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("transshadow1")) == 0) SetTransShadow1(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("transtext1")) == 0) SetTransText1(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("gradientangle")) == 0) SetGradientAngle(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("enabledstroke")) == 0) SetEnabledStroke(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (_tcscmp(pstrName, _T("enabledshadow")) == 0) SetEnabledShadow(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (_tcscmp(pstrName, _T("transstroke")) == 0) SetTransStroke(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("gradientlength")) == 0) SetGradientLength(_ttoi(pstrValue));
+        else if (_tcscmp(pstrName, _T("shadowoffset")) == 0){
             LPTSTR pstr = NULL;
-            int offsetx = _tcstol(pstrValue, &pstr, 10);    ASSERT(pstr);    
+            int offsetx = _tcstol(pstrValue, &pstr, 10);    ASSERT(pstr);
             int offsety = _tcstol(pstr + 1, &pstr, 10);     ASSERT(pstr);
-            SetShadowOffset(offsetx,offsety);
+            SetShadowOffset(offsetx, offsety);
         }
-        else if( _tcscmp(pstrName, _T("textcolor1")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (_tcscmp(pstrName, _T("textcolor1")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextColor1(clrColor);
         }
-        else if( _tcscmp(pstrName, _T("textshadowcolora")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (_tcscmp(pstrName, _T("textshadowcolora")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextShadowColorA(clrColor);
         }
-        else if( _tcscmp(pstrName, _T("textshadowcolorb")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (_tcscmp(pstrName, _T("textshadowcolorb")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextShadowColorB(clrColor);
         }
-        else if( _tcscmp(pstrName, _T("strokecolor")) == 0 ) {
-            if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (_tcscmp(pstrName, _T("strokecolor")) == 0) {
+            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetStrokeColor(clrColor);
@@ -278,8 +278,8 @@ namespace DuiLib
 
     void CLabelUI::PaintText(HDC hDC)
     {
-        if( m_dwTextColor == 0 ) m_dwTextColor = m_pManager->GetDefaultFontColor();
-        if( m_dwDisabledTextColor == 0 ) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
+        if (m_dwTextColor == 0) m_dwTextColor = m_pManager->GetDefaultFontColor();
+        if (m_dwDisabledTextColor == 0) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
         RECT rc = m_rcItem;
         rc.left += m_rcTextPadding.left;
@@ -287,12 +287,12 @@ namespace DuiLib
         rc.top += m_rcTextPadding.top;
         rc.bottom -= m_rcTextPadding.bottom;
 
-        if(!GetEnabledEffect())
+        if (!GetEnabledEffect())
         {
-            if( m_sText.IsEmpty() ) return;
+            if (m_sText.IsEmpty()) return;
             int nLinks = 0;
-            if( IsEnabled() ) {
-                if( m_bShowHtml )
+            if (IsEnabled()) {
+                if (m_bShowHtml)
                     CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
                     NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
                 else
@@ -300,7 +300,7 @@ namespace DuiLib
                     m_iFont, DT_SINGLELINE | m_uTextStyle);
             }
             else {
-                if( m_bShowHtml )
+                if (m_bShowHtml)
                     CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
                     NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
                 else
@@ -310,7 +310,7 @@ namespace DuiLib
         }
         else
         {
-            Font    nFont(hDC,m_pManager->GetFont(GetFont()));
+            Font    nFont(hDC, m_pManager->GetFont(GetFont()));
 
             Graphics nGraphics(hDC);
             nGraphics.SetTextRenderingHint(m_TextRenderingHintAntiAlias);
@@ -319,23 +319,23 @@ namespace DuiLib
             format.SetAlignment((StringAlignment)m_hAlign);
             format.SetLineAlignment((StringAlignment)m_vAlign);
 
-            RectF nRc((float)rc.left,(float)rc.top,(float)rc.right-rc.left,(float)rc.bottom-rc.top);
+            RectF nRc((float)rc.left, (float)rc.top, (float)rc.right - rc.left, (float)rc.bottom - rc.top);
             RectF nShadowRc = nRc;
             nShadowRc.X += m_ShadowOffset.X;
             nShadowRc.Y += m_ShadowOffset.Y;
 
             int nGradientLength = GetGradientLength();
 
-            if(nGradientLength == 0)
-                nGradientLength = (rc.bottom-rc.top);
+            if (nGradientLength == 0)
+                nGradientLength = (rc.bottom - rc.top);
 
-            LinearGradientBrush nLineGrBrushA(Point(GetGradientAngle(), 0),Point(0,nGradientLength),_MakeRGB(GetTransShadow(),GetTextShadowColorA()),_MakeRGB(GetTransShadow1(),GetTextShadowColorB() == -1?GetTextShadowColorA():GetTextShadowColorB()));
-            LinearGradientBrush nLineGrBrushB(Point(GetGradientAngle(), 0),Point(0,nGradientLength),_MakeRGB(GetTransText(),GetTextColor()),_MakeRGB(GetTransText1(),GetTextColor1() == -1?GetTextColor():GetTextColor1()));
+            LinearGradientBrush nLineGrBrushA(Point(GetGradientAngle(), 0), Point(0, nGradientLength), _MakeRGB(GetTransShadow(), GetTextShadowColorA()), _MakeRGB(GetTransShadow1(), GetTextShadowColorB() == -1 ? GetTextShadowColorA() : GetTextShadowColorB()));
+            LinearGradientBrush nLineGrBrushB(Point(GetGradientAngle(), 0), Point(0, nGradientLength), _MakeRGB(GetTransText(), GetTextColor()), _MakeRGB(GetTransText1(), GetTextColor1() == -1 ? GetTextColor() : GetTextColor1()));
 
-            if(GetEnabledStroke() && GetStrokeColor() > 0)
+            if (GetEnabledStroke() && GetStrokeColor() > 0)
             {
-                LinearGradientBrush nLineGrBrushStroke(Point(GetGradientAngle(),0),Point(0,rc.bottom-rc.top+2),_MakeRGB(GetTransStroke(),GetStrokeColor()),_MakeRGB(GetTransStroke(),GetStrokeColor()));
-                
+                LinearGradientBrush nLineGrBrushStroke(Point(GetGradientAngle(), 0), Point(0, rc.bottom - rc.top + 2), _MakeRGB(GetTransStroke(), GetStrokeColor()), _MakeRGB(GetTransStroke(), GetStrokeColor()));
+
 #ifdef _UNICODE
                 nRc.Offset(-1,0);
                 nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
@@ -350,17 +350,17 @@ namespace DuiLib
                 USES_CONVERSION;
                 wstring mTextValue = A2W(m_TextValue.GetData());
 
-                nRc.Offset(-1,0);
-                nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
-                nRc.Offset(2,0);
-                nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
-                nRc.Offset(-1,-1);
-                nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
-                nRc.Offset(0,2);
-                nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushStroke);
-                nRc.Offset(0,-1);
+                nRc.Offset(-1, 0);
+                nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushStroke);
+                nRc.Offset(2, 0);
+                nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushStroke);
+                nRc.Offset(-1, -1);
+                nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushStroke);
+                nRc.Offset(0, 2);
+                nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushStroke);
+                nRc.Offset(0, -1);
 #endif
-                
+
             }
 #ifdef _UNICODE
             if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
@@ -371,12 +371,12 @@ namespace DuiLib
             USES_CONVERSION;
             wstring mTextValue = A2W(m_TextValue.GetData());
 
-            if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
-                nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nShadowRc,&format,&nLineGrBrushA);
+            if (GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
+                nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nShadowRc, &format, &nLineGrBrushA);
 
-            nGraphics.DrawString(mTextValue.c_str(),mTextValue.length(),&nFont,nRc,&format,&nLineGrBrushB);
+            nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushB);
 #endif
-            
+
         }
     }
 
@@ -389,7 +389,7 @@ namespace DuiLib
     // Parameter: int _TransShadow
     // Note:      
     //************************************
-    void CLabelUI::SetTransShadow( int _TransShadow )
+    void CLabelUI::SetTransShadow(int _TransShadow)
     {
         try
         {
@@ -430,11 +430,11 @@ namespace DuiLib
     // Parameter: int _TextRenderingHintAntiAlias
     // Note:      
     //************************************
-    void CLabelUI::SetTextRenderingHintAntiAlias( int _TextRenderingHintAntiAlias )
+    void CLabelUI::SetTextRenderingHintAntiAlias(int _TextRenderingHintAntiAlias)
     {
         try
         {
-            if(_TextRenderingHintAntiAlias < 0 || _TextRenderingHintAntiAlias > 5)
+            if (_TextRenderingHintAntiAlias < 0 || _TextRenderingHintAntiAlias > 5)
                 _TextRenderingHintAntiAlias = 0;
             m_TextRenderingHintAntiAlias = (TextRenderingHint)_TextRenderingHintAntiAlias;
         }
@@ -474,23 +474,23 @@ namespace DuiLib
     // Parameter: int _angle
     // Note:      
     //************************************
-    void CLabelUI::SetShadowOffset( int _offset,int _angle )
+    void CLabelUI::SetShadowOffset(int _offset, int _angle)
     {
         try
         {
-            if(_angle > 180 || _angle < -180)
+            if (_angle > 180 || _angle < -180)
                 return;
 
             RECT rc = m_rcItem;
 
-            if(_angle >= 0 && _angle <= 180)
+            if (_angle >= 0 && _angle <= 180)
                 rc.top -= _offset;
-            else if(_angle > -180 && _angle < 0)
+            else if (_angle > -180 && _angle < 0)
                 rc.top += _offset;
 
-            if(_angle > -90 && _angle <= 90)
+            if (_angle > -90 && _angle <= 90)
                 rc.left -= _offset;
-            else if( _angle > 90 || _angle < -90)
+            else if (_angle > 90 || _angle < -90)
                 rc.left += _offset;
 
             m_ShadowOffset.X = (float)rc.top;
@@ -531,11 +531,11 @@ namespace DuiLib
     // Parameter: LPCTSTR pstrText
     // Note:      
     //************************************
-    void CLabelUI::SetText( LPCTSTR pstrText )
+    void CLabelUI::SetText(LPCTSTR pstrText)
     {
         try
         {
-            if(!GetEnabledEffect())
+            if (!GetEnabledEffect())
                 return CControlUI::SetText(pstrText);
 
             m_TextValue = pstrText;
@@ -558,7 +558,7 @@ namespace DuiLib
     {
         try
         {
-            if(!m_EnableEffect)
+            if (!m_EnableEffect)
                 return CControlUI::GetText();
             return m_TextValue;
         }
@@ -577,7 +577,7 @@ namespace DuiLib
     // Parameter: bool _EnabledEffect
     // Note:      
     //************************************
-    void CLabelUI::SetEnabledEffect( bool _EnabledEffect )
+    void CLabelUI::SetEnabledEffect(bool _EnabledEffect)
     {
         try
         {
@@ -618,11 +618,11 @@ namespace DuiLib
     // Parameter: DWORD _TextColor1
     // Note:      
     //************************************
-    void CLabelUI::SetTextColor1( DWORD _TextColor1 )
+    void CLabelUI::SetTextColor1(DWORD _TextColor1)
     {
         try
         {
-            m_dwTextColor1  = _TextColor1;
+            m_dwTextColor1 = _TextColor1;
         }
         catch (...)
         {
@@ -659,11 +659,11 @@ namespace DuiLib
     // Parameter: DWORD _TextShadowColorA
     // Note:      
     //************************************
-    void CLabelUI::SetTextShadowColorA( DWORD _TextShadowColorA )
+    void CLabelUI::SetTextShadowColorA(DWORD _TextShadowColorA)
     {
         try
         {
-            m_dwTextShadowColorA    = _TextShadowColorA;
+            m_dwTextShadowColorA = _TextShadowColorA;
         }
         catch (...)
         {
@@ -700,11 +700,11 @@ namespace DuiLib
     // Parameter: DWORD _TextShadowColorB
     // Note:      
     //************************************
-    void CLabelUI::SetTextShadowColorB( DWORD _TextShadowColorB )
+    void CLabelUI::SetTextShadowColorB(DWORD _TextShadowColorB)
     {
         try
         {
-            m_dwTextShadowColorB    = _TextShadowColorB;
+            m_dwTextShadowColorB = _TextShadowColorB;
         }
         catch (...)
         {
@@ -741,7 +741,7 @@ namespace DuiLib
     // Parameter: int _TransText
     // Note:      
     //************************************
-    void CLabelUI::SetTransText( int _TransText )
+    void CLabelUI::SetTransText(int _TransText)
     {
         try
         {
@@ -782,11 +782,11 @@ namespace DuiLib
     // Parameter: int _TransShadow
     // Note:      
     //************************************
-    void CLabelUI::SetTransShadow1( int _TransShadow )
+    void CLabelUI::SetTransShadow1(int _TransShadow)
     {
         try
         {
-            m_TransShadow1  = _TransShadow;
+            m_TransShadow1 = _TransShadow;
         }
         catch (...)
         {
@@ -823,11 +823,11 @@ namespace DuiLib
     // Parameter: int _TransText
     // Note:      
     //************************************
-    void CLabelUI::SetTransText1( int _TransText )
+    void CLabelUI::SetTransText1(int _TransText)
     {
         try
         {
-            m_TransText1    = _TransText;
+            m_TransText1 = _TransText;
         }
         catch (...)
         {
@@ -864,7 +864,7 @@ namespace DuiLib
     // Parameter: float _SetGradientAngle
     // Note:      
     //************************************
-    void CLabelUI::SetGradientAngle( int _SetGradientAngle )
+    void CLabelUI::SetGradientAngle(int _SetGradientAngle)
     {
         try
         {
@@ -905,7 +905,7 @@ namespace DuiLib
     // Parameter: bool _EnabledStroke
     // Note:      
     //************************************
-    void CLabelUI::SetEnabledStroke( bool _EnabledStroke )
+    void CLabelUI::SetEnabledStroke(bool _EnabledStroke)
     {
         try
         {
@@ -946,7 +946,7 @@ namespace DuiLib
     // Parameter: int _TransStroke
     // Note:      
     //************************************
-    void CLabelUI::SetTransStroke( int _TransStroke )
+    void CLabelUI::SetTransStroke(int _TransStroke)
     {
         try
         {
@@ -987,7 +987,7 @@ namespace DuiLib
     // Parameter: DWORD _StrokeColor
     // Note:      
     //************************************
-    void CLabelUI::SetStrokeColor( DWORD _StrokeColor )
+    void CLabelUI::SetStrokeColor(DWORD _StrokeColor)
     {
         try
         {
@@ -1028,7 +1028,7 @@ namespace DuiLib
     // Parameter: bool _EnabledShadowe
     // Note:      
     //************************************
-    void CLabelUI::SetEnabledShadow( bool _EnabledShadowe )
+    void CLabelUI::SetEnabledShadow(bool _EnabledShadowe)
     {
         try
         {
@@ -1069,11 +1069,11 @@ namespace DuiLib
     // Parameter: int _GradientLength
     // Note:      
     //************************************
-    void CLabelUI::SetGradientLength( int _GradientLength )
+    void CLabelUI::SetGradientLength(int _GradientLength)
     {
         try
         {
-            m_GradientLength    = _GradientLength;
+            m_GradientLength = _GradientLength;
         }
         catch (...)
         {

@@ -14,25 +14,25 @@ namespace DuiLib
         CFlashEventHandler() {}
         ~CFlashEventHandler() {}
 
-        virtual ULONG STDMETHODCALLTYPE Release( void ) { return S_OK;}
-        virtual ULONG STDMETHODCALLTYPE AddRef( void ) { return S_OK;}
+        virtual ULONG STDMETHODCALLTYPE Release(void) { return S_OK; }
+        virtual ULONG STDMETHODCALLTYPE AddRef(void) { return S_OK; }
 
-        virtual HRESULT OnReadyStateChange ( long newState )
+        virtual HRESULT OnReadyStateChange(long newState)
         {
             return S_OK;
         }
 
-        virtual HRESULT OnProgress (long percentDone )
+        virtual HRESULT OnProgress(long percentDone)
         {
             return S_OK;
         }
 
-        virtual HRESULT FSCommand ( LPCTSTR command, LPCTSTR args )
+        virtual HRESULT FSCommand(LPCTSTR command, LPCTSTR args)
         {
             return S_OK;
         }
-        
-        virtual HRESULT FlashCall ( LPCTSTR request )
+
+        virtual HRESULT FlashCall(LPCTSTR request)
         {
             return S_OK;
         }

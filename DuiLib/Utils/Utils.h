@@ -250,9 +250,9 @@ namespace DuiLib
     class CVariant : public VARIANT
     {
     public:
-        CVariant() 
-        { 
-            VariantInit(this); 
+        CVariant()
+        {
+            VariantInit(this);
         }
         CVariant(int i)
         {
@@ -279,9 +279,9 @@ namespace DuiLib
             this->pdispVal = disp;
         }
 
-        ~CVariant() 
-        { 
-            VariantClear(this); 
+        ~CVariant()
+        {
+            VariantClear(this);
         }
     };
 

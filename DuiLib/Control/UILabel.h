@@ -4,7 +4,7 @@
 #pragma once
 
 #include <GdiPlus.h>
-#pragma comment( lib, "GdiPlus.lib" )
+#pragma comment(lib, "GdiPlus.lib")
 using namespace Gdiplus;
 class UILIB_API Gdiplus::RectF;
 struct UILIB_API Gdiplus::GdiplusStartupInput;
@@ -57,7 +57,7 @@ namespace DuiLib
         int         GetGradientLength();
         void        SetTextRenderingHintAntiAlias(int _TextRenderingHintAntiAlias);
         int         GetTextRenderingHintAntiAlias();
-        void        SetShadowOffset(int _offset,int _angle);
+        void        SetShadowOffset(int _offset, int _angle);
         RectF       GetShadowOffset();
         void        SetTextColor1(DWORD _TextColor1);
         DWORD       GetTextColor1();
@@ -73,7 +73,7 @@ namespace DuiLib
         bool        GetEnabledStroke();
         void        SetEnabledShadow(bool _EnabledShadowe);
         bool        GetEnabledShadow();
-        
+
     protected:
         DWORD   m_dwTextColor;
         DWORD   m_dwDisabledTextColor;
