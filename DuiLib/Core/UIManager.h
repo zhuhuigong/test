@@ -47,12 +47,12 @@ namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
 //
 
-// Flags for CControlUI::GetControlFlags()
+// CControlUI::GetControlFlags()的标识
 #define UIFLAG_TABSTOP       0x00000001
 #define UIFLAG_SETCURSOR     0x00000002
 #define UIFLAG_WANTRETURN    0x00000004
 
-// Flags for FindControl()
+// FindControl()的标识
 #define UIFIND_ALL           0x00000000
 #define UIFIND_VISIBLE       0x00000001
 #define UIFIND_ENABLED       0x00000002
@@ -60,7 +60,7 @@ namespace DuiLib {
 #define UIFIND_TOP_FIRST     0x00000008
 #define UIFIND_ME_FIRST      0x80000000
 
-// Flags for the CDialogLayout stretching
+// CDialogLayout拉伸标识
 #define UISTRETCH_NEWGROUP   0x00000001
 #define UISTRETCH_NEWLINE    0x00000002
 #define UISTRETCH_MOVE_X     0x00000004
@@ -68,7 +68,7 @@ namespace DuiLib {
 #define UISTRETCH_SIZE_X     0x00000010
 #define UISTRETCH_SIZE_Y     0x00000020
 
-// Flags used for controlling the paint
+// 控制绘图的标识(状态)
 #define UISTATE_FOCUSED      0x00000001
 #define UISTATE_SELECTED     0x00000002
 #define UISTATE_DISABLED     0x00000004
@@ -103,8 +103,7 @@ namespace DuiLib {
         DWORD dwMask;
     } TImageInfo;
 
-    // Structure for notifications from the system
-    // to the control implementation.
+    // 系统消息到控件消息转换的结构体
     typedef struct tagTEventUI
     {
         int Type;
@@ -117,7 +116,7 @@ namespace DuiLib {
         LPARAM lParam;
     } TEventUI;
 
-    // Structure for relative position to the parent
+    // 相对于父窗口位置的结构，用于跟随父窗口变而变化
     typedef struct tagTRelativePosUI
     {
         bool bRelative;
@@ -126,22 +125,23 @@ namespace DuiLib {
         int nMoveYPercent;
         int nZoomXPercent;
         int nZoomYPercent;
-    }TRelativePosUI;
+    } TRelativePosUI;
 
-    // Listener interface
+    // 事件/消息监听接口，用于控件消息的处理
     class INotifyUI
     {
     public:
         virtual void Notify(TNotifyUI& msg) = 0;
     };
 
-    // MessageFilter interface
+    // 消息过滤接口，早于控件消息
     class IMessageFilterUI
     {
     public:
         virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) = 0;
     };
 
+    // 快捷键处理接口
     class ITranslateAccelerator
     {
     public:
@@ -153,7 +153,7 @@ namespace DuiLib {
     //
     typedef CControlUI* (*LPCREATECONTROL)(LPCTSTR pstrType);
 
-
+    // duilib核心绘制管理类
     class UILIB_API CPaintManagerUI
     {
     public:
