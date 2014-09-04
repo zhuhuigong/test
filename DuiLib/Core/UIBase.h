@@ -24,6 +24,9 @@ namespace DuiLib {
 #define UI_CLASSSTYLE_CHILD      (CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS | CS_SAVEBITS)
 #define UI_CLASSSTYLE_DIALOG     (CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS | CS_SAVEBITS)
 
+// 窗口Prop
+#define SUBCLASS_WINDOW_PROP    _T("#16000")
+#define SUPCLASS_WINDOW_PROP    _T("#16001")
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -116,15 +119,18 @@ do {                                           \
         virtual UINT GetClassStyle() const;
 
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+        virtual void OnSubWindowInit(); // 子类化时的初始化函数，相当于OnCreate！
         virtual void OnFinalMessage(HWND hWnd);
 
         static LRESULT CALLBACK __WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-        static LRESULT CALLBACK __ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+        static LRESULT CALLBACK __SubWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+        static LRESULT CALLBACK __SupWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     protected:
         HWND m_hWnd;
         WNDPROC m_OldWndProc;
         bool m_bSubclassed;
+        bool m_bSupclassed;
     };
 
 } // namespace DuiLib

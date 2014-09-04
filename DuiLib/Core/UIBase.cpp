@@ -93,10 +93,10 @@ namespace DuiLib {
     //////////////////////////////////////////////////////////////////////////
     // 这里可以处理消息！！！
     DUI_BASE_BEGIN_MESSAGE_MAP(CNotifyPump)
-        DUI_END_MESSAGE_MAP()
+    DUI_END_MESSAGE_MAP()
 
 
-        static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEntry, TNotifyUI& msg)
+    static const DUI_MSGMAP_ENTRY* DuiFindMessageEntry(const DUI_MSGMAP_ENTRY* lpEntry, TNotifyUI& msg)
     {
         CDuiString sMsgType = msg.sType;
         CDuiString sCtrlName = msg.pSender->GetName();
@@ -219,12 +219,14 @@ namespace DuiLib {
         LoopDispatch(msg);
     }
 
+
     //////////////////////////////////////////////////////////////////////////
     /// duilib窗口基类
     CWindowWnd::CWindowWnd()
         : m_hWnd(NULL)
         , m_OldWndProc(::DefWindowProc)
         , m_bSubclassed(false)
+        , m_bSupclassed(false)
     {
 
     }
@@ -282,63 +284,105 @@ namespace DuiLib {
 
     HWND CWindowWnd::Subclass(HWND hWnd)
     {
-        ASSERT(::IsWindow(hWnd));
-        ASSERT(m_hWnd == NULL);
-        m_OldWndProc = SubclassWindow(hWnd, __WndProc);
-        if (m_OldWndProc == NULL) return NULL;
-        m_bSubclassed = true;
-        m_hWnd = hWnd;
-        ::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(this));
+        // 仅当没有子类化过时进行子类化
+        if (!m_bSubclassed)
+        {
+            ASSERT(::IsWindow(hWnd));
+            ASSERT(m_hWnd == NULL);
+
+            m_hWnd = hWnd;
+            ::SetProp(hWnd, SUBCLASS_WINDOW_PROP, (HANDLE) this);
+
+            // 子类化窗口！
+            m_OldWndProc = SubclassWindow(hWnd, __SubWindowProc);
+            if (m_OldWndProc == NULL)
+            {
+                return NULL;
+            }
+
+            m_bSubclassed = true;
+        }
+
         return m_hWnd;
     }
 
     void CWindowWnd::Unsubclass()
     {
-        ASSERT(::IsWindow(m_hWnd));
-        if (!::IsWindow(m_hWnd)) return;
-        if (!m_bSubclassed) return;
-        SubclassWindow(m_hWnd, m_OldWndProc);
-        m_OldWndProc = ::DefWindowProc;
-        m_bSubclassed = false;
+        // 已经子类化过窗口时才去掉子类化
+        if (m_bSubclassed)
+        {
+            ASSERT(::IsWindow(m_hWnd));
+            if (!::IsWindow(m_hWnd))
+                return;
+
+            // 去掉子类化
+            SubclassWindow(m_hWnd, m_OldWndProc);
+            m_OldWndProc = ::DefWindowProc;
+            m_bSubclassed = false;
+        }
     }
 
     void CWindowWnd::ShowWindow(bool bShow /*= true*/, bool bTakeFocus /*= false*/)
     {
         ASSERT(::IsWindow(m_hWnd));
-        if (!::IsWindow(m_hWnd)) return;
+        if (!::IsWindow(m_hWnd))
+        {
+            return;
+        }
+
         ::ShowWindow(m_hWnd, bShow ? (bTakeFocus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
     }
 
     UINT CWindowWnd::ShowModal()
     {
         ASSERT(::IsWindow(m_hWnd));
+
         UINT nRet = 0;
         HWND hWndParent = GetWindowOwner(m_hWnd);
         ::ShowWindow(m_hWnd, SW_SHOWNORMAL);
         ::EnableWindow(hWndParent, FALSE);
+
         MSG msg = { 0 };
-        while (::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0)) {
-            if (msg.message == WM_CLOSE && msg.hwnd == m_hWnd) {
+        while (::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0))
+        {
+            if (msg.message == WM_CLOSE && msg.hwnd == m_hWnd)
+            {
                 nRet = msg.wParam;
                 ::EnableWindow(hWndParent, TRUE);
                 ::SetFocus(hWndParent);
             }
-            if (!CPaintManagerUI::TranslateMessage(&msg)) {
+
+            if (!CPaintManagerUI::TranslateMessage(&msg))
+            {
                 ::TranslateMessage(&msg);
                 ::DispatchMessage(&msg);
             }
-            if (msg.message == WM_QUIT) break;
+
+            if (msg.message == WM_QUIT)
+            {
+                break;
+            }
         }
+
         ::EnableWindow(hWndParent, TRUE);
         ::SetFocus(hWndParent);
-        if (msg.message == WM_QUIT) ::PostQuitMessage(msg.wParam);
+
+        if (msg.message == WM_QUIT)
+        {
+            ::PostQuitMessage(msg.wParam);
+        }
+
         return nRet;
     }
 
     void CWindowWnd::Close(UINT nRet)
     {
         ASSERT(::IsWindow(m_hWnd));
-        if (!::IsWindow(m_hWnd)) return;
+        if (!::IsWindow(m_hWnd))
+        {
+            return;
+        }
+
         PostMessage(WM_CLOSE, (WPARAM)nRet, 0L);
     }
 
@@ -459,16 +503,17 @@ namespace DuiLib {
     void CWindowWnd::CenterWindow()
     {
         ASSERT(::IsWindow(m_hWnd));
-        ASSERT((GetWindowStyle(m_hWnd)&WS_CHILD)==0);
+        ASSERT((GetWindowStyle(m_hWnd) & WS_CHILD) == 0);
+
         RECT rcDlg = { 0 };
         ::GetWindowRect(m_hWnd, &rcDlg);
         RECT rcArea = { 0 };
         RECT rcCenter = { 0 };
-        HWND hWnd=*this;
+        HWND hWnd = *this;
         HWND hWndParent = ::GetParent(m_hWnd);
         HWND hWndCenter = ::GetWindowOwner(m_hWnd);
-        if (hWndCenter!=NULL)
-            hWnd=hWndCenter;
+        if (hWndCenter != NULL)
+            hWnd = hWndCenter;
 
         // 处理多显示器模式下屏幕居中
         MONITORINFO oMonitor = {};
@@ -476,7 +521,7 @@ namespace DuiLib {
         ::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
         rcArea = oMonitor.rcWork;
 
-        if( hWndCenter == NULL )
+        if (hWndCenter == NULL)
             rcCenter = rcArea;
         else
             ::GetWindowRect(hWndCenter, &rcCenter);
@@ -489,20 +534,31 @@ namespace DuiLib {
         int yTop = (rcCenter.top + rcCenter.bottom) / 2 - DlgHeight / 2;
 
         // The dialog is outside the screen, move it inside
-        if( xLeft < rcArea.left ) xLeft = rcArea.left;
-        else if( xLeft + DlgWidth > rcArea.right ) xLeft = rcArea.right - DlgWidth;
-        if( yTop < rcArea.top ) yTop = rcArea.top;
-        else if( yTop + DlgHeight > rcArea.bottom ) yTop = rcArea.bottom - DlgHeight;
+        if (xLeft < rcArea.left)
+            xLeft = rcArea.left;
+        else if (xLeft + DlgWidth > rcArea.right)
+            xLeft = rcArea.right - DlgWidth;
+
+        if (yTop < rcArea.top)
+            yTop = rcArea.top;
+        else if (yTop + DlgHeight > rcArea.bottom) 
+            yTop = rcArea.bottom - DlgHeight;
+
         ::SetWindowPos(m_hWnd, NULL, xLeft, yTop, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
     }
 #endif
 
     void CWindowWnd::SetIcon(UINT nRes)
     {
-        HICON hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR);
+        HICON hIcon = NULL;
+
+        // 设置大图标
+        hIcon = (HICON) ::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON), LR_DEFAULTCOLOR);
         ASSERT(hIcon);
         ::SendMessage(m_hWnd, WM_SETICON, (WPARAM)TRUE, (LPARAM)hIcon);
-        hIcon = (HICON)::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
+
+        // 设置小图标
+        hIcon = (HICON) ::LoadImage(CPaintManagerUI::GetInstance(), MAKEINTRESOURCE(nRes), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), LR_DEFAULTCOLOR);
         ASSERT(hIcon);
         ::SendMessage(m_hWnd, WM_SETICON, (WPARAM)FALSE, (LPARAM)hIcon);
     }
@@ -520,84 +576,165 @@ namespace DuiLib {
         wc.hbrBackground = NULL;
         wc.lpszMenuName = NULL;
         wc.lpszClassName = GetWindowClassName();
+
         ATOM ret = ::RegisterClass(&wc);
         ASSERT(ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS);
+
         return ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS;
     }
 
     bool CWindowWnd::RegisterSuperclass()
     {
-        // Get the class information from an existing
-        // window so we can subclass it later on...
+        // 从已存在的窗口中获取窗口类信息，然后修改之，以便超类化！
         WNDCLASSEX wc = { 0 };
         wc.cbSize = sizeof(WNDCLASSEX);
-        if (!::GetClassInfoEx(NULL, GetSuperClassName(), &wc)) {
-            if (!::GetClassInfoEx(CPaintManagerUI::GetInstance(), GetSuperClassName(), &wc)) {
+        if (!::GetClassInfoEx(NULL, GetSuperClassName(), &wc))
+        {
+            if (!::GetClassInfoEx(CPaintManagerUI::GetInstance(), GetSuperClassName(), &wc))
+            {
                 ASSERT(!"Unable to locate window class");
                 return NULL;
             }
         }
+
         m_OldWndProc = wc.lpfnWndProc;
-        wc.lpfnWndProc = CWindowWnd::__ControlProc;
+        wc.lpfnWndProc = CWindowWnd::__SupWindowProc;
         wc.hInstance = CPaintManagerUI::GetInstance();
         wc.lpszClassName = GetWindowClassName();
+
+        // 超类化
+        m_bSupclassed = true;
         ATOM ret = ::RegisterClassEx(&wc);
         ASSERT(ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS);
+
         return ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS;
     }
 
+    // 窗口函数，窗口是创建的时候使用的窗口函数
     LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         CWindowWnd* pThis = NULL;
-        if (uMsg == WM_NCCREATE) {
+
+        if (uMsg == WM_NCCREATE)
+        {
             LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
             pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
             pThis->m_hWnd = hWnd;
             ::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pThis));
         }
-        else {
+        else
+        {
             pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
-            if (uMsg == WM_NCDESTROY && pThis != NULL) {
-                LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
+
+            if (uMsg == WM_NCDESTROY && pThis != NULL)
+            {
+                LRESULT lRes = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+
                 ::SetWindowLongPtr(pThis->m_hWnd, GWLP_USERDATA, 0L);
-                if (pThis->m_bSubclassed) pThis->Unsubclass();
                 pThis->m_hWnd = NULL;
                 pThis->OnFinalMessage(hWnd);
                 return lRes;
             }
         }
-        if (pThis != NULL) {
+
+        if (pThis != NULL)
+        {
             return pThis->HandleMessage(uMsg, wParam, lParam);
         }
-        else {
+        else
+        {
+            // 应该不会来到这里
             return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
     }
 
-    LRESULT CALLBACK CWindowWnd::__ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    // 子类化已存在的窗口的窗口函数，注意一旦子类化，是收不到WM_NCCREATE、WM_CREATE消息的
+    // 因此要想子类化后做初始化操作，重载虚函数OnSubWindowInit即可，其它消息可在虚函数
+    // HandleMessage中处理
+    LRESULT CALLBACK CWindowWnd::__SubWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
+        static BOOL bInit = TRUE;
+
+        // 获取放在窗口属性__SubWindowProc中的指针，可能得到的是空不成？？
+        CWindowWnd* pThis = (CWindowWnd*) ::GetProp(hWnd, SUBCLASS_WINDOW_PROP);
+
+        // 子类化时第一次__SubWindowProc被调用则给执行虚函数OnSubWindowInit的机会
+        if (bInit)
+        {
+            bInit = FALSE;
+
+            if (pThis != NULL)
+            {
+                pThis->OnSubWindowInit();
+            }
+        }
+
+        // 窗口收到的最后一条消息，这里直接处理，以免HandleMessage乱处理
+        if (uMsg == WM_NCDESTROY && pThis != NULL)
+        {
+            LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
+
+            // 去掉窗口子类化
+            pThis->Unsubclass();
+            // 移除窗口属性
+            ::RemoveProp(hWnd, SUBCLASS_WINDOW_PROP);
+            // 窗口句柄设置为空
+            pThis->m_hWnd = NULL;
+            // 执行窗口最后的虚函数，可在此释放资源
+            pThis->OnFinalMessage(hWnd);
+
+            return lRes;
+        }
+
+        // 消息处理交给虚函数HandleMessage
+        if (pThis != NULL)
+        {
+            return pThis->HandleMessage(uMsg, wParam, lParam);
+        }
+        else
+        {
+            // 应该不会来到这里
+            return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
+    }
+
+    // 超类化窗口时使用的窗口函数！！！
+    LRESULT CALLBACK CWindowWnd::__SupWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         CWindowWnd* pThis = NULL;
-        if (uMsg == WM_NCCREATE) {
+
+        // 窗口创建后收到的第一条消息
+        if (uMsg == WM_NCCREATE)
+        {
             LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
             pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
-            ::SetProp(hWnd, _T("WndX"), (HANDLE)pThis);
+            ::SetProp(hWnd, SUPCLASS_WINDOW_PROP, (HANDLE)pThis);
             pThis->m_hWnd = hWnd;
         }
-        else {
-            pThis = reinterpret_cast<CWindowWnd*>(::GetProp(hWnd, _T("WndX")));
-            if (uMsg == WM_NCDESTROY && pThis != NULL) {
+        else
+        {
+            pThis = reinterpret_cast<CWindowWnd*>(::GetProp(hWnd, SUPCLASS_WINDOW_PROP));
+
+            // 窗口收到的最后一条消息，这里直接处理，以免HandleMessage乱处理
+            if (uMsg == WM_NCDESTROY && pThis != NULL)
+            {
                 LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
-                if (pThis->m_bSubclassed) pThis->Unsubclass();
-                ::SetProp(hWnd, _T("WndX"), NULL);
+                ::RemoveProp(hWnd, SUPCLASS_WINDOW_PROP);
                 pThis->m_hWnd = NULL;
+                pThis->m_bSupclassed = false;
+                pThis->Unsubclass();
                 pThis->OnFinalMessage(hWnd);
                 return lRes;
             }
         }
-        if (pThis != NULL) {
+
+        if (pThis != NULL)
+        {
             return pThis->HandleMessage(uMsg, wParam, lParam);
         }
-        else {
+        else
+        {
+            // 应该不会来到这里
             return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
         }
     }
@@ -618,20 +755,42 @@ namespace DuiLib {
     {
         ASSERT(::IsWindow(m_hWnd));
         RECT rc = { 0 };
-        if (!::GetClientRect(m_hWnd, &rc)) return;
+        if (!::GetClientRect(m_hWnd, &rc))
+        {
+            return;
+        }
+
         if (cx != -1) rc.right = cx;
         if (cy != -1) rc.bottom = cy;
-        if (!::AdjustWindowRectEx(&rc, GetWindowStyle(m_hWnd), (!(GetWindowStyle(m_hWnd) & WS_CHILD) && (::GetMenu(m_hWnd) != NULL)), GetWindowExStyle(m_hWnd))) return;
+
+        if (!::AdjustWindowRectEx(&rc, GetWindowStyle(m_hWnd), (!(GetWindowStyle(m_hWnd) & WS_CHILD) && (::GetMenu(m_hWnd) != NULL)), GetWindowExStyle(m_hWnd)))
+        {
+            return;
+        }
+
         ::SetWindowPos(m_hWnd, NULL, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE);
     }
 
     LRESULT CWindowWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        return ::CallWindowProc(m_OldWndProc, m_hWnd, uMsg, wParam, lParam);
+        if (m_bSubclassed || m_bSupclassed)
+        {
+            return ::CallWindowProc(m_OldWndProc, m_hWnd, uMsg, wParam, lParam);
+        }
+        else
+        {
+            return ::DefWindowProc(m_hWnd, uMsg, wParam, lParam);
+        }
     }
 
     void CWindowWnd::OnFinalMessage(HWND /*hWnd*/)
     {
+
+    }
+
+    void CWindowWnd::OnSubWindowInit()
+    {
+
     }
 
 } // namespace DuiLib
