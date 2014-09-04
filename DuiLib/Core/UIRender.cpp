@@ -1,30 +1,31 @@
 ﻿#include "StdAfx.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////
-DECLARE_HANDLE(HZIP);   // An HZIP identifies a zip file that has been opened
+DECLARE_HANDLE(HZIP);               // 一个HZIP标识一个已经被打开的文件
 typedef DWORD ZRESULT;
+
 typedef struct
 {
-    int index;                 // index of this file within the zip
-    char name[MAX_PATH];       // filename within the zip
-    DWORD attr;                // attributes, as in GetFileAttributes.
-    FILETIME atime, ctime, mtime;// access, create, modify filetimes
-    long comp_size;            // sizes of item, compressed and uncompressed. These
-    long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
+    int index;                      // 此文件在zip压缩包中的索引
+    char name[MAX_PATH];            // 此文件的文件名
+    DWORD attr;                     // 文件属性，如GetFileAttributes
+    FILETIME atime, ctime, mtime;   // 文件被访问、创建、修改的时间
+    long comp_size;                 // 项的大小，有压缩的和未压缩的（可能高16位和低16位中）
+    long unc_size;                  // 如果未知可能是-1，如正在加载中
 } ZIPENTRY;
+
 typedef struct
 {
-    int index;                 // index of this file within the zip
-    TCHAR name[MAX_PATH];      // filename within the zip
-    DWORD attr;                // attributes, as in GetFileAttributes.
-    FILETIME atime, ctime, mtime;// access, create, modify filetimes
-    long comp_size;            // sizes of item, compressed and uncompressed. These
-    long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
+    int index;                      // 此文件在zip压缩包中的索引
+    TCHAR name[MAX_PATH];           // 此文件的文件名
+    DWORD attr;                     // 文件属性，如GetFileAttributes
+    FILETIME atime, ctime, mtime;   // 文件被访问、创建、修改的时间
+    long comp_size;                 // 项的大小，有压缩的和未压缩的（可能高16位和低16位中）
+    long unc_size;                  // 如果未知可能是-1，如正在加载中
 } ZIPENTRYW;
+
 #define OpenZip OpenZipU
 #define CloseZip(hz) CloseZipU(hz)
-extern HZIP OpenZipU(void *z, unsigned int len, DWORD flags);
-extern ZRESULT CloseZipU(HZIP hz);
 #ifdef _UNICODE
 #define ZIPENTRY ZIPENTRYW
 #define GetZipItem GetZipItemW
@@ -33,6 +34,9 @@ extern ZRESULT CloseZipU(HZIP hz);
 #define GetZipItem GetZipItemA
 #define FindZipItem FindZipItemA
 #endif
+
+extern HZIP OpenZipU(void *z, unsigned int len, DWORD flags);
+extern ZRESULT CloseZipU(HZIP hz);
 extern ZRESULT GetZipItemA(HZIP hz, int index, ZIPENTRY *ze);
 extern ZRESULT GetZipItemW(HZIP hz, int index, ZIPENTRYW *ze);
 extern ZRESULT FindZipItemA(HZIP hz, const TCHAR *name, bool ic, int *index, ZIPENTRY *ze);
@@ -42,10 +46,8 @@ extern ZRESULT UnzipItem(HZIP hz, int index, void *dst, unsigned int len, DWORD 
 
 extern "C"
 {
-    extern unsigned char *stbi_load_from_memory(unsigned char const *buffer, int len, int *x, int *y, \
-        int *comp, int req_comp);
-    extern void     stbi_image_free(void *retval_from_stbi_load);
-
+    extern unsigned char *stbi_load_from_memory(unsigned char const *buffer, int len, int *x, int *y, int *comp, int req_comp);
+    extern void stbi_image_free(void *retval_from_stbi_load);
 };
 
 namespace DuiLib {
@@ -59,6 +61,7 @@ namespace DuiLib {
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
         ASSERT(::GetObjectType(hRgn) == OBJ_REGION);
         ASSERT(::GetObjectType(hOldRgn) == OBJ_REGION);
+
         ::SelectClipRgn(hDC, hOldRgn);
         ::DeleteObject(hOldRgn);
         ::DeleteObject(hRgn);
@@ -100,76 +103,97 @@ namespace DuiLib {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
+    // 一些有用的工具函数、转换函数、绘制函数
     //
-    //
-
     static const float OneThird = 1.0f / 3;
 
-    static void RGBtoHSL(DWORD ARGB, float* H, float* S, float* L) {
-        const float
-            R = (float)GetRValue(ARGB),
-            G = (float)GetGValue(ARGB),
-            B = (float)GetBValue(ARGB),
-            nR = (R < 0 ? 0 : (R>255 ? 255 : R)) / 255,
-            nG = (G < 0 ? 0 : (G>255 ? 255 : G)) / 255,
-            nB = (B < 0 ? 0 : (B>255 ? 255 : B)) / 255,
-            m = min(min(nR, nG), nB),
-            M = max(max(nR, nG), nB);
+    // RGB颜色空间转HSL颜色空间
+    static void RGBtoHSL(DWORD ARGB, float* H, float* S, float* L)
+    {
+        const float R = (float) GetRValue(ARGB);
+        const float G = (float) GetGValue(ARGB);
+        const float B = (float) GetBValue(ARGB);
+        const float nR = (R < 0 ? 0 : (R > 255 ? 255 : R)) / 255;
+        const float nG = (G < 0 ? 0 : (G > 255 ? 255 : G)) / 255;
+        const float nB = (B < 0 ? 0 : (B > 255 ? 255 : B)) / 255;
+        const float m = min(min(nR, nG), nB);
+        const float M = max(max(nR, nG), nB);
+
+        // L的
         *L = (m + M) / 2;
-        if (M == m) *H = *S = 0;
-        else {
-            const float
-                f = (nR == m) ? (nG - nB) : ((nG == m) ? (nB - nR) : (nR - nG)),
-                i = (nR == m) ? 3.0f : ((nG == m) ? 5.0f : 1.0f);
+
+        if (M == m)
+        {
+            *H = *S = 0;
+        }
+        else
+        {
+            const float f = (nR == m) ? (nG - nB) : ((nG == m) ? (nB - nR) : (nR - nG));
+            const float i = (nR == m) ? 3.0f : ((nG == m) ? 5.0f : 1.0f);
+
+            // H的
             *H = (i - f / (M - m));
-            if (*H >= 6) *H -= 6;
+
+            if (*H >= 6)
+            {
+                *H -= 6;
+            }
+
             *H *= 60;
+
+            // S的
             *S = (2 * (*L) <= 1) ? ((M - m) / (M + m)) : ((M - m) / (2 - M - m));
         }
     }
 
-    static void HSLtoRGB(DWORD* ARGB, float H, float S, float L) {
-        const float
-            q = 2 * L < 1 ? L*(1 + S) : (L + S - L*S),
-            p = 2 * L - q,
-            h = H / 360,
-            tr = h + OneThird,
-            tg = h,
-            tb = h - OneThird,
-            ntr = tr < 0 ? tr + 1 : (tr>1 ? tr - 1 : tr),
-            ntg = tg < 0 ? tg + 1 : (tg>1 ? tg - 1 : tg),
-            ntb = tb < 0 ? tb + 1 : (tb>1 ? tb - 1 : tb),
-            R = 255 * (6 * ntr < 1 ? p + (q - p) * 6 * ntr : (2 * ntr < 1 ? q : (3 * ntr < 2 ? p + (q - p) * 6 * (2.0f*OneThird - ntr) : p))),
-            G = 255 * (6 * ntg < 1 ? p + (q - p) * 6 * ntg : (2 * ntg < 1 ? q : (3 * ntg < 2 ? p + (q - p) * 6 * (2.0f*OneThird - ntg) : p))),
-            B = 255 * (6 * ntb < 1 ? p + (q - p) * 6 * ntb : (2 * ntb < 1 ? q : (3 * ntb < 2 ? p + (q - p) * 6 * (2.0f*OneThird - ntb) : p)));
+    // HSL颜色空间转RGB颜色空间
+    static void HSLtoRGB(DWORD* ARGB, float H, float S, float L)
+    {
+        const float q = 2 * L < 1 ? L * (1 + S) : (L + S - L * S);
+        const float p = 2 * L - q;
+        const float h = H / 360;
+        const float tr = h + OneThird;
+        const float tg = h;
+        const float tb = h - OneThird;
+        const float ntr = tr < 0 ? tr + 1 : (tr > 1 ? tr - 1 : tr);
+        const float ntg = tg < 0 ? tg + 1 : (tg > 1 ? tg - 1 : tg);
+        const float ntb = tb < 0 ? tb + 1 : (tb > 1 ? tb - 1 : tb);
+        const float R = 255 * (6 * ntr < 1 ? p + (q - p) * 6 * ntr : (2 * ntr < 1 ? q : (3 * ntr < 2 ? p + (q - p) * 6 * (2.0f * OneThird - ntr) : p)));
+        const float G = 255 * (6 * ntg < 1 ? p + (q - p) * 6 * ntg : (2 * ntg < 1 ? q : (3 * ntg < 2 ? p + (q - p) * 6 * (2.0f * OneThird - ntg) : p)));
+        const float B = 255 * (6 * ntb < 1 ? p + (q - p) * 6 * ntb : (2 * ntb < 1 ? q : (3 * ntb < 2 ? p + (q - p) * 6 * (2.0f * OneThird - ntb) : p)));
+
         *ARGB &= 0xFF000000;
-        *ARGB |= RGB((BYTE)(R < 0 ? 0 : (R>255 ? 255 : R)), (BYTE)(G < 0 ? 0 : (G>255 ? 255 : G)), (BYTE)(B < 0 ? 0 : (B>255 ? 255 : B)));
+        *ARGB |= RGB((BYTE)(R < 0 ? 0 : (R > 255 ? 255 : R)), (BYTE)(G < 0 ? 0 : (G > 255 ? 255 : G)), (BYTE)(B < 0 ? 0 : (B > 255 ? 255 : B)));
     }
 
     static COLORREF PixelAlpha(COLORREF clrSrc, double src_darken, COLORREF clrDest, double dest_darken)
     {
-        return RGB(GetRValue(clrSrc) * src_darken + GetRValue(clrDest) * dest_darken,
+        return RGB(
+            GetRValue(clrSrc) * src_darken + GetRValue(clrDest) * dest_darken,
             GetGValue(clrSrc) * src_darken + GetGValue(clrDest) * dest_darken,
             GetBValue(clrSrc) * src_darken + GetBValue(clrDest) * dest_darken);
 
     }
 
+    // 带透明试的绘制BitBlt
     static BOOL WINAPI AlphaBitBlt(HDC hDC, int nDestX, int nDestY, int dwWidth, int dwHeight, HDC hSrcDC, \
         int nSrcX, int nSrcY, int wSrc, int hSrc, BLENDFUNCTION ftn)
     {
         HDC hTempDC = ::CreateCompatibleDC(hDC);
         if (NULL == hTempDC)
+        {
             return FALSE;
+        }
 
-        //Creates Source DIB
-        LPBITMAPINFO lpbiSrc = NULL;
-        // Fill in the BITMAPINFOHEADER
-        lpbiSrc = (LPBITMAPINFO) new BYTE[sizeof(BITMAPINFOHEADER)];
+        // 创建源位图
+        LPBITMAPINFO lpbiSrc = (LPBITMAPINFO) new BYTE[sizeof(BITMAPINFOHEADER)];
         if (lpbiSrc == NULL)
         {
             ::DeleteDC(hTempDC);
             return FALSE;
         }
+
+        // 填充位图头部数据
         lpbiSrc->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         lpbiSrc->bmiHeader.biWidth = dwWidth;
         lpbiSrc->bmiHeader.biHeight = dwHeight;
@@ -183,9 +207,7 @@ namespace DuiLib {
         lpbiSrc->bmiHeader.biClrImportant = 0;
 
         COLORREF* pSrcBits = NULL;
-        HBITMAP hSrcDib = CreateDIBSection(
-            hSrcDC, lpbiSrc, DIB_RGB_COLORS, (void **)&pSrcBits,
-            NULL, NULL);
+        HBITMAP hSrcDib = ::CreateDIBSection(hSrcDC, lpbiSrc, DIB_RGB_COLORS, (void**)&pSrcBits, NULL, NULL);
 
         if ((NULL == hSrcDib) || (NULL == pSrcBits))
         {
@@ -194,14 +216,12 @@ namespace DuiLib {
             return FALSE;
         }
 
-        HBITMAP hOldTempBmp = (HBITMAP)::SelectObject(hTempDC, hSrcDib);
+        HBITMAP hOldTempBmp = (HBITMAP) ::SelectObject(hTempDC, hSrcDib);
         ::StretchBlt(hTempDC, 0, 0, dwWidth, dwHeight, hSrcDC, nSrcX, nSrcY, wSrc, hSrc, SRCCOPY);
         ::SelectObject(hTempDC, hOldTempBmp);
 
-        //Creates Destination DIB
-        LPBITMAPINFO lpbiDest = NULL;
-        // Fill in the BITMAPINFOHEADER
-        lpbiDest = (LPBITMAPINFO) new BYTE[sizeof(BITMAPINFOHEADER)];
+        // 创建目标位图
+        LPBITMAPINFO lpbiDest = (LPBITMAPINFO) new BYTE[sizeof(BITMAPINFOHEADER)];
         if (lpbiDest == NULL)
         {
             delete[] lpbiSrc;
@@ -210,6 +230,7 @@ namespace DuiLib {
             return FALSE;
         }
 
+        // 填充位图头部数据
         lpbiDest->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         lpbiDest->bmiHeader.biWidth = dwWidth;
         lpbiDest->bmiHeader.biHeight = dwHeight;
@@ -223,9 +244,7 @@ namespace DuiLib {
         lpbiDest->bmiHeader.biClrImportant = 0;
 
         COLORREF* pDestBits = NULL;
-        HBITMAP hDestDib = CreateDIBSection(
-            hDC, lpbiDest, DIB_RGB_COLORS, (void **)&pDestBits,
-            NULL, NULL);
+        HBITMAP hDestDib = ::CreateDIBSection(hDC, lpbiDest, DIB_RGB_COLORS, (void **)&pDestBits, NULL, NULL);
 
         if ((NULL == hDestDib) || (NULL == pDestBits))
         {
@@ -246,9 +265,13 @@ namespace DuiLib {
         {
             nAlpha = LOBYTE(*pSrcBits >> 24);
             src_darken = (double)(nAlpha * ftn.SourceConstantAlpha) / 255.0 / 255.0;
-            if (src_darken < 0.0) src_darken = 0.0;
-            *pDestBits = PixelAlpha(*pSrcBits, src_darken, *pDestBits, 1.0 - src_darken);
-        } //for
+            if (src_darken < 0.0)
+            {
+                src_darken = 0.0;
+            }
+
+            *pDestBits = DuiLib::PixelAlpha(*pSrcBits, src_darken, *pDestBits, 1.0 - src_darken);
+        }
 
         ::SelectObject(hTempDC, hDestDib);
         ::BitBlt(hDC, nDestX, nDestY, dwWidth, dwHeight, hTempDC, 0, 0, SRCCOPY);
@@ -270,10 +293,13 @@ namespace DuiLib {
 
     DWORD CRenderEngine::AdjustColor(DWORD dwColor, short H, short S, short L)
     {
-        if (H == 180 && S == 100 && L == 100) return dwColor;
+        if (H == 180 && S == 100 && L == 100)
+            return dwColor;
+
         float fH, fS, fL;
         float S1 = S / 100.0f;
         float L1 = L / 100.0f;
+
         RGBtoHSL(dwColor, &fH, &fS, &fL);
         fH += (H - 180);
         fH = fH > 0 ? fH : fH + 360;
@@ -290,62 +316,108 @@ namespace DuiLib {
 
         do
         {
-            if (type == NULL) {
+            if (type == NULL)
+            {
                 CDuiString sFile = CPaintManagerUI::GetResourcePath();
-                if (CPaintManagerUI::GetResourceZip().IsEmpty()) {
+                if (CPaintManagerUI::GetResourceZip().IsEmpty())
+                {
                     sFile += bitmap.m_lpstr;
-                    HANDLE hFile = ::CreateFile(sFile.GetData(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
-                        FILE_ATTRIBUTE_NORMAL, NULL);
-                    if (hFile == INVALID_HANDLE_VALUE) break;
+                    HANDLE hFile = ::CreateFile(sFile.GetData(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                    if (hFile == INVALID_HANDLE_VALUE)
+                    {
+                        break;
+                    }
+
                     dwSize = ::GetFileSize(hFile, NULL);
-                    if (dwSize == 0) break;
+                    if (dwSize == 0)
+                    {
+                        break;
+                    }
 
                     DWORD dwRead = 0;
                     pData = new BYTE[dwSize];
                     ::ReadFile(hFile, pData, dwSize, &dwRead, NULL);
                     ::CloseHandle(hFile);
 
-                    if (dwRead != dwSize) {
+                    if (dwRead != dwSize)
+                    {
                         delete[] pData;
                         pData = NULL;
                         break;
                     }
                 }
-                else {
+                else
+                {
                     sFile += CPaintManagerUI::GetResourceZip();
                     HZIP hz = NULL;
-                    if (CPaintManagerUI::IsCachedResourceZip()) hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
-                    else hz = OpenZip((void*)sFile.GetData(), 0, 2);
-                    if (hz == NULL) break;
-                    ZIPENTRY ze;
-                    int i;
-                    if (FindZipItem(hz, bitmap.m_lpstr, true, &i, &ze) != 0) break;
-                    dwSize = ze.unc_size;
-                    if (dwSize == 0) break;
-                    pData = new BYTE[dwSize];
-                    int res = UnzipItem(hz, i, pData, dwSize, 3);
-                    if (res != 0x00000000 && res != 0x00000600) {
-                        delete[] pData;
-                        pData = NULL;
-                        if (!CPaintManagerUI::IsCachedResourceZip()) CloseZip(hz);
+                    if (CPaintManagerUI::IsCachedResourceZip())
+                    {
+                        hz = (HZIP)CPaintManagerUI::GetResourceZipHandle();
+                    }
+                    else
+                    {
+                        hz = OpenZip((void*)sFile.GetData(), 0, 2);
+                    }
+
+                    if (hz == NULL)
+                    {
                         break;
                     }
-                    if (!CPaintManagerUI::IsCachedResourceZip()) CloseZip(hz);
+
+                    ZIPENTRY ze;
+                    int i;
+                    if (FindZipItem(hz, bitmap.m_lpstr, true, &i, &ze) != 0)
+                    {
+                        break;
+                    }
+
+                    dwSize = ze.unc_size;
+                    if (dwSize == 0)
+                    {
+                        break;
+                    }
+
+                    pData = new BYTE[dwSize];
+                    int res = UnzipItem(hz, i, pData, dwSize, 3);
+                    if (res != 0x00000000 && res != 0x00000600)
+                    {
+                        delete[] pData;
+                        pData = NULL;
+                        if (!CPaintManagerUI::IsCachedResourceZip())
+                        {
+                            CloseZip(hz);
+                        }
+                        break;
+                    }
+                    if (!CPaintManagerUI::IsCachedResourceZip())
+                    {
+                        CloseZip(hz);
+                    }
                 }
             }
-            else {
+            else
+            {
                 HRSRC hResource = ::FindResource(CPaintManagerUI::GetResourceDll(), bitmap.m_lpstr, type);
-                if (hResource == NULL) break;
+                if (hResource == NULL)
+                {
+                    break;
+                }
+
                 HGLOBAL hGlobal = ::LoadResource(CPaintManagerUI::GetResourceDll(), hResource);
-                if (hGlobal == NULL) {
+                if (hGlobal == NULL)
+                {
                     FreeResource(hResource);
                     break;
                 }
 
                 dwSize = ::SizeofResource(CPaintManagerUI::GetResourceDll(), hResource);
-                if (dwSize == 0) break;
+                if (dwSize == 0)
+                {
+                    break;
+                }
+
                 pData = new BYTE[dwSize];
-                ::CopyMemory(pData, (LPBYTE)::LockResource(hGlobal), dwSize);
+                ::CopyMemory(pData, (LPBYTE) ::LockResource(hGlobal), dwSize);
                 ::FreeResource(hResource);
             }
         } while (0);
@@ -353,23 +425,31 @@ namespace DuiLib {
         while (!pData)
         {
             //读不到图片, 则直接去读取bitmap.m_lpstr指向的路径
-            HANDLE hFile = ::CreateFile(bitmap.m_lpstr, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, \
-                FILE_ATTRIBUTE_NORMAL, NULL);
-            if (hFile == INVALID_HANDLE_VALUE) break;
+            HANDLE hFile = ::CreateFile(bitmap.m_lpstr, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (hFile == INVALID_HANDLE_VALUE)
+            {
+                break;
+            }
+
             dwSize = ::GetFileSize(hFile, NULL);
-            if (dwSize == 0) break;
+            if (dwSize == 0)
+            {
+                break;
+            }
 
             DWORD dwRead = 0;
             pData = new BYTE[dwSize];
             ::ReadFile(hFile, pData, dwSize, &dwRead, NULL);
             ::CloseHandle(hFile);
 
-            if (dwRead != dwSize) {
+            if (dwRead != dwSize)
+            {
                 delete[] pData;
                 pData = NULL;
             }
             break;
         }
+
         if (!pData)
         {
             //::MessageBox(0, _T("读取图片数据失败！"), _T("抓BUG"), MB_OK);
@@ -380,7 +460,8 @@ namespace DuiLib {
         int x, y, n;
         pImage = stbi_load_from_memory(pData, dwSize, &x, &y, &n, 4);
         delete[] pData;
-        if (!pImage) {
+        if (!pImage)
+        {
             //::MessageBox(0, _T("解析图片失败"), _T("抓BUG"), MB_OK);
             return NULL;
         }
@@ -398,7 +479,8 @@ namespace DuiLib {
         bool bAlphaChannel = false;
         LPBYTE pDest = NULL;
         HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, (void**)&pDest, NULL, 0);
-        if (!hBitmap) {
+        if (!hBitmap)
+        {
             //::MessageBox(0, _T("CreateDIBSection失败"), _T("抓BUG"), MB_OK);
             return NULL;
         }
@@ -408,20 +490,21 @@ namespace DuiLib {
             pDest[i * 4 + 3] = pImage[i * 4 + 3];
             if (pDest[i * 4 + 3] < 255)
             {
-                pDest[i * 4] = (BYTE)(DWORD(pImage[i * 4 + 2])*pImage[i * 4 + 3] / 255);
-                pDest[i * 4 + 1] = (BYTE)(DWORD(pImage[i * 4 + 1])*pImage[i * 4 + 3] / 255);
-                pDest[i * 4 + 2] = (BYTE)(DWORD(pImage[i * 4])*pImage[i * 4 + 3] / 255);
+                pDest[i * 4 + 0] = (BYTE)(DWORD(pImage[i * 4 + 2]) * pImage[i * 4 + 3] / 255);
+                pDest[i * 4 + 1] = (BYTE)(DWORD(pImage[i * 4 + 1]) * pImage[i * 4 + 3] / 255);
+                pDest[i * 4 + 2] = (BYTE)(DWORD(pImage[i * 4 + 0]) * pImage[i * 4 + 3] / 255);
                 bAlphaChannel = true;
             }
             else
             {
-                pDest[i * 4] = pImage[i * 4 + 2];
+                pDest[i * 4 + 0] = pImage[i * 4 + 2];
                 pDest[i * 4 + 1] = pImage[i * 4 + 1];
-                pDest[i * 4 + 2] = pImage[i * 4];
+                pDest[i * 4 + 2] = pImage[i * 4 + 0];
             }
 
-            if (*(DWORD*)(&pDest[i * 4]) == mask) {
-                pDest[i * 4] = (BYTE)0;
+            if (*(DWORD*)(&pDest[i * 4]) == mask)
+            {
+                pDest[i * 4 + 0] = (BYTE)0;
                 pDest[i * 4 + 1] = (BYTE)0;
                 pDest[i * 4 + 2] = (BYTE)0;
                 pDest[i * 4 + 3] = (BYTE)0;
@@ -441,10 +524,16 @@ namespace DuiLib {
 
     void CRenderEngine::FreeImage(const TImageInfo* bitmap)
     {
-        if (bitmap->hBitmap) {
-            ::DeleteObject(bitmap->hBitmap);
+        if (bitmap != NULL)
+        {
+            if (bitmap->hBitmap != NULL)
+            {
+                ::DeleteObject(bitmap->hBitmap);
+            }
+
+            delete bitmap;
+            bitmap = NULL;
         }
-        delete bitmap;
     }
 
     void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RECT& rcPaint,
@@ -465,6 +554,8 @@ namespace DuiLib {
 
         RECT rcTemp = { 0 };
         RECT rcDest = { 0 };
+
+        // 如果AlphaBlend函数可用，并且图片支持alpha通道或需要透明，则用AlphaBlend绘图（支持透明度）
         if (lpAlphaBlend && (alphaChannel || uFade < 255)) {
             BLENDFUNCTION bf = { AC_SRC_OVER, 0, uFade, AC_SRC_ALPHA };
             // middle
@@ -901,28 +992,42 @@ namespace DuiLib {
         const CDuiString& sImageResType, RECT rcItem, RECT rcBmpPart, RECT rcCorner, DWORD dwMask, BYTE bFade, \
         bool bHole, bool bTiledX, bool bTiledY)
     {
-        if (sImageName.IsEmpty()) {
+        if (sImageName.IsEmpty())
+        {
             return false;
         }
+
         const TImageInfo* data = NULL;
-        if (sImageResType.IsEmpty()) {
+        if (sImageResType.IsEmpty())
+        {
             data = pManager->GetImageEx((LPCTSTR)sImageName, NULL, dwMask);
         }
-        else {
+        else
+        {
             data = pManager->GetImageEx((LPCTSTR)sImageName, (LPCTSTR)sImageResType, dwMask);
         }
-        if (!data) return false;
 
-        if (rcBmpPart.left == 0 && rcBmpPart.right == 0 && rcBmpPart.top == 0 && rcBmpPart.bottom == 0) {
+        if (!data)
+            return false;
+
+        if (rcBmpPart.left == 0 && rcBmpPart.right == 0 && rcBmpPart.top == 0 && rcBmpPart.bottom == 0)
+        {
             rcBmpPart.right = data->nX;
             rcBmpPart.bottom = data->nY;
         }
-        if (rcBmpPart.right > data->nX) rcBmpPart.right = data->nX;
-        if (rcBmpPart.bottom > data->nY) rcBmpPart.bottom = data->nY;
+
+        if (rcBmpPart.right > data->nX)
+            rcBmpPart.right = data->nX;
+
+        if (rcBmpPart.bottom > data->nY)
+            rcBmpPart.bottom = data->nY;
 
         RECT rcTemp;
-        if (!::IntersectRect(&rcTemp, &rcItem, &rc)) return true;
-        if (!::IntersectRect(&rcTemp, &rcItem, &rcPaint)) return true;
+        if (!::IntersectRect(&rcTemp, &rcItem, &rc))
+            return true;
+
+        if (!::IntersectRect(&rcTemp, &rcItem, &rcPaint))
+            return true;
 
         CRenderEngine::DrawImage(hDC, data->hBitmap, rcItem, rcPaint, rcBmpPart, rcCorner, data->alphaChannel, bFade, bHole, bTiledX, bTiledY);
 
@@ -932,7 +1037,8 @@ namespace DuiLib {
     bool CRenderEngine::DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& rcPaint,
         LPCTSTR pStrImage, LPCTSTR pStrModify)
     {
-        if ((pManager == NULL) || (hDC == NULL)) return false;
+        if ((pManager == NULL) || (hDC == NULL))
+            return false;
 
         // 1、aaa.jpg
         // 2、file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
@@ -955,19 +1061,22 @@ namespace DuiLib {
         CDuiString sValue;
         LPTSTR pstr = NULL;
 
-        for (int i = 0; i < 2; ++i, image_count = 0) {
+        for (int i = 0; i < 2; ++i, image_count = 0)
+        {
             if (i == 1)
                 pStrImage = pStrModify;
 
             if (!pStrImage) continue;
 
-            while (*pStrImage != _T('\0')) {
+            while (*pStrImage != _T('\0'))
+            {
                 sItem.Empty();
                 sValue.Empty();
                 while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
                 while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' ')) {
                     LPTSTR pstrTemp = ::CharNext(pStrImage);
-                    while (pStrImage < pstrTemp) {
+                    while (pStrImage < pstrTemp)
+                    {
                         sItem += *pStrImage++;
                     }
                 }
@@ -982,8 +1091,10 @@ namespace DuiLib {
                     }
                 }
                 if (*pStrImage++ != _T('\'')) break;
-                if (!sValue.IsEmpty()) {
-                    if (sItem == _T("file") || sItem == _T("res")) {
+                if (!sValue.IsEmpty())
+                {
+                    if (sItem == _T("file") || sItem == _T("res"))
+                    {
                         if (image_count > 0)
                             DuiLib::DrawImage(hDC, pManager, rc, rcPaint, sImageName, sImageResType,
                             rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bTiledX, bTiledY);
@@ -992,7 +1103,8 @@ namespace DuiLib {
                         if (sItem == _T("file"))
                             ++image_count;
                     }
-                    else if (sItem == _T("restype")) {
+                    else if (sItem == _T("restype"))
+                    {
                         if (image_count > 0)
                             DuiLib::DrawImage(hDC, pManager, rc, rcPaint, sImageName, sImageResType,
                             rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bTiledX, bTiledY);
@@ -1000,7 +1112,8 @@ namespace DuiLib {
                         sImageResType = sValue;
                         ++image_count;
                     }
-                    else if (sItem == _T("dest")) {
+                    else if (sItem == _T("dest"))
+                    {
                         rcItem.left = rc.left + _tcstol(sValue.GetData(), &pstr, 10);  ASSERT(pstr);
                         rcItem.top = rc.top + _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         rcItem.right = rc.left + _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
@@ -1008,36 +1121,47 @@ namespace DuiLib {
                         rcItem.bottom = rc.top + _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                         if (rcItem.bottom > rc.bottom) rcItem.bottom = rc.bottom;
                     }
-                    else if (sItem == _T("source")) {
+                    else if (sItem == _T("source"))
+                    {
                         rcBmpPart.left = _tcstol(sValue.GetData(), &pstr, 10);  ASSERT(pstr);
                         rcBmpPart.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         rcBmpPart.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
                         rcBmpPart.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                     }
-                    else if (sItem == _T("corner")) {
+                    else if (sItem == _T("corner"))
+                    {
                         rcCorner.left = _tcstol(sValue.GetData(), &pstr, 10);  ASSERT(pstr);
                         rcCorner.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
                         rcCorner.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
                         rcCorner.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
                     }
-                    else if (sItem == _T("mask")) {
-                        if (sValue[0] == _T('#')) dwMask = _tcstoul(sValue.GetData() + 1, &pstr, 16);
-                        else dwMask = _tcstoul(sValue.GetData(), &pstr, 16);
+                    else if (sItem == _T("mask"))
+                    {
+                        if (sValue[0] == _T('#'))
+                            dwMask = _tcstoul(sValue.GetData() + 1, &pstr, 16);
+                        else
+                            dwMask = _tcstoul(sValue.GetData(), &pstr, 16);
                     }
-                    else if (sItem == _T("fade")) {
+                    else if (sItem == _T("fade"))
+                    {
                         bFade = (BYTE)_tcstoul(sValue.GetData(), &pstr, 10);
                     }
-                    else if (sItem == _T("hole")) {
+                    else if (sItem == _T("hole"))
+                    {
                         bHole = (_tcscmp(sValue.GetData(), _T("true")) == 0);
                     }
-                    else if (sItem == _T("xtiled")) {
+                    else if (sItem == _T("xtiled"))
+                    {
                         bTiledX = (_tcscmp(sValue.GetData(), _T("true")) == 0);
                     }
-                    else if (sItem == _T("ytiled")) {
+                    else if (sItem == _T("ytiled"))
+                    {
                         bTiledY = (_tcscmp(sValue.GetData(), _T("true")) == 0);
                     }
                 }
-                if (*pStrImage++ != _T(' ')) break;
+
+                if (*pStrImage++ != _T(' '))
+                    break;
             }
         }
 
@@ -1049,7 +1173,9 @@ namespace DuiLib {
 
     void CRenderEngine::DrawColor(HDC hDC, const RECT& rc, DWORD color)
     {
-        if (color <= 0x00FFFFFF) return;
+        if (color <= 0x00FFFFFF)
+            return;
+
         if (color >= 0xFF000000)
         {
             ::SetBkColor(hDC, RGB(GetBValue(color), GetGValue(color), GetRValue(color)));
@@ -1068,7 +1194,8 @@ namespace DuiLib {
             bmi.bmiHeader.biSizeImage = 1 * 1 * sizeof(DWORD);
             LPDWORD pDest = NULL;
             HBITMAP hBitmap = ::CreateDIBSection(hDC, &bmi, DIB_RGB_COLORS, (LPVOID*)&pDest, NULL, 0);
-            if (!hBitmap) return;
+            if (!hBitmap)
+                return;
 
             *pDest = color;
 

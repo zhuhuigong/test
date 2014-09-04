@@ -407,8 +407,8 @@ namespace DuiLib {
                 // 解析所有属性并覆盖默认属性
                 if (node.HasAttributes())
                 {
-                    TCHAR szValue[500] = { 0 };
-                    SIZE_T cchLen = lengthof(szValue) - 1;
+                    //TCHAR szValue[500] = { 0 };
+                    //SIZE_T cchLen = lengthof(szValue) - 1;
                     // Set ordinary attributes
                     int nAttributes = node.GetAttributeCount();
                     for (int i = 0; i < nAttributes; i++)
