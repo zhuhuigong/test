@@ -3,7 +3,10 @@
 
 namespace DuiLib
 {
-    CVerticalLayoutUI::CVerticalLayoutUI() : m_iSepHeight(0), m_uButtonState(0), m_bImmMode(false)
+    CVerticalLayoutUI::CVerticalLayoutUI()
+        : m_iSepHeight(0)
+        , m_uButtonState(0)
+        , m_bImmMode(false)
     {
         ptLastMouse.x = ptLastMouse.y = 0;
         ::ZeroMemory(&m_rcNewPos, sizeof(m_rcNewPos));
@@ -16,7 +19,9 @@ namespace DuiLib
 
     LPVOID CVerticalLayoutUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_VERTICALLAYOUT) == 0) return static_cast<CVerticalLayoutUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_VERTICALLAYOUT) == 0)
+            return static_cast<CVerticalLayoutUI*>(this);
+
         return CContainerUI::GetInterface(pstrName);
     }
 
@@ -166,28 +171,43 @@ namespace DuiLib
 
     void CVerticalLayoutUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("sepheight")) == 0) SetSepHeight(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("sepimm")) == 0) SetSepImmMode(_tcscmp(pstrValue, _T("true")) == 0);
-        else CContainerUI::SetAttribute(pstrName, pstrValue);
+        if (lstrcmpi(pstrName, _T("sepheight")) == 0)
+        {
+            SetSepHeight(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("sepimm")) == 0)
+        {
+            SetSepImmMode(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else
+        {
+            CContainerUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     void CVerticalLayoutUI::DoEvent(TEventUI& event)
     {
-        if (m_iSepHeight != 0) {
+        if (m_iSepHeight != 0)
+        {
             if (event.Type == UIEVENT_BUTTONDOWN && IsEnabled())
             {
                 RECT rcSeparator = GetThumbRect(false);
-                if (::PtInRect(&rcSeparator, event.ptMouse)) {
+                if (::PtInRect(&rcSeparator, event.ptMouse))
+                {
                     m_uButtonState |= UISTATE_CAPTURED;
                     ptLastMouse = event.ptMouse;
                     m_rcNewPos = m_rcItem;
-                    if (!m_bImmMode && m_pManager) m_pManager->AddPostPaint(this);
+                    if (!m_bImmMode && m_pManager)
+                        m_pManager->AddPostPaint(this);
+
                     return;
                 }
             }
+
             if (event.Type == UIEVENT_BUTTONUP)
             {
-                if ((m_uButtonState & UISTATE_CAPTURED) != 0) {
+                if ((m_uButtonState & UISTATE_CAPTURED) != 0)
+                {
                     m_uButtonState &= ~UISTATE_CAPTURED;
                     m_rcItem = m_rcNewPos;
                     if (!m_bImmMode && m_pManager) m_pManager->RemovePostPaint(this);
@@ -195,9 +215,11 @@ namespace DuiLib
                     return;
                 }
             }
+
             if (event.Type == UIEVENT_MOUSEMOVE)
             {
-                if ((m_uButtonState & UISTATE_CAPTURED) != 0) {
+                if ((m_uButtonState & UISTATE_CAPTURED) != 0)
+                {
                     LONG cy = event.ptMouse.y - ptLastMouse.y;
                     ptLastMouse = event.ptMouse;
                     RECT rc = m_rcNewPos;
@@ -253,27 +275,25 @@ namespace DuiLib
                 }
             }
         }
+
         CContainerUI::DoEvent(event);
     }
 
     RECT CVerticalLayoutUI::GetThumbRect(bool bUseNew) const
     {
-        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew) {
+        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew)
+        {
             if (m_iSepHeight >= 0)
-                return CDuiRect(m_rcNewPos.left, MAX(m_rcNewPos.bottom - m_iSepHeight, m_rcNewPos.top),
-                m_rcNewPos.right, m_rcNewPos.bottom);
+                return CDuiRect(m_rcNewPos.left, MAX(m_rcNewPos.bottom - m_iSepHeight, m_rcNewPos.top), m_rcNewPos.right, m_rcNewPos.bottom);
             else
-                return CDuiRect(m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.right,
-                MIN(m_rcNewPos.top - m_iSepHeight, m_rcNewPos.bottom));
+                return CDuiRect(m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.right, MIN(m_rcNewPos.top - m_iSepHeight, m_rcNewPos.bottom));
         }
-        else {
+        else
+        {
             if (m_iSepHeight >= 0)
-                return CDuiRect(m_rcItem.left, MAX(m_rcItem.bottom - m_iSepHeight, m_rcItem.top), m_rcItem.right,
-                m_rcItem.bottom);
+                return CDuiRect(m_rcItem.left, MAX(m_rcItem.bottom - m_iSepHeight, m_rcItem.top), m_rcItem.right, m_rcItem.bottom);
             else
-                return CDuiRect(m_rcItem.left, m_rcItem.top, m_rcItem.right,
-                MIN(m_rcItem.top - m_iSepHeight, m_rcItem.bottom));
-
+                return CDuiRect(m_rcItem.left, m_rcItem.top, m_rcItem.right, MIN(m_rcItem.top - m_iSepHeight, m_rcItem.bottom));
         }
     }
 }

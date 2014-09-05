@@ -6,7 +6,11 @@ namespace DuiLib {
     //
     //
 
-    CListUI::CListUI() : m_pCallback(NULL), m_bScrollSelect(false), m_iCurSel(-1), m_iExpandedItem(-1)
+    CListUI::CListUI()
+        : m_pCallback(NULL)
+        , m_bScrollSelect(false)
+        , m_iCurSel(-1)
+        , m_iExpandedItem(-1)
     {
         m_pList = new CListBodyUI(this);
         m_pHeader = new CListHeaderUI;
@@ -45,9 +49,15 @@ namespace DuiLib {
 
     LPVOID CListUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_LIST) == 0) return static_cast<CListUI*>(this);
-        if (_tcscmp(pstrName, _T("IList")) == 0) return static_cast<IListUI*>(this);
-        if (_tcscmp(pstrName, _T("IListOwner")) == 0) return static_cast<IListOwnerUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_LIST) == 0)
+            return static_cast<CListUI*>(this);
+
+        if (lstrcmpi(pstrName, _T("IList")) == 0)
+            return static_cast<IListUI*>(this);
+
+        if (lstrcmpi(pstrName, _T("IListOwner")) == 0)
+            return static_cast<IListOwnerUI*>(this);
+
         return CVerticalLayoutUI::GetInterface(pstrName);
     }
 

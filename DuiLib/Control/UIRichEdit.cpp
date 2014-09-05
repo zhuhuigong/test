@@ -2062,62 +2062,100 @@ namespace DuiLib {
 
     void CRichEditUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("vscrollbar")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
+        if (lstrcmpi(pstrName, _T("vscrollbar")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
         }
-        if (_tcscmp(pstrName, _T("autovscroll")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_lTwhStyle |= ES_AUTOVSCROLL;
+        if (lstrcmpi(pstrName, _T("autovscroll")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_lTwhStyle |= ES_AUTOVSCROLL;
         }
-        else if (_tcscmp(pstrName, _T("hscrollbar")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
+        else if (lstrcmpi(pstrName, _T("hscrollbar")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
         }
-        if (_tcscmp(pstrName, _T("autohscroll")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_lTwhStyle |= ES_AUTOHSCROLL;
+        if (lstrcmpi(pstrName, _T("autohscroll")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_lTwhStyle |= ES_AUTOHSCROLL;
         }
-        else if (_tcscmp(pstrName, _T("wanttab")) == 0) {
-            SetWantTab(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (lstrcmpi(pstrName, _T("wanttab")) == 0)
+        {
+            SetWantTab(lstrcmpi(pstrValue, _T("true")) == 0);
         }
-        else if (_tcscmp(pstrName, _T("wantreturn")) == 0) {
-            SetWantReturn(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (lstrcmpi(pstrName, _T("wantreturn")) == 0)
+        {
+            SetWantReturn(lstrcmpi(pstrValue, _T("true")) == 0);
         }
-        else if (_tcscmp(pstrName, _T("wantctrlreturn")) == 0) {
-            SetWantCtrlReturn(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (lstrcmpi(pstrName, _T("wantctrlreturn")) == 0)
+        {
+            SetWantCtrlReturn(lstrcmpi(pstrValue, _T("true")) == 0);
         }
-        else if (_tcscmp(pstrName, _T("rich")) == 0) {
-            SetRich(_tcscmp(pstrValue, _T("true")) == 0);
+        else if (lstrcmpi(pstrName, _T("rich")) == 0)
+        {
+            SetRich(lstrcmpi(pstrValue, _T("true")) == 0);
         }
-        else if (_tcscmp(pstrName, _T("multiline")) == 0) {
-            if (_tcscmp(pstrValue, _T("false")) == 0) m_lTwhStyle &= ~ES_MULTILINE;
+        else if (lstrcmpi(pstrName, _T("multiline")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("false")) == 0)
+                m_lTwhStyle &= ~ES_MULTILINE;
         }
-        else if (_tcscmp(pstrName, _T("readonly")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) { m_lTwhStyle |= ES_READONLY; m_bReadOnly = true; }
+        else if (lstrcmpi(pstrName, _T("readonly")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+            {
+                m_lTwhStyle |= ES_READONLY;
+                m_bReadOnly = true;
+            }
         }
-        else if (_tcscmp(pstrName, _T("password")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_lTwhStyle |= ES_PASSWORD;
+        else if (lstrcmpi(pstrName, _T("password")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_lTwhStyle |= ES_PASSWORD;
         }
-        else if (_tcscmp(pstrName, _T("align")) == 0) {
-            if (_tcsstr(pstrValue, _T("left")) != NULL) {
+        else if (lstrcmpi(pstrName, _T("align")) == 0)
+        {
+            if (_tcsstr(pstrValue, _T("left")) != NULL)
+            {
                 m_lTwhStyle &= ~(ES_CENTER | ES_RIGHT);
                 m_lTwhStyle |= ES_LEFT;
             }
-            if (_tcsstr(pstrValue, _T("center")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("center")) != NULL)
+            {
                 m_lTwhStyle &= ~(ES_LEFT | ES_RIGHT);
                 m_lTwhStyle |= ES_CENTER;
             }
-            if (_tcsstr(pstrValue, _T("right")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("right")) != NULL)
+            {
                 m_lTwhStyle &= ~(ES_LEFT | ES_CENTER);
                 m_lTwhStyle |= ES_RIGHT;
             }
         }
-        else if (_tcscmp(pstrName, _T("font")) == 0) SetFont(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("textcolor")) == 0) {
-            while (*pstrValue > _T('\0') && *pstrValue <= _T(' ')) pstrValue = ::CharNext(pstrValue);
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("font")) == 0)
+        {
+            SetFont(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
+        {
+            while (*pstrValue > _T('\0') && *pstrValue <= _T(' '))
+                pstrValue = ::CharNext(pstrValue);
+
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextColor(clrColor);
         }
-        else CContainerUI::SetAttribute(pstrName, pstrValue);
+        else
+        {
+            CContainerUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     LRESULT CRichEditUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)

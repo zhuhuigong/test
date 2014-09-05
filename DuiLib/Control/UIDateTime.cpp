@@ -31,8 +31,12 @@ namespace DuiLib
         bool m_bInit;
     };
 
-    CDateTimeWnd::CDateTimeWnd() : m_pOwner(NULL), m_hBkBrush(NULL), m_bInit(false)
+    CDateTimeWnd::CDateTimeWnd()
+        : m_pOwner(NULL)
+        , m_hBkBrush(NULL)
+        , m_bInit(false)
     {
+
     }
 
     void CDateTimeWnd::Init(CDateTimeUI* pOwner)

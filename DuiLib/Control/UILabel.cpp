@@ -15,29 +15,30 @@ namespace DuiLib
         return Color(255, r, g, b);
     }
 
-    CLabelUI::CLabelUI() : m_uTextStyle(DT_VCENTER), m_dwTextColor(0),
-        m_dwDisabledTextColor(0),
-        m_iFont(-1),
-        m_bShowHtml(false),
-
-        m_EnableEffect(false),
-        m_gdiplusToken(0),
-        m_TextRenderingHintAntiAlias(TextRenderingHintSystemDefault),
-        m_TransShadow(60),
-        m_TransText(168),
-        m_TransShadow1(60),
-        m_TransText1(168),
-        m_hAlign(DT_LEFT),
-        m_vAlign(DT_CENTER),
-        m_dwTextColor1(-1),
-        m_dwTextShadowColorA(0xff000000),
-        m_dwTextShadowColorB(-1),
-        m_GradientAngle(0),
-        m_EnabledStroke(false),
-        m_TransStroke(255),
-        m_dwStrokeColor(0),
-        m_EnabledShadow(false),
-        m_GradientLength(0)
+    CLabelUI::CLabelUI() 
+        : m_uTextStyle(DT_VCENTER)
+        , m_dwTextColor(0)
+        , m_dwDisabledTextColor(0)
+        , m_iFont(-1)
+        , m_bShowHtml(false)
+        , m_EnableEffect(false)
+        , m_gdiplusToken(0)
+        , m_TextRenderingHintAntiAlias(TextRenderingHintSystemDefault)
+        , m_TransShadow(60)
+        , m_TransText(168)
+        , m_TransShadow1(60)
+        , m_TransText1(168)
+        , m_hAlign(DT_LEFT)
+        , m_vAlign(DT_CENTER)
+        , m_dwTextColor1(-1)
+        , m_dwTextShadowColorA(0xff000000)
+        , m_dwTextShadowColorB(-1)
+        , m_GradientAngle(0)
+        , m_EnabledStroke(false)
+        , m_TransStroke(255)
+        , m_dwStrokeColor(0)
+        , m_EnabledShadow(false)
+        , m_GradientLength(0)
     {
         m_ShadowOffset.X = 0.0f;
         m_ShadowOffset.Y = 0.0f;
@@ -75,7 +76,9 @@ namespace DuiLib
 
     LPVOID CLabelUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, _T("Label")) == 0) return static_cast<CLabelUI*>(this);
+        if (lstrcmpi(pstrName, _T("Label")) == 0)
+            return static_cast<CLabelUI*>(this);
+
         return CControlUI::GetInterface(pstrName);
     }
 
@@ -141,7 +144,8 @@ namespace DuiLib
 
     void CLabelUI::SetShowHtml(bool bShowHtml)
     {
-        if (m_bShowHtml == bShowHtml) return;
+        if (m_bShowHtml == bShowHtml)
+            return;
 
         m_bShowHtml = bShowHtml;
         Invalidate();
@@ -149,7 +153,9 @@ namespace DuiLib
 
     SIZE CLabelUI::EstimateSize(SIZE szAvailable)
     {
-        if (m_cxyFixed.cy == 0) return CSize(m_cxyFixed.cx, m_pManager->GetFontInfo(GetFont())->tm.tmHeight + 4);
+        if (m_cxyFixed.cy == 0)
+            return CSize(m_cxyFixed.cx, m_pManager->GetFontInfo(GetFont())->tm.tmHeight + 4);
+
         return CControlUI::EstimateSize(szAvailable);
     }
 
@@ -160,68 +166,97 @@ namespace DuiLib
             m_bFocused = true;
             return;
         }
+
         if (event.Type == UIEVENT_KILLFOCUS)
         {
             m_bFocused = false;
             return;
         }
+
         if (event.Type == UIEVENT_MOUSEENTER)
         {
             // return;
         }
+
         if (event.Type == UIEVENT_MOUSELEAVE)
         {
             // return;
         }
+
         CControlUI::DoEvent(event);
     }
 
     void CLabelUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("align")) == 0) {
-            if (_tcsstr(pstrValue, _T("left")) != NULL) {
+        if (lstrcmpi(pstrName, _T("align")) == 0)
+        {
+            if (_tcsstr(pstrValue, _T("left")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
                 m_uTextStyle |= DT_LEFT;
             }
-            if (_tcsstr(pstrValue, _T("center")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("center")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_LEFT | DT_RIGHT);
                 m_uTextStyle |= DT_CENTER;
             }
-            if (_tcsstr(pstrValue, _T("right")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("right")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_LEFT | DT_CENTER | DT_VCENTER | DT_SINGLELINE);
                 m_uTextStyle |= DT_RIGHT;
             }
-            if (_tcsstr(pstrValue, _T("top")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("top")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_BOTTOM | DT_VCENTER | DT_VCENTER);
                 m_uTextStyle |= (DT_TOP | DT_SINGLELINE);
             }
-            if (_tcsstr(pstrValue, _T("vcenter")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("vcenter")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_TOP | DT_BOTTOM);
                 m_uTextStyle |= (DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             }
-            if (_tcsstr(pstrValue, _T("bottom")) != NULL) {
+
+            if (_tcsstr(pstrValue, _T("bottom")) != NULL)
+            {
                 m_uTextStyle &= ~(DT_TOP | DT_VCENTER | DT_VCENTER);
                 m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
             }
         }
-        else if (_tcscmp(pstrName, _T("endellipsis")) == 0) {
-            if (_tcscmp(pstrValue, _T("true")) == 0) m_uTextStyle |= DT_END_ELLIPSIS;
-            else m_uTextStyle &= ~DT_END_ELLIPSIS;
+        else if (lstrcmpi(pstrName, _T("endellipsis")) == 0)
+        {
+            if (lstrcmpi(pstrValue, _T("true")) == 0)
+                m_uTextStyle |= DT_END_ELLIPSIS;
+            else
+                m_uTextStyle &= ~DT_END_ELLIPSIS;
         }
-        else if (_tcscmp(pstrName, _T("font")) == 0) SetFont(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("textcolor")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("font")) == 0)
+        {
+            SetFont(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("disabledtextcolor")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("disabledtextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetDisabledTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("textpadding")) == 0) {
+        else if (lstrcmpi(pstrName, _T("textpadding")) == 0)
+        {
             RECT rcTextPadding = { 0 };
             LPTSTR pstr = NULL;
             rcTextPadding.left = _tcstol(pstrValue, &pstr, 10);  ASSERT(pstr);
@@ -230,56 +265,109 @@ namespace DuiLib
             rcTextPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
             SetTextPadding(rcTextPadding);
         }
-        else if (_tcscmp(pstrName, _T("showhtml")) == 0) SetShowHtml(_tcscmp(pstrValue, _T("true")) == 0);
-
-        else if (_tcscmp(pstrName, _T("enabledeffect")) == 0) SetEnabledEffect(_tcscmp(pstrValue, _T("true")) == 0);
-        else if (_tcscmp(pstrName, _T("rhaa")) == 0) SetTextRenderingHintAntiAlias(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("transshadow")) == 0) SetTransShadow(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("transtext")) == 0) SetTransText(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("transshadow1")) == 0) SetTransShadow1(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("transtext1")) == 0) SetTransText1(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("gradientangle")) == 0) SetGradientAngle(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("enabledstroke")) == 0) SetEnabledStroke(_tcscmp(pstrValue, _T("true")) == 0);
-        else if (_tcscmp(pstrName, _T("enabledshadow")) == 0) SetEnabledShadow(_tcscmp(pstrValue, _T("true")) == 0);
-        else if (_tcscmp(pstrName, _T("transstroke")) == 0) SetTransStroke(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("gradientlength")) == 0) SetGradientLength(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("shadowoffset")) == 0){
+        else if (lstrcmpi(pstrName, _T("showhtml")) == 0)
+        {
+            SetShowHtml(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else if (lstrcmpi(pstrName, _T("enabledeffect")) == 0)
+        {
+            SetEnabledEffect(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else if (lstrcmpi(pstrName, _T("rhaa")) == 0)
+        {
+            SetTextRenderingHintAntiAlias(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("transshadow")) == 0)
+        {
+            SetTransShadow(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("transtext")) == 0)
+        {
+            SetTransText(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("transshadow1")) == 0)
+        {
+            SetTransShadow1(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("transtext1")) == 0)
+        {
+            SetTransText1(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("gradientangle")) == 0)
+        {
+            SetGradientAngle(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("enabledstroke")) == 0)
+        {
+            SetEnabledStroke(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else if (lstrcmpi(pstrName, _T("enabledshadow")) == 0)
+        {
+            SetEnabledShadow(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else if (lstrcmpi(pstrName, _T("transstroke")) == 0)
+        {
+            SetTransStroke(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("gradientlength")) == 0)
+        {
+            SetGradientLength(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("shadowoffset")) == 0)
+        {
             LPTSTR pstr = NULL;
             int offsetx = _tcstol(pstrValue, &pstr, 10);    ASSERT(pstr);
             int offsety = _tcstol(pstr + 1, &pstr, 10);     ASSERT(pstr);
             SetShadowOffset(offsetx, offsety);
         }
-        else if (_tcscmp(pstrName, _T("textcolor1")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("textcolor1")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextColor1(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("textshadowcolora")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("textshadowcolora")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextShadowColorA(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("textshadowcolorb")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("textshadowcolorb")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetTextShadowColorB(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("strokecolor")) == 0) {
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("strokecolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetStrokeColor(clrColor);
         }
-        else CControlUI::SetAttribute(pstrName, pstrValue);
+        else
+        {
+            CControlUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     void CLabelUI::PaintText(HDC hDC)
     {
-        if (m_dwTextColor == 0) m_dwTextColor = m_pManager->GetDefaultFontColor();
-        if (m_dwDisabledTextColor == 0) m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
+        if (m_dwTextColor == 0)
+            m_dwTextColor = m_pManager->GetDefaultFontColor();
+        if (m_dwDisabledTextColor == 0)
+            m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
         RECT rc = m_rcItem;
         rc.left += m_rcTextPadding.left;
@@ -289,28 +377,28 @@ namespace DuiLib
 
         if (!GetEnabledEffect())
         {
-            if (m_sText.IsEmpty()) return;
+            if (m_sText.IsEmpty())
+                return;
+
             int nLinks = 0;
-            if (IsEnabled()) {
+            if (IsEnabled())
+            {
                 if (m_bShowHtml)
-                    CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
-                    NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+                    CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
                 else
-                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, \
-                    m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
             }
-            else {
+            else 
+            {
                 if (m_bShowHtml)
-                    CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
-                    NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+                    CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
                 else
-                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, \
-                    m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
             }
         }
         else
         {
-            Font    nFont(hDC, m_pManager->GetFont(GetFont()));
+            Font nFont(hDC, m_pManager->GetFont(GetFont()));
 
             Graphics nGraphics(hDC);
             nGraphics.SetTextRenderingHint(m_TextRenderingHintAntiAlias);
@@ -335,7 +423,6 @@ namespace DuiLib
             if (GetEnabledStroke() && GetStrokeColor() > 0)
             {
                 LinearGradientBrush nLineGrBrushStroke(Point(GetGradientAngle(), 0), Point(0, rc.bottom - rc.top + 2), _MakeRGB(GetTransStroke(), GetStrokeColor()), _MakeRGB(GetTransStroke(), GetStrokeColor()));
-
 #ifdef _UNICODE
                 nRc.Offset(-1,0);
                 nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushStroke);
@@ -360,13 +447,12 @@ namespace DuiLib
                 nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushStroke);
                 nRc.Offset(0, -1);
 #endif
-
             }
 #ifdef _UNICODE
-            if(GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
-                nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nShadowRc,&format,&nLineGrBrushA);
+            if (GetEnabledShadow() && (GetTextShadowColorA() > 0 || GetTextShadowColorB() > 0))
+                nGraphics.DrawString(m_TextValue, m_TextValue.GetLength(), &nFont, nShadowRc, &format, &nLineGrBrushA);
 
-            nGraphics.DrawString(m_TextValue,m_TextValue.GetLength(),&nFont,nRc,&format,&nLineGrBrushB);
+            nGraphics.DrawString(m_TextValue, m_TextValue.GetLength(), &nFont, nRc, &format, &nLineGrBrushB);
 #else
             USES_CONVERSION;
             wstring mTextValue = A2W(m_TextValue.GetData());
@@ -376,7 +462,6 @@ namespace DuiLib
 
             nGraphics.DrawString(mTextValue.c_str(), mTextValue.length(), &nFont, nRc, &format, &nLineGrBrushB);
 #endif
-
         }
     }
 

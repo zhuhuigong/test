@@ -14,7 +14,9 @@ namespace DuiLib
 
     LPVOID CTabLayoutUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_TABLAYOUT) == 0) return static_cast<CTabLayoutUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_TABLAYOUT) == 0)
+            return static_cast<CTabLayoutUI*>(this);
+
         return CContainerUI::GetInterface(pstrName);
     }
 
@@ -131,7 +133,11 @@ namespace DuiLib
 
     void CTabLayoutUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("selectedid")) == 0) SelectItem(_ttoi(pstrValue));
+        if (lstrcmpi(pstrName, _T("selectedid")) == 0)
+        {
+            SelectItem(_ttoi(pstrValue));
+        }
+
         return CContainerUI::SetAttribute(pstrName, pstrValue);
     }
 

@@ -3,7 +3,10 @@
 
 namespace DuiLib
 {
-    CHorizontalLayoutUI::CHorizontalLayoutUI() : m_iSepWidth(0), m_uButtonState(0), m_bImmMode(false)
+    CHorizontalLayoutUI::CHorizontalLayoutUI()
+        : m_iSepWidth(0)
+        , m_uButtonState(0)
+        , m_bImmMode(false)
     {
         ptLastMouse.x = ptLastMouse.y = 0;
         ::ZeroMemory(&m_rcNewPos, sizeof(m_rcNewPos));
@@ -16,14 +19,18 @@ namespace DuiLib
 
     LPVOID CHorizontalLayoutUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_HORIZONTALLAYOUT) == 0) return static_cast<CHorizontalLayoutUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_HORIZONTALLAYOUT) == 0)
+            return static_cast<CHorizontalLayoutUI*>(this);
+
         return CContainerUI::GetInterface(pstrName);
     }
 
     UINT CHorizontalLayoutUI::GetControlFlags() const
     {
-        if (IsEnabled() && m_iSepWidth != 0) return UIFLAG_SETCURSOR;
-        else return 0;
+        if (IsEnabled() && m_iSepWidth != 0)
+            return UIFLAG_SETCURSOR;
+        else
+            return 0;
     }
 
     void CHorizontalLayoutUI::SetPos(RECT rc)
@@ -161,9 +168,18 @@ namespace DuiLib
 
     void CHorizontalLayoutUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("sepwidth")) == 0) SetSepWidth(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("sepimm")) == 0) SetSepImmMode(_tcscmp(pstrValue, _T("true")) == 0);
-        else CContainerUI::SetAttribute(pstrName, pstrValue);
+        if (lstrcmpi(pstrName, _T("sepwidth")) == 0)
+        {
+            SetSepWidth(_ttoi(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("sepimm")) == 0)
+        {
+            SetSepImmMode(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else
+        {
+            CContainerUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     void CHorizontalLayoutUI::DoEvent(TEventUI& event)
@@ -248,18 +264,25 @@ namespace DuiLib
                 }
             }
         }
+
         CContainerUI::DoEvent(event);
     }
 
     RECT CHorizontalLayoutUI::GetThumbRect(bool bUseNew) const
     {
-        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew) {
-            if (m_iSepWidth >= 0) return CDuiRect(m_rcNewPos.right - m_iSepWidth, m_rcNewPos.top, m_rcNewPos.right, m_rcNewPos.bottom);
-            else return CDuiRect(m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.left - m_iSepWidth, m_rcNewPos.bottom);
+        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && bUseNew)
+        {
+            if (m_iSepWidth >= 0)
+                return CDuiRect(m_rcNewPos.right - m_iSepWidth, m_rcNewPos.top, m_rcNewPos.right, m_rcNewPos.bottom);
+            else
+                return CDuiRect(m_rcNewPos.left, m_rcNewPos.top, m_rcNewPos.left - m_iSepWidth, m_rcNewPos.bottom);
         }
-        else {
-            if (m_iSepWidth >= 0) return CDuiRect(m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom);
-            else return CDuiRect(m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom);
+        else
+        {
+            if (m_iSepWidth >= 0)
+                return CDuiRect(m_rcItem.right - m_iSepWidth, m_rcItem.top, m_rcItem.right, m_rcItem.bottom);
+            else
+                return CDuiRect(m_rcItem.left, m_rcItem.top, m_rcItem.left - m_iSepWidth, m_rcItem.bottom);
         }
     }
 }
