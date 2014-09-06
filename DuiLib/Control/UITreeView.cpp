@@ -41,7 +41,7 @@ namespace DuiLib
 
         if (_ParentNode)
         {
-            if (_tcsicmp(_ParentNode->GetClass(), _T("TreeNodeUI")) != 0)
+            if (lstrcmpi(_ParentNode->GetClass(), _T("TreeNodeUI")) != 0)
                 return;
 
             pDottedLine->SetVisible(_ParentNode->IsVisible());
@@ -85,8 +85,9 @@ namespace DuiLib
     //************************************
     LPVOID CTreeNodeUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, _T("TreeNode")) == 0)
+        if (lstrcmpi(pstrName, _T("TreeNode")) == 0)
             return static_cast<CTreeNodeUI*>(this);
+
         return CListContainerElementUI::GetInterface(pstrName);
     }
 
@@ -98,9 +99,13 @@ namespace DuiLib
     //************************************
     void CTreeNodeUI::DoEvent(TEventUI& event)
     {
-        if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-            if (m_pOwner != NULL) m_pOwner->DoEvent(event);
-            else CContainerUI::DoEvent(event);
+        if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND)
+        {
+            if (m_pOwner != NULL)
+                m_pOwner->DoEvent(event);
+            else
+                CContainerUI::DoEvent(event);
+
             return;
         }
 
@@ -108,35 +113,45 @@ namespace DuiLib
 
         if (event.Type == UIEVENT_DBLCLICK)
         {
-            if (IsEnabled()) {
+            if (IsEnabled())
+            {
                 m_pManager->SendNotify(this, _T("itemdbclick"));
                 Invalidate();
             }
+
             return;
         }
+
         if (event.Type == UIEVENT_MOUSEENTER)
         {
-            if (IsEnabled()) {
+            if (IsEnabled())
+            {
                 if (m_bSelected && GetSelItemHotTextColor())
                     pItemButton->SetTextColor(GetSelItemHotTextColor());
                 else
                     pItemButton->SetTextColor(GetItemHotTextColor());
             }
             else
+            {
                 pItemButton->SetTextColor(pItemButton->GetDisabledTextColor());
+            }
 
             return;
         }
+
         if (event.Type == UIEVENT_MOUSELEAVE)
         {
-            if (IsEnabled()) {
+            if (IsEnabled())
+            {
                 if (m_bSelected && GetSelItemTextColor())
                     pItemButton->SetTextColor(GetSelItemTextColor());
                 else if (!m_bSelected)
                     pItemButton->SetTextColor(GetItemTextColor());
             }
             else
+            {
                 pItemButton->SetTextColor(pItemButton->GetDisabledTextColor());
+            }
 
             return;
         }
@@ -152,9 +167,11 @@ namespace DuiLib
         if (!IsVisible())
             return;
 
-        if (GetParent()) {
+        if (GetParent())
+        {
             CContainerUI* pParentContainer = static_cast<CContainerUI*>(GetParent()->GetInterface(_T("Container")));
-            if (pParentContainer) {
+            if (pParentContainer)
+            {
                 RECT rc = pParentContainer->GetPos();
                 RECT rcInset = pParentContainer->GetInset();
                 rc.left += rcInset.left;
@@ -162,9 +179,14 @@ namespace DuiLib
                 rc.right -= rcInset.right;
                 rc.bottom -= rcInset.bottom;
                 CScrollBarUI* pVerticalScrollBar = pParentContainer->GetVerticalScrollBar();
-                if (pVerticalScrollBar && pVerticalScrollBar->IsVisible()) rc.right -= pVerticalScrollBar->GetFixedWidth();
+
+                if (pVerticalScrollBar && pVerticalScrollBar->IsVisible())
+                    rc.right -= pVerticalScrollBar->GetFixedWidth();
+
                 CScrollBarUI* pHorizontalScrollBar = pParentContainer->GetHorizontalScrollBar();
-                if (pHorizontalScrollBar && pHorizontalScrollBar->IsVisible()) rc.bottom -= pHorizontalScrollBar->GetFixedHeight();
+
+                if (pHorizontalScrollBar && pHorizontalScrollBar->IsVisible())
+                    rc.bottom -= pHorizontalScrollBar->GetFixedHeight();
 
                 RECT invalidateRc = m_rcItem;
                 if (!::IntersectRect(&invalidateRc, &m_rcItem, &rc))
@@ -181,13 +203,16 @@ namespace DuiLib
                         return;
                 }
 
-                if (m_pManager != NULL) m_pManager->Invalidate(invalidateRc);
+                if (m_pManager != NULL)
+                    m_pManager->Invalidate(invalidateRc);
             }
-            else {
+            else
+            {
                 CContainerUI::Invalidate();
             }
         }
-        else {
+        else
+        {
             CContainerUI::Invalidate();
         }
     }
@@ -201,6 +226,7 @@ namespace DuiLib
     bool CTreeNodeUI::Select(bool bSelect /*= true*/)
     {
         bool nRet = CListContainerElementUI::Select(bSelect);
+
         if (m_bSelected)
             pItemButton->SetTextColor(GetSelItemTextColor());
         else
@@ -217,7 +243,7 @@ namespace DuiLib
     //************************************
     bool CTreeNodeUI::Add(CControlUI* _pTreeNodeUI)
     {
-        if (_tcsicmp(_pTreeNodeUI->GetClass(), _T("TreeNodeUI")) == 0)
+        if (lstrcmpi(_pTreeNodeUI->GetClass(), _T("TreeNodeUI")) == 0)
             return AddChildNode((CTreeNodeUI*)_pTreeNodeUI);
 
         return CListContainerElementUI::Add(_pTreeNodeUI);
@@ -236,12 +262,15 @@ namespace DuiLib
             return false;
 
         CTreeNodeUI* pIndexNode = static_cast<CTreeNodeUI*>(mTreeNodes.GetAt(iIndex));
-        if (!pIndexNode){
+        if (!pIndexNode)
+        {
             if (!mTreeNodes.Add(pControl))
                 return false;
         }
         else if (pIndexNode && !mTreeNodes.InsertAt(iIndex, pControl))
+        {
             return false;
+        }
 
         if (!pIndexNode && pTreeView && pTreeView->GetItemAt(GetTreeIndex() + 1))
             pIndexNode = static_cast<CTreeNodeUI*>(pTreeView->GetItemAt(GetTreeIndex() + 1)->GetInterface(_T("TreeNode")));
@@ -351,18 +380,21 @@ namespace DuiLib
         if (!_pTreeNodeUI)
             return false;
 
-        if (_tcsicmp(_pTreeNodeUI->GetClass(), _T("TreeNodeUI")) != 0)
+        if (lstrcmpi(_pTreeNodeUI->GetClass(), _T("TreeNodeUI")) != 0)
             return false;
 
         _pTreeNodeUI = CalLocation(_pTreeNodeUI);
 
         bool nRet = true;
 
-        if (pTreeView){
+        if (pTreeView)
+        {
             CTreeNodeUI* pNode = static_cast<CTreeNodeUI*>(mTreeNodes.GetAt(mTreeNodes.GetSize() - 1));
+
             if (!pNode || !pNode->GetLastNode())
                 nRet = pTreeView->AddAt(_pTreeNodeUI, GetTreeIndex() + 1) >= 0;
-            else nRet = pTreeView->AddAt(_pTreeNodeUI, pNode->GetLastNode()->GetTreeIndex() + 1) >= 0;
+            else
+                nRet = pTreeView->AddAt(_pTreeNodeUI, pNode->GetLastNode()->GetTreeIndex() + 1) >= 0;
         }
 
         if (nRet)
@@ -393,6 +425,7 @@ namespace DuiLib
 
             return true;
         }
+
         return false;
     }
 
@@ -457,43 +490,70 @@ namespace DuiLib
     //************************************
     void CTreeNodeUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("text")) == 0)
+        if (lstrcmpi(pstrName, _T("text")) == 0)
+        {
             pItemButton->SetText(pstrValue);
-        else if (_tcscmp(pstrName, _T("horizattr")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("horizattr")) == 0)
+        {
             pHoriz->ApplyAttributeList(pstrValue);
-        else if (_tcscmp(pstrName, _T("dotlineattr")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("dotlineattr")) == 0)
+        {
             pDottedLine->ApplyAttributeList(pstrValue);
-        else if (_tcscmp(pstrName, _T("folderattr")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("folderattr")) == 0)
+        {
             pFolderButton->ApplyAttributeList(pstrValue);
-        else if (_tcscmp(pstrName, _T("checkboxattr")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("checkboxattr")) == 0)
+        {
             pCheckBox->ApplyAttributeList(pstrValue);
-        else if (_tcscmp(pstrName, _T("itemattr")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("itemattr")) == 0)
+        {
             pItemButton->ApplyAttributeList(pstrValue);
-        else if (_tcscmp(pstrName, _T("itemtextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        }
+        else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetItemTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("itemhottextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetItemHotTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("selitemtextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetSelItemTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("selitemhottextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetSelItemHotTextColor(clrColor);
         }
-        else CListContainerElementUI::SetAttribute(pstrName, pstrValue);
+        else
+        {
+            CListContainerElementUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     //************************************
@@ -569,7 +629,8 @@ namespace DuiLib
         if (!pTreeView)
             return -1;
 
-        for (int nIndex = 0; nIndex < pTreeView->GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < pTreeView->GetCount(); nIndex++)
+        {
             if (this == pTreeView->GetItemAt(nIndex))
                 return nIndex;
         }
@@ -605,7 +666,8 @@ namespace DuiLib
 
         CTreeNodeUI* nRetNode = NULL;
 
-        for (int nIndex = 0; nIndex < GetTreeNodes().GetSize(); nIndex++){
+        for (int nIndex = 0; nIndex < GetTreeNodes().GetSize(); nIndex++)
+        {
             CTreeNodeUI* pNode = static_cast<CTreeNodeUI*>(GetTreeNodes().GetAt(nIndex));
             if (!pNode)
                 continue;
@@ -736,7 +798,10 @@ namespace DuiLib
     // 参数信息: void
     // 函数说明: 
     //************************************
-    CTreeViewUI::CTreeViewUI(void) : m_bVisibleFolderBtn(true), m_bVisibleCheckBtn(false), m_uItemMinWidth(0)
+    CTreeViewUI::CTreeViewUI(void)
+        : m_bVisibleFolderBtn(true)
+        , m_bVisibleCheckBtn(false)
+        , m_uItemMinWidth(0)
     {
         this->GetHeader()->SetVisible(false);
     }
@@ -770,7 +835,9 @@ namespace DuiLib
     //************************************
     LPVOID CTreeViewUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, _T("TreeView")) == 0) return static_cast<CTreeViewUI*>(this);
+        if (lstrcmpi(pstrName, _T("TreeView")) == 0)
+            return static_cast<CTreeViewUI*>(this);
+
         return CListUI::GetInterface(pstrName);
     }
 
@@ -785,7 +852,7 @@ namespace DuiLib
         if (!pControl)
             return false;
 
-        if (_tcsicmp(pControl->GetClass(), _T("TreeNodeUI")) != 0)
+        if (lstrcmpi(pControl->GetClass(), _T("TreeNodeUI")) != 0)
             return false;
 
         pControl->OnNotify += MakeDelegate(this, &CTreeViewUI::OnDBClickItem);
@@ -826,7 +893,7 @@ namespace DuiLib
         if (!pControl)
             return -1;
 
-        if (_tcsicmp(pControl->GetClass(), _T("TreeNodeUI")) != 0)
+        if (lstrcmpi(pControl->GetClass(), _T("TreeNodeUI")) != 0)
             return -1;
 
         CTreeNodeUI* pParent = static_cast<CTreeNodeUI*>(GetItemAt(iIndex));
@@ -856,7 +923,9 @@ namespace DuiLib
             }
         }
         else
+        {
             return iIndex + 1;
+        }
 
         return -1;
     }
@@ -875,8 +944,10 @@ namespace DuiLib
 
         int nItemIndex = -1;
 
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
-            if (_IndexNode == GetItemAt(nIndex)){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
+            if (_IndexNode == GetItemAt(nIndex))
+            {
                 nItemIndex = nIndex;
                 break;
             }
@@ -902,11 +973,13 @@ namespace DuiLib
             for (int nIndex = 0; nIndex < nCount; nIndex++)
             {
                 CTreeNodeUI* pNode = pControl->GetChildNode(nIndex);
-                if (pNode){
+                if (pNode)
+                {
                     pControl->Remove(pNode);
                 }
             }
         }
+
         CListUI::Remove(pControl);
         return true;
     }
@@ -922,6 +995,7 @@ namespace DuiLib
         CTreeNodeUI* pItem = (CTreeNodeUI*)GetItemAt(iIndex);
         if (pItem->GetCountChild())
             Remove(pItem);
+
         return true;
     }
 
@@ -957,6 +1031,7 @@ namespace DuiLib
             SetItemCheckBox(pCheckBox->GetCheck(), pItem);
             return true;
         }
+
         return true;
     }
 
@@ -977,6 +1052,7 @@ namespace DuiLib
             SetItemExpand(!pFolder->GetCheck(), pItem);
             return true;
         }
+
         return true;
     }
 
@@ -998,6 +1074,7 @@ namespace DuiLib
             SetItemExpand(!pFolder->GetCheck(), pItem);
             return true;
         }
+
         return false;
     }
 
@@ -1040,6 +1117,7 @@ namespace DuiLib
             }
             return true;
         }
+
         return false;
     }
 
@@ -1149,11 +1227,13 @@ namespace DuiLib
     {
         m_uItemMinWidth = _ItemMinWidth;
 
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
             CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(GetItemAt(nIndex));
             if (pTreeNode)
                 pTreeNode->SetMinWidth(GetItemMinWidth());
         }
+
         Invalidate();
     }
 
@@ -1175,7 +1255,8 @@ namespace DuiLib
     //************************************
     void CTreeViewUI::SetItemTextColor(DWORD _dwItemTextColor)
     {
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
             CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(GetItemAt(nIndex));
             if (pTreeNode)
                 pTreeNode->SetItemTextColor(_dwItemTextColor);
@@ -1190,7 +1271,8 @@ namespace DuiLib
     //************************************
     void CTreeViewUI::SetItemHotTextColor(DWORD _dwItemHotTextColor)
     {
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
             CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(GetItemAt(nIndex));
             if (pTreeNode)
                 pTreeNode->SetItemHotTextColor(_dwItemHotTextColor);
@@ -1205,7 +1287,8 @@ namespace DuiLib
     //************************************
     void CTreeViewUI::SetSelItemTextColor(DWORD _dwSelItemTextColor)
     {
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
             CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(GetItemAt(nIndex));
             if (pTreeNode)
                 pTreeNode->SetSelItemTextColor(_dwSelItemTextColor);
@@ -1220,7 +1303,8 @@ namespace DuiLib
     //************************************
     void CTreeViewUI::SetSelItemHotTextColor(DWORD _dwSelHotItemTextColor)
     {
-        for (int nIndex = 0; nIndex < GetCount(); nIndex++){
+        for (int nIndex = 0; nIndex < GetCount(); nIndex++)
+        {
             CTreeNodeUI* pTreeNode = static_cast<CTreeNodeUI*>(GetItemAt(nIndex));
             if (pTreeNode)
                 pTreeNode->SetSelItemHotTextColor(_dwSelHotItemTextColor);
@@ -1236,37 +1320,58 @@ namespace DuiLib
     //************************************
     void CTreeViewUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (_tcscmp(pstrName, _T("visiblefolderbtn")) == 0)
+        if (lstrcmpi(pstrName, _T("visiblefolderbtn")) == 0)
+        {
             SetVisibleFolderBtn(_tcscmp(pstrValue, _T("true")) == 0);
-        else if (_tcscmp(pstrName, _T("visiblecheckbtn")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("visiblecheckbtn")) == 0)
+        {
             SetVisibleCheckBtn(_tcscmp(pstrValue, _T("true")) == 0);
-        else if (_tcscmp(pstrName, _T("itemminwidth")) == 0)
+        }
+        else if (lstrcmpi(pstrName, _T("itemminwidth")) == 0)
+        {
             SetItemMinWidth(_ttoi(pstrValue));
-        else if (_tcscmp(pstrName, _T("itemtextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        }
+        else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetItemTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("itemhottextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetItemHotTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("selitemtextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetSelItemTextColor(clrColor);
         }
-        else if (_tcscmp(pstrName, _T("selitemhottextcolor")) == 0){
-            if (*pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
+        else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
+        {
+            if (*pstrValue == _T('#'))
+                pstrValue = ::CharNext(pstrValue);
+
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetSelItemHotTextColor(clrColor);
         }
-        else CListUI::SetAttribute(pstrName, pstrValue);
+        else
+        {
+            CListUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
 }

@@ -238,7 +238,8 @@ namespace DuiLib {
         return TRUE;
     }
 
-    CTxtWinHost::CTxtWinHost() : m_re(NULL)
+    CTxtWinHost::CTxtWinHost()
+        : m_re(NULL)
     {
         ::ZeroMemory(&cRefs, sizeof(CTxtWinHost) - offsetof(CTxtWinHost, cRefs));
         cchTextMost = cInitTextMax;
@@ -359,8 +360,7 @@ namespace DuiLib {
         HRESULT hr = E_NOINTERFACE;
         *ppvObject = NULL;
 
-        if (IsEqualIID(riid, IID_IUnknown)
-            || IsEqualIID(riid, IID_ITextHost))
+        if (IsEqualIID(riid, IID_IUnknown) || IsEqualIID(riid, IID_ITextHost))
         {
             AddRef();
             *ppvObject = (ITextHost *) this;
@@ -415,34 +415,46 @@ namespace DuiLib {
     {
         CScrollBarUI* pVerticalScrollBar = m_re->GetVerticalScrollBar();
         CScrollBarUI* pHorizontalScrollBar = m_re->GetHorizontalScrollBar();
-        if (fnBar == SB_VERT && pVerticalScrollBar) {
+
+        if (fnBar == SB_VERT && pVerticalScrollBar)
+        {
             pVerticalScrollBar->SetVisible(fShow == TRUE);
         }
-        else if (fnBar == SB_HORZ && pHorizontalScrollBar) {
+        else if (fnBar == SB_HORZ && pHorizontalScrollBar)
+        {
             pHorizontalScrollBar->SetVisible(fShow == TRUE);
         }
-        else if (fnBar == SB_BOTH) {
-            if (pVerticalScrollBar) pVerticalScrollBar->SetVisible(fShow == TRUE);
-            if (pHorizontalScrollBar) pHorizontalScrollBar->SetVisible(fShow == TRUE);
+        else if (fnBar == SB_BOTH)
+        {
+            if (pVerticalScrollBar)
+                pVerticalScrollBar->SetVisible(fShow == TRUE);
+
+            if (pHorizontalScrollBar)
+                pHorizontalScrollBar->SetVisible(fShow == TRUE);
         }
+
         return TRUE;
     }
 
     BOOL CTxtWinHost::TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags)
     {
-        if (fuSBFlags == SB_VERT) {
+        if (fuSBFlags == SB_VERT)
+        {
             m_re->EnableScrollBar(true, m_re->GetHorizontalScrollBar() != NULL);
             m_re->GetVerticalScrollBar()->SetVisible(fuArrowflags != ESB_DISABLE_BOTH);
         }
-        else if (fuSBFlags == SB_HORZ) {
+        else if (fuSBFlags == SB_HORZ)
+        {
             m_re->EnableScrollBar(m_re->GetVerticalScrollBar() != NULL, true);
             m_re->GetHorizontalScrollBar()->SetVisible(fuArrowflags != ESB_DISABLE_BOTH);
         }
-        else if (fuSBFlags == SB_BOTH) {
+        else if (fuSBFlags == SB_BOTH)
+        {
             m_re->EnableScrollBar(true, true);
             m_re->GetVerticalScrollBar()->SetVisible(fuArrowflags != ESB_DISABLE_BOTH);
             m_re->GetHorizontalScrollBar()->SetVisible(fuArrowflags != ESB_DISABLE_BOTH);
         }
+
         return TRUE;
     }
 
@@ -450,24 +462,32 @@ namespace DuiLib {
     {
         CScrollBarUI* pVerticalScrollBar = m_re->GetVerticalScrollBar();
         CScrollBarUI* pHorizontalScrollBar = m_re->GetHorizontalScrollBar();
-        if (fnBar == SB_VERT && pVerticalScrollBar) {
-            if (nMaxPos - nMinPos - rcClient.bottom + rcClient.top <= 0) {
+
+        if (fnBar == SB_VERT && pVerticalScrollBar)
+        {
+            if (nMaxPos - nMinPos - rcClient.bottom + rcClient.top <= 0)
+            {
                 pVerticalScrollBar->SetVisible(false);
             }
-            else {
+            else
+            {
                 pVerticalScrollBar->SetVisible(true);
                 pVerticalScrollBar->SetScrollRange(nMaxPos - nMinPos - rcClient.bottom + rcClient.top);
             }
         }
-        else if (fnBar == SB_HORZ && pHorizontalScrollBar) {
-            if (nMaxPos - nMinPos - rcClient.right + rcClient.left <= 0) {
+        else if (fnBar == SB_HORZ && pHorizontalScrollBar)
+        {
+            if (nMaxPos - nMinPos - rcClient.right + rcClient.left <= 0)
+            {
                 pHorizontalScrollBar->SetVisible(false);
             }
-            else {
+            else
+            {
                 pHorizontalScrollBar->SetVisible(true);
                 pHorizontalScrollBar->SetScrollRange(nMaxPos - nMinPos - rcClient.right + rcClient.left);
             }
         }
+
         return TRUE;
     }
 
@@ -475,28 +495,35 @@ namespace DuiLib {
     {
         CScrollBarUI* pVerticalScrollBar = m_re->GetVerticalScrollBar();
         CScrollBarUI* pHorizontalScrollBar = m_re->GetHorizontalScrollBar();
-        if (fnBar == SB_VERT && pVerticalScrollBar) {
+
+        if (fnBar == SB_VERT && pVerticalScrollBar)
+        {
             pVerticalScrollBar->SetScrollPos(nPos);
         }
-        else if (fnBar == SB_HORZ && pHorizontalScrollBar) {
+        else if (fnBar == SB_HORZ && pHorizontalScrollBar)
+        {
             pHorizontalScrollBar->SetScrollPos(nPos);
         }
+
         return TRUE;
     }
 
     void CTxtWinHost::TxInvalidateRect(LPCRECT prc, BOOL fMode)
     {
-        if (prc == NULL) {
+        if (prc == NULL)
+        {
             m_re->GetManager()->Invalidate(rcClient);
             return;
         }
+
         RECT rc = *prc;
         m_re->GetManager()->Invalidate(rc);
     }
 
     void CTxtWinHost::TxViewChange(BOOL fUpdate)
     {
-        if (m_re->OnTxViewChanged()) m_re->Invalidate();
+        if (m_re->OnTxViewChanged())
+            m_re->Invalidate();
     }
 
     BOOL CTxtWinHost::TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
@@ -536,8 +563,11 @@ namespace DuiLib {
 
     void CTxtWinHost::TxSetCapture(BOOL fCapture)
     {
-        if (fCapture) m_re->GetManager()->SetCapture();
-        else m_re->GetManager()->ReleaseCapture();
+        if (fCapture)
+            m_re->GetManager()->SetCapture();
+        else
+            m_re->GetManager()->ReleaseCapture();
+
         fCaptured = fCapture;
     }
 
@@ -697,13 +727,15 @@ namespace DuiLib {
         }
 
         *pdwBits = dwProperties & dwMask;
+
         return NOERROR;
     }
 
 
     HRESULT CTxtWinHost::TxNotify(DWORD iNotify, void *pv)
     {
-        if (iNotify == EN_REQUESTRESIZE) {
+        if (iNotify == EN_REQUESTRESIZE)
+        {
             RECT rc;
             REQRESIZE *preqsz = (REQRESIZE *)pv;
             GetControlRect(&rc);
@@ -711,6 +743,7 @@ namespace DuiLib {
             rc.right = rc.left + preqsz->rc.right;
             SetClientRect(&rc);
         }
+
         m_re->OnTxNotify(iNotify, pv);
         return S_OK;
     }
@@ -755,17 +788,23 @@ namespace DuiLib {
 
     void CTxtWinHost::SetFont(HFONT hFont)
     {
-        if (hFont == NULL) return;
+        if (hFont == NULL)
+            return;
+
         LOGFONT lf;
         ::GetObject(hFont, sizeof(LOGFONT), &lf);
         LONG yPixPerInch = ::GetDeviceCaps(m_re->GetManager()->GetPaintDC(), LOGPIXELSY);
         cf.yHeight = -lf.lfHeight * LY_PER_INCH / yPixPerInch;
+
         if (lf.lfWeight >= FW_BOLD)
             cf.dwEffects |= CFE_BOLD;
+
         if (lf.lfItalic)
             cf.dwEffects |= CFE_ITALIC;
+
         if (lf.lfUnderline)
             cf.dwEffects |= CFE_UNDERLINE;
+
         cf.bCharSet = lf.lfCharSet;
         cf.bPitchAndFamily = lf.lfPitchAndFamily;
 #ifdef _UNICODE
@@ -775,15 +814,13 @@ namespace DuiLib {
         MultiByteToWideChar(CP_ACP, 0, lf.lfFaceName, LF_FACESIZE, cf.szFaceName, LF_FACESIZE);
 #endif
 
-        pserv->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE,
-            TXTBIT_CHARFORMATCHANGE);
+        pserv->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
     }
 
     void CTxtWinHost::SetColor(DWORD dwColor)
     {
         cf.crTextColor = RGB(GetBValue(dwColor), GetGValue(dwColor), GetRValue(dwColor));
-        pserv->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE,
-            TXTBIT_CHARFORMATCHANGE);
+        pserv->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
     }
 
     SIZEL* CTxtWinHost::GetExtent()
@@ -800,7 +837,9 @@ namespace DuiLib {
     void CTxtWinHost::LimitText(LONG nChars)
     {
         cchTextMost = nChars;
-        if (cchTextMost <= 0) cchTextMost = cInitTextMax;
+        if (cchTextMost <= 0)
+            cchTextMost = cInitTextMax;
+
         pserv->OnTxPropertyBitsChange(TXTBIT_MAXLENGTHCHANGE, TXTBIT_MAXLENGTHCHANGE);
     }
 
@@ -818,8 +857,7 @@ namespace DuiLib {
     {
         fAllowBeep = fAllowBeep;
 
-        pserv->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP,
-            fAllowBeep ? TXTBIT_ALLOWBEEP : 0);
+        pserv->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, fAllowBeep ? TXTBIT_ALLOWBEEP : 0);
     }
 
     WORD CTxtWinHost::GetDefaultAlign()
@@ -844,8 +882,7 @@ namespace DuiLib {
     {
         fRich = fNew;
 
-        pserv->OnTxPropertyBitsChange(TXTBIT_RICHTEXT,
-            fNew ? TXTBIT_RICHTEXT : 0);
+        pserv->OnTxPropertyBitsChange(TXTBIT_RICHTEXT, fNew ? TXTBIT_RICHTEXT : 0);
     }
 
     LONG CTxtWinHost::GetDefaultLeftIndent()
@@ -879,8 +916,7 @@ namespace DuiLib {
         fSaveSelection = f_SaveSelection;
 
         // notify text services of property change
-        pserv->OnTxPropertyBitsChange(TXTBIT_SAVESELECTION,
-            fSaveSelection ? TXTBIT_SAVESELECTION : 0);
+        pserv->OnTxPropertyBitsChange(TXTBIT_SAVESELECTION, fSaveSelection ? TXTBIT_SAVESELECTION : 0);
 
         return fResult;
     }
@@ -1022,16 +1058,30 @@ namespace DuiLib {
     //
     //
 
-    CRichEditUI::CRichEditUI() : m_pTwh(NULL), m_bVScrollBarFixing(false), m_bWantTab(true), m_bWantReturn(true),
-        m_bWantCtrlReturn(true), m_bRich(true), m_bReadOnly(false), m_bWordWrap(false), m_dwTextColor(0), m_iFont(-1),
-        m_iLimitText(cInitTextMax), m_lTwhStyle(ES_MULTILINE), m_bInited(false)
+    CRichEditUI::CRichEditUI()
+        : m_pTwh(NULL)
+        , m_bVScrollBarFixing(false)
+        , m_bWantTab(true)
+        , m_bWantReturn(true)
+        , m_bWantCtrlReturn(true)
+        , m_bRich(true)
+        , m_bReadOnly(false)
+        , m_bWordWrap(false)
+        , m_dwTextColor(0)
+        , m_iFont(-1)
+        , m_iLimitText(cInitTextMax)
+        , m_lTwhStyle(ES_MULTILINE)
+        , m_bInited(false)
     {
+
     }
 
     CRichEditUI::~CRichEditUI()
     {
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             m_pTwh->Release();
+            m_pTwh = NULL;
             m_pManager->RemoveMessageFilter(this);
         }
     }
@@ -1043,13 +1093,16 @@ namespace DuiLib {
 
     LPVOID CRichEditUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_RICHEDIT) == 0) return static_cast<CRichEditUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_RICHEDIT) == 0)
+            return static_cast<CRichEditUI*>(this);
+
         return CContainerUI::GetInterface(pstrName);
     }
 
     UINT CRichEditUI::GetControlFlags() const
     {
-        if (!IsEnabled()) return CControlUI::GetControlFlags();
+        if (!IsEnabled())
+            return CControlUI::GetControlFlags();
 
         return UIFLAG_SETCURSOR | UIFLAG_TABSTOP;
     }
@@ -1092,7 +1145,8 @@ namespace DuiLib {
     void CRichEditUI::SetRich(bool bRich)
     {
         m_bRich = bRich;
-        if (m_pTwh) m_pTwh->SetRichTextFlag(bRich);
+        if (m_pTwh != NULL) 
+            m_pTwh->SetRichTextFlag(bRich);
     }
 
     bool CRichEditUI::IsReadOnly()
@@ -1103,7 +1157,8 @@ namespace DuiLib {
     void CRichEditUI::SetReadOnly(bool bReadOnly)
     {
         m_bReadOnly = bReadOnly;
-        if (m_pTwh) m_pTwh->SetReadOnly(bReadOnly);
+        if (m_pTwh != NULL) 
+            m_pTwh->SetReadOnly(bReadOnly);
     }
 
     bool CRichEditUI::GetWordWrap()
@@ -1114,7 +1169,8 @@ namespace DuiLib {
     void CRichEditUI::SetWordWrap(bool bWordWrap)
     {
         m_bWordWrap = bWordWrap;
-        if (m_pTwh) m_pTwh->SetWordWrap(bWordWrap);
+        if (m_pTwh != NULL)
+            m_pTwh->SetWordWrap(bWordWrap);
     }
 
     int CRichEditUI::GetFont()
@@ -1125,17 +1181,19 @@ namespace DuiLib {
     void CRichEditUI::SetFont(int index)
     {
         m_iFont = index;
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             m_pTwh->SetFont(GetManager()->GetFont(m_iFont));
         }
     }
 
     void CRichEditUI::SetFont(LPCTSTR pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic)
     {
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             LOGFONT lf = { 0 };
             ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-            _tcsncpy(lf.lfFaceName, pStrFontName, LF_FACESIZE);
+            lstrcpyn(lf.lfFaceName, pStrFontName, LF_FACESIZE);
             lf.lfCharSet = DEFAULT_CHARSET;
             lf.lfHeight = -nSize;
             if (bBold) lf.lfWeight += FW_BOLD;
@@ -1166,7 +1224,8 @@ namespace DuiLib {
     void CRichEditUI::SetTextColor(DWORD dwTextColor)
     {
         m_dwTextColor = dwTextColor;
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             m_pTwh->SetColor(dwTextColor);
         }
     }
@@ -1179,7 +1238,8 @@ namespace DuiLib {
     void CRichEditUI::SetLimitText(int iChars)
     {
         m_iLimitText = iChars;
-        if (m_pTwh) {
+        if (m_pTwh != NULL) 
+        {
             m_pTwh->LimitText(m_iLimitText);
         }
     }
@@ -1477,14 +1537,18 @@ namespace DuiLib {
 
     bool CRichEditUI::SetParaFormat(PARAFORMAT2 &pf)
     {
-        if (!m_pTwh) return false;
+        if (!m_pTwh)
+            return false;
+
         pf.cbSize = sizeof(PARAFORMAT2);
         LRESULT lResult;
         TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&pf, &lResult);
-        if ((BOOL)lResult == TRUE) {
+        if ((BOOL)lResult == TRUE)
+        {
             m_pTwh->SetParaFormat(pf);
             return true;
         }
+
         return false;
     }
 
@@ -1526,9 +1590,12 @@ namespace DuiLib {
 
     int CRichEditUI::GetLineCount() const
     {
-        if (!m_pTwh) return 0;
+        if (!m_pTwh)
+            return 0;
+
         LRESULT lResult;
         TxSendMessage(EM_GETLINECOUNT, 0, 0, &lResult);
+
         return (int)lResult;
     }
 
@@ -1575,9 +1642,12 @@ namespace DuiLib {
 
     long CRichEditUI::LineFromChar(long nIndex) const
     {
-        if (!m_pTwh) return 0L;
+        if (!m_pTwh)
+            return 0L;
+
         LRESULT lResult;
         TxSendMessage(EM_EXLINEFROMCHAR, 0, nIndex, &lResult);
+
         return (long)lResult;
     }
 
@@ -1591,9 +1661,12 @@ namespace DuiLib {
     int CRichEditUI::CharFromPos(CPoint pt) const
     {
         POINTL ptl = { pt.x, pt.y };
-        if (!m_pTwh) return 0;
+        if (!m_pTwh)
+            return 0;
+
         LRESULT lResult;
         TxSendMessage(EM_CHARFROMPOS, 0, (LPARAM)&ptl, &lResult);
+
         return (int)lResult;
     }
 
@@ -1604,25 +1677,34 @@ namespace DuiLib {
 
     UINT CRichEditUI::SetUndoLimit(UINT nLimit)
     {
-        if (!m_pTwh) return 0;
+        if (!m_pTwh)
+            return 0;
+
         LRESULT lResult;
         TxSendMessage(EM_SETUNDOLIMIT, (WPARAM)nLimit, 0, &lResult);
+
         return (UINT)lResult;
     }
 
     long CRichEditUI::StreamIn(int nFormat, EDITSTREAM &es)
     {
-        if (!m_pTwh) return 0L;
+        if (!m_pTwh)
+            return 0L;
+
         LRESULT lResult;
         TxSendMessage(EM_STREAMIN, nFormat, (LPARAM)&es, &lResult);
+
         return (long)lResult;
     }
 
     long CRichEditUI::StreamOut(int nFormat, EDITSTREAM &es)
     {
-        if (!m_pTwh) return 0L;
+        if (!m_pTwh)
+            return 0L;
+
         LRESULT lResult;
         TxSendMessage(EM_STREAMOUT, nFormat, (LPARAM)&es, &lResult);
+
         return (long)lResult;
     }
 
@@ -1638,8 +1720,11 @@ namespace DuiLib {
         cs.cy = 0;
         cs.cx = 0;
         cs.lpszName = m_sText.GetData();
+
         CreateHost(this, &cs, &m_pTwh);
-        if (m_pTwh) {
+
+        if (m_pTwh != NULL)
+        {
             m_pTwh->SetTransparent(TRUE);
             LRESULT lResult;
             m_pTwh->GetTextServices()->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &lResult);
@@ -1652,22 +1737,31 @@ namespace DuiLib {
 
     HRESULT CRichEditUI::TxSendMessage(UINT msg, WPARAM wparam, LPARAM lparam, LRESULT *plresult) const
     {
-        if (m_pTwh) {
-            if (msg == WM_KEYDOWN && TCHAR(wparam) == VK_RETURN) {
-                if (!m_bWantReturn || (::GetKeyState(VK_CONTROL) < 0 && !m_bWantCtrlReturn)) {
-                    if (m_pManager != NULL) m_pManager->SendNotify((CControlUI*)this, DUI_MSGTYPE_RETURN);
+        if (m_pTwh != NULL)
+        {
+            if (msg == WM_KEYDOWN && TCHAR(wparam) == VK_RETURN)
+            {
+                if (!m_bWantReturn || (::GetKeyState(VK_CONTROL) < 0 && !m_bWantCtrlReturn))
+                {
+                    if (m_pManager != NULL)
+                        m_pManager->SendNotify((CControlUI*)this, DUI_MSGTYPE_RETURN);
+
                     return S_OK;
                 }
             }
+
             return m_pTwh->GetTextServices()->TxSendMessage(msg, wparam, lparam, plresult);
         }
+
         return S_FALSE;
     }
 
     IDropTarget* CRichEditUI::GetTxDropTarget()
     {
         IDropTarget *pdt = NULL;
-        if (m_pTwh->GetTextServices()->TxGetDropTarget(&pdt) == NOERROR) return pdt;
+        if (m_pTwh->GetTextServices()->TxGetDropTarget(&pdt) == NOERROR)
+            return pdt;
+
         return NULL;
     }
 
@@ -1681,6 +1775,7 @@ namespace DuiLib {
         LRESULT lResult;
         TxSendMessage(EM_SETEVENTMASK, 0, ENM_DROPFILES | ENM_LINK, // ENM_CHANGE| ENM_CORRECTTEXT | ENM_DRAGDROPDONE | ENM_DROPFILES | ENM_IMECHANGE | ENM_LINK | ENM_OBJECTPOSITIONS | ENM_PROTECTED | ENM_REQUESTRESIZE | ENM_SCROLL | ENM_SELCHANGE | ENM_UPDATE,
             &lResult);
+
         return (BOOL)lResult == FALSE;
     }
 
@@ -1698,21 +1793,21 @@ namespace DuiLib {
         case EN_LINK:
         case EN_OBJECTPOSITIONS:
         case EN_DRAGDROPDONE:
-        {
-            if (pv)                        // Fill out NMHDR portion of pv   
             {
-                LONG nId = GetWindowLong(this->GetManager()->GetPaintWindow(), GWL_ID);
-                NMHDR  *phdr = (NMHDR *)pv;
-                phdr->hwndFrom = this->GetManager()->GetPaintWindow();
-                phdr->idFrom = nId;
-                phdr->code = iNotify;
-
-                if (SendMessage(this->GetManager()->GetPaintWindow(), WM_NOTIFY, (WPARAM)nId, (LPARAM)pv))
+                if (pv)                        // Fill out NMHDR portion of pv   
                 {
-                    //hr = S_FALSE;   
+                    LONG nId = GetWindowLong(this->GetManager()->GetPaintWindow(), GWL_ID);
+                    NMHDR  *phdr = (NMHDR*)pv;
+                    phdr->hwndFrom = this->GetManager()->GetPaintWindow();
+                    phdr->idFrom = nId;
+                    phdr->code = iNotify;
+
+                    if (SendMessage(this->GetManager()->GetPaintWindow(), WM_NOTIFY, (WPARAM)nId, (LPARAM)pv))
+                    {
+                        //hr = S_FALSE;   
+                    }
                 }
             }
-        }
             break;
         }
     }
@@ -1723,28 +1818,38 @@ namespace DuiLib {
     {
         int cx = 0;
         int cy = 0;
-        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+
+        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+        {
             int iLastScrollPos = m_pVerticalScrollBar->GetScrollPos();
             m_pVerticalScrollBar->SetScrollPos(szPos.cy);
             cy = m_pVerticalScrollBar->GetScrollPos() - iLastScrollPos;
         }
-        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) {
+
+        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible())
+        {
             int iLastScrollPos = m_pHorizontalScrollBar->GetScrollPos();
             m_pHorizontalScrollBar->SetScrollPos(szPos.cx);
             cx = m_pHorizontalScrollBar->GetScrollPos() - iLastScrollPos;
         }
-        if (cy != 0) {
+
+        if (cy != 0)
+        {
             int iPos = 0;
             if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
                 iPos = m_pVerticalScrollBar->GetScrollPos();
+
             WPARAM wParam = MAKEWPARAM(SB_THUMBPOSITION, m_pVerticalScrollBar->GetScrollPos());
             TxSendMessage(WM_VSCROLL, wParam, 0L, 0);
-            if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+            if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+            {
                 if (cy > 0 && m_pVerticalScrollBar->GetScrollPos() <= iPos)
                     m_pVerticalScrollBar->SetScrollPos(iPos);
             }
         }
-        if (cx != 0) {
+
+        if (cx != 0)
+        {
             WPARAM wParam = MAKEWPARAM(SB_THUMBPOSITION, m_pHorizontalScrollBar->GetScrollPos());
             TxSendMessage(WM_HSCROLL, wParam, 0L, 0);
         }
@@ -1760,8 +1865,11 @@ namespace DuiLib {
         int iPos = 0;
         if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
             iPos = m_pVerticalScrollBar->GetScrollPos();
+
         TxSendMessage(WM_VSCROLL, SB_LINEDOWN, 0L, 0);
-        if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+
+        if (m_pTwh && !m_bRich && m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+        {
             if (m_pVerticalScrollBar->GetScrollPos() <= iPos)
                 m_pVerticalScrollBar->SetScrollPos(m_pVerticalScrollBar->GetScrollRange());
         }
@@ -1819,70 +1927,96 @@ namespace DuiLib {
 
     void CRichEditUI::DoEvent(TEventUI& event)
     {
-        if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND) {
-            if (m_pParent != NULL) m_pParent->DoEvent(event);
-            else CControlUI::DoEvent(event);
+        if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND)
+        {
+            if (m_pParent != NULL)
+                m_pParent->DoEvent(event);
+            else
+                CControlUI::DoEvent(event);
+
             return;
         }
 
         if (event.Type == UIEVENT_SETCURSOR && IsEnabled())
         {
-            if (m_pTwh && m_pTwh->DoSetCursor(NULL, &event.ptMouse)) {
+            if (m_pTwh && m_pTwh->DoSetCursor(NULL, &event.ptMouse))
+            {
                 return;
             }
         }
-        if (event.Type == UIEVENT_SETFOCUS) {
-            if (m_pTwh) {
+
+        if (event.Type == UIEVENT_SETFOCUS)
+        {
+            if (m_pTwh != NULL)
+            {
                 m_pTwh->OnTxInPlaceActivate(NULL);
                 m_pTwh->GetTextServices()->TxSendMessage(WM_SETFOCUS, 0, 0, 0);
             }
+
             m_bFocused = true;
             Invalidate();
             return;
         }
-        if (event.Type == UIEVENT_KILLFOCUS)  {
-            if (m_pTwh) {
+
+        if (event.Type == UIEVENT_KILLFOCUS) 
+        {
+            if (m_pTwh != NULL)
+            {
                 m_pTwh->OnTxInPlaceActivate(NULL);
                 m_pTwh->GetTextServices()->TxSendMessage(WM_KILLFOCUS, 0, 0, 0);
             }
+
             m_bFocused = false;
             Invalidate();
             return;
         }
-        if (event.Type == UIEVENT_TIMER) {
-            if (m_pTwh) {
+
+        if (event.Type == UIEVENT_TIMER)
+        {
+            if (m_pTwh != NULL)
+            {
                 m_pTwh->GetTextServices()->TxSendMessage(WM_TIMER, event.wParam, event.lParam, 0);
             }
         }
-        if (event.Type == UIEVENT_SCROLLWHEEL) {
-            if ((event.wKeyState & MK_CONTROL) != 0) {
+
+        if (event.Type == UIEVENT_SCROLLWHEEL)
+        {
+            if ((event.wKeyState & MK_CONTROL) != 0)
+            {
                 return;
             }
         }
+
         if (event.Type == UIEVENT_BUTTONDOWN || event.Type == UIEVENT_DBLCLICK)
         {
             return;
         }
+
         if (event.Type == UIEVENT_MOUSEMOVE)
         {
             return;
         }
+
         if (event.Type == UIEVENT_BUTTONUP)
         {
             return;
         }
+
         if (event.Type == UIEVENT_MOUSEENTER)
         {
             return;
         }
+
         if (event.Type == UIEVENT_MOUSELEAVE)
         {
             return;
         }
+
         if (event.Type > UIEVENT__KEYBEGIN && event.Type < UIEVENT__KEYEND)
         {
             return;
         }
+
         CContainerUI::DoEvent(event);
     }
 
@@ -1902,17 +2036,22 @@ namespace DuiLib {
         rc.right -= m_rcInset.right;
         rc.bottom -= m_rcInset.bottom;
         bool bVScrollBarVisiable = false;
-        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+        {
             bVScrollBarVisiable = true;
             rc.right -= m_pVerticalScrollBar->GetFixedWidth();
         }
-        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) {
+
+        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible())
+        {
             rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight();
         }
 
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             m_pTwh->SetClientRect(&rc);
-            if (bVScrollBarVisiable && (!m_pVerticalScrollBar->IsVisible() || m_bVScrollBarFixing)) {
+            if (bVScrollBarVisiable && (!m_pVerticalScrollBar->IsVisible() || m_bVScrollBarFixing))
+            {
                 LONG lWidth = rc.right - rc.left + m_pVerticalScrollBar->GetFixedWidth();
                 LONG lHeight = 0;
                 SIZEL szExtent = { -1, -1 };
@@ -1925,13 +2064,17 @@ namespace DuiLib {
                     &szExtent,
                     &lWidth,
                     &lHeight);
-                if (lHeight > rc.bottom - rc.top) {
+
+                if (lHeight > rc.bottom - rc.top)
+                {
                     m_pVerticalScrollBar->SetVisible(true);
                     m_pVerticalScrollBar->SetScrollPos(0);
                     m_bVScrollBarFixing = true;
                 }
-                else {
-                    if (m_bVScrollBarFixing) {
+                else
+                {
+                    if (m_bVScrollBarFixing)
+                    {
                         m_pVerticalScrollBar->SetVisible(false);
                         m_bVScrollBarFixing = false;
                     }
@@ -1939,22 +2082,30 @@ namespace DuiLib {
             }
         }
 
-        if (m_pVerticalScrollBar != NULL && m_pVerticalScrollBar->IsVisible()) {
+        if (m_pVerticalScrollBar != NULL && m_pVerticalScrollBar->IsVisible())
+        {
             RECT rcScrollBarPos = { rc.right, rc.top, rc.right + m_pVerticalScrollBar->GetFixedWidth(), rc.bottom };
             m_pVerticalScrollBar->SetPos(rcScrollBarPos);
         }
-        if (m_pHorizontalScrollBar != NULL && m_pHorizontalScrollBar->IsVisible()) {
+
+        if (m_pHorizontalScrollBar != NULL && m_pHorizontalScrollBar->IsVisible())
+        {
             RECT rcScrollBarPos = { rc.left, rc.bottom, rc.right, rc.bottom + m_pHorizontalScrollBar->GetFixedHeight() };
             m_pHorizontalScrollBar->SetPos(rcScrollBarPos);
         }
 
-        for (int it = 0; it < m_items.GetSize(); it++) {
+        for (int it = 0; it < m_items.GetSize(); it++)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
-            if (!pControl->IsVisible()) continue;
-            if (pControl->IsFloat()) {
+            if (!pControl->IsVisible())
+                continue;
+
+            if (pControl->IsFloat())
+            {
                 SetFloatPos(it);
             }
-            else {
+            else
+            {
                 pControl->SetPos(rc); // 所有非float子控件放大到整个客户区
             }
         }
@@ -1963,13 +2114,15 @@ namespace DuiLib {
     void CRichEditUI::DoPaint(HDC hDC, const RECT& rcPaint)
     {
         RECT rcTemp = { 0 };
-        if (!::IntersectRect(&rcTemp, &rcPaint, &m_rcItem)) return;
+        if (!::IntersectRect(&rcTemp, &rcPaint, &m_rcItem))
+            return;
 
         CRenderClip clip;
         CRenderClip::GenerateClip(hDC, rcTemp, clip);
         CControlUI::DoPaint(hDC, rcPaint);
 
-        if (m_pTwh) {
+        if (m_pTwh != NULL)
+        {
             RECT rc;
             m_pTwh->GetControlRect(&rc);
             // Remember wparam is actually the hdc and lparam is the update
@@ -1987,7 +2140,9 @@ namespace DuiLib {
                 NULL,                   // Call back function
                 NULL,                   // Call back parameter
                 0);                     // What view of the object
-            if (m_bVScrollBarFixing) {
+
+            if (m_bVScrollBarFixing)
+            {
                 LONG lWidth = rc.right - rc.left + m_pVerticalScrollBar->GetFixedWidth();
                 LONG lHeight = 0;
                 SIZEL szExtent = { -1, -1 };
@@ -2000,61 +2155,93 @@ namespace DuiLib {
                     &szExtent,
                     &lWidth,
                     &lHeight);
-                if (lHeight <= rc.bottom - rc.top) {
+
+                if (lHeight <= rc.bottom - rc.top)
+                {
                     NeedUpdate();
                 }
             }
         }
 
-        if (m_items.GetSize() > 0) {
+        if (m_items.GetSize() > 0)
+        {
             RECT rc = m_rcItem;
             rc.left += m_rcInset.left;
             rc.top += m_rcInset.top;
             rc.right -= m_rcInset.right;
             rc.bottom -= m_rcInset.bottom;
-            if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) rc.right -= m_pVerticalScrollBar->GetFixedWidth();
-            if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight();
 
-            if (!::IntersectRect(&rcTemp, &rcPaint, &rc)) {
-                for (int it = 0; it < m_items.GetSize(); it++) {
+            if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+                rc.right -= m_pVerticalScrollBar->GetFixedWidth();
+
+            if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible())
+                rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight();
+
+            if (!::IntersectRect(&rcTemp, &rcPaint, &rc))
+            {
+                for (int it = 0; it < m_items.GetSize(); it++)
+                {
                     CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
-                    if (!pControl->IsVisible()) continue;
-                    if (!::IntersectRect(&rcTemp, &rcPaint, &pControl->GetPos())) continue;
-                    if (pControl->IsFloat()) {
-                        if (!::IntersectRect(&rcTemp, &m_rcItem, &pControl->GetPos())) continue;
+                    if (!pControl->IsVisible())
+                        continue;
+
+                    if (!::IntersectRect(&rcTemp, &rcPaint, &pControl->GetPos()))
+                        continue;
+
+                    if (pControl->IsFloat())
+                    {
+                        if (!::IntersectRect(&rcTemp, &m_rcItem, &pControl->GetPos()))
+                            continue;
+
                         pControl->DoPaint(hDC, rcPaint);
                     }
                 }
             }
-            else {
+            else
+            {
                 CRenderClip childClip;
                 CRenderClip::GenerateClip(hDC, rcTemp, childClip);
-                for (int it = 0; it < m_items.GetSize(); it++) {
+                for (int it = 0; it < m_items.GetSize(); it++)
+                {
                     CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
-                    if (!pControl->IsVisible()) continue;
-                    if (!::IntersectRect(&rcTemp, &rcPaint, &pControl->GetPos())) continue;
-                    if (pControl->IsFloat()) {
-                        if (!::IntersectRect(&rcTemp, &m_rcItem, &pControl->GetPos())) continue;
+                    if (!pControl->IsVisible())
+                        continue;
+
+                    if (!::IntersectRect(&rcTemp, &rcPaint, &pControl->GetPos()))
+                        continue;
+
+                    if (pControl->IsFloat())
+                    {
+                        if (!::IntersectRect(&rcTemp, &m_rcItem, &pControl->GetPos()))
+                            continue;
+
                         CRenderClip::UseOldClipBegin(hDC, childClip);
                         pControl->DoPaint(hDC, rcPaint);
                         CRenderClip::UseOldClipEnd(hDC, childClip);
                     }
-                    else {
-                        if (!::IntersectRect(&rcTemp, &rc, &pControl->GetPos())) continue;
+                    else
+                    {
+                        if (!::IntersectRect(&rcTemp, &rc, &pControl->GetPos()))
+                            continue;
+
                         pControl->DoPaint(hDC, rcPaint);
                     }
                 }
             }
         }
 
-        if (m_pVerticalScrollBar != NULL && m_pVerticalScrollBar->IsVisible()) {
-            if (::IntersectRect(&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos())) {
+        if (m_pVerticalScrollBar != NULL && m_pVerticalScrollBar->IsVisible())
+        {
+            if (::IntersectRect(&rcTemp, &rcPaint, &m_pVerticalScrollBar->GetPos()))
+            {
                 m_pVerticalScrollBar->DoPaint(hDC, rcPaint);
             }
         }
 
-        if (m_pHorizontalScrollBar != NULL && m_pHorizontalScrollBar->IsVisible()) {
-            if (::IntersectRect(&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos())) {
+        if (m_pHorizontalScrollBar != NULL && m_pHorizontalScrollBar->IsVisible())
+        {
+            if (::IntersectRect(&rcTemp, &rcPaint, &m_pHorizontalScrollBar->GetPos()))
+            {
                 m_pHorizontalScrollBar->DoPaint(hDC, rcPaint);
             }
         }
@@ -2160,64 +2347,88 @@ namespace DuiLib {
 
     LRESULT CRichEditUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
     {
-        if (!IsVisible() || !IsEnabled()) return 0;
-        if (!IsMouseEnabled() && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) return 0;
-        if (uMsg == WM_MOUSEWHEEL && (LOWORD(wParam) & MK_CONTROL) == 0) return 0;
+        if (!IsVisible() || !IsEnabled())
+            return 0;
+
+        if (!IsMouseEnabled() && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+            return 0;
+
+        if (uMsg == WM_MOUSEWHEEL && (LOWORD(wParam) & MK_CONTROL) == 0)
+            return 0;
 
         bool bWasHandled = true;
-        if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR) {
-            if (!m_pTwh->IsCaptured()) {
-                switch (uMsg) {
+        if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR)
+        {
+            if (!m_pTwh->IsCaptured())
+            {
+                switch (uMsg)
+                {
                 case WM_LBUTTONDOWN:
                 case WM_LBUTTONUP:
                 case WM_LBUTTONDBLCLK:
                 case WM_RBUTTONDOWN:
                 case WM_RBUTTONUP:
-                {
-                    POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-                    CControlUI* pHover = GetManager()->FindControl(pt);
-                    if (pHover != this) {
-                        bWasHandled = false;
-                        return 0;
+                    {
+                        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+                        CControlUI* pHover = GetManager()->FindControl(pt);
+                        if (pHover != this)
+                        {
+                            bWasHandled = false;
+                            return 0;
+                        }
                     }
-                }
                     break;
                 }
             }
+
             // Mouse message only go when captured or inside rect
             DWORD dwHitResult = m_pTwh->IsCaptured() ? HITRESULT_HIT : HITRESULT_OUTSIDE;
-            if (dwHitResult == HITRESULT_OUTSIDE) {
+            if (dwHitResult == HITRESULT_OUTSIDE)
+            {
                 RECT rc;
                 m_pTwh->GetControlRect(&rc);
                 POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-                if (uMsg == WM_MOUSEWHEEL) ::ScreenToClient(GetManager()->GetPaintWindow(), &pt);
-                if (::PtInRect(&rc, pt) && !GetManager()->IsCaptured()) dwHitResult = HITRESULT_HIT;
+
+                if (uMsg == WM_MOUSEWHEEL)
+                    ::ScreenToClient(GetManager()->GetPaintWindow(), &pt);
+
+                if (::PtInRect(&rc, pt) && !GetManager()->IsCaptured())
+                    dwHitResult = HITRESULT_HIT;
             }
-            if (dwHitResult != HITRESULT_HIT) return 0;
-            if (uMsg == WM_SETCURSOR) bWasHandled = false;
-            else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDOWN) {
+
+            if (dwHitResult != HITRESULT_HIT)
+                return 0;
+
+            if (uMsg == WM_SETCURSOR)
+                bWasHandled = false;
+            else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDOWN)
                 SetFocus();
-            }
         }
 #ifdef _UNICODE
-        else if( uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST ) {
+        else if( uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST )
+        {
 #else
-        else if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) || uMsg == WM_CHAR || uMsg == WM_IME_CHAR) {
+        else if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) || uMsg == WM_CHAR || uMsg == WM_IME_CHAR)
+        {
 #endif
-            if (!IsFocused()) return 0;
+            if (!IsFocused())
+                return 0;
         }
-        else if (uMsg == WM_CONTEXTMENU) {
+        else if (uMsg == WM_CONTEXTMENU)
+        {
             POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
             ::ScreenToClient(GetManager()->GetPaintWindow(), &pt);
             CControlUI* pHover = GetManager()->FindControl(pt);
-            if (pHover != this) {
+            if (pHover != this)
+            {
                 bWasHandled = false;
                 return 0;
             }
         }
         else
         {
-            switch (uMsg) {
+            switch (uMsg)
+            {
             case WM_HELP:
                 bWasHandled = false;
                 break;
@@ -2225,17 +2436,24 @@ namespace DuiLib {
                 return 0;
             }
         }
+
         LRESULT lResult = 0;
         HRESULT Hr = TxSendMessage(uMsg, wParam, lParam, &lResult);
-        if (Hr == S_OK) bHandled = bWasHandled;
-        else if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) || uMsg == WM_CHAR || uMsg == WM_IME_CHAR)
+        if (Hr == S_OK)
+        {
             bHandled = bWasHandled;
-        else if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) {
-            if (m_pTwh->IsCaptured()) bHandled = bWasHandled;
         }
+        else if ((uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) || uMsg == WM_CHAR || uMsg == WM_IME_CHAR)
+        {
+            bHandled = bWasHandled;
+        }
+        else if (uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+        {
+            if (m_pTwh->IsCaptured())
+                bHandled = bWasHandled;
+        }
+
         return lResult;
     }
-
-
 
 } // namespace DuiLib

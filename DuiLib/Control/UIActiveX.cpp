@@ -5,14 +5,12 @@ namespace DuiLib {
     /////////////////////////////////////////////////////////////////////////////////////
     //
     //
-
     class CActiveXCtrl;
 
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
     //
-
     class CActiveXWnd : public CWindowWnd
     {
     public:
@@ -40,14 +38,17 @@ namespace DuiLib {
     /////////////////////////////////////////////////////////////////////////////////////
     //
     //
-
     class CActiveXEnum : public IEnumUnknown
     {
     public:
-        CActiveXEnum(IUnknown* pUnk) : m_pUnk(pUnk), m_dwRef(1), m_iPos(0)
+        CActiveXEnum(IUnknown* pUnk)
+            : m_pUnk(pUnk)
+            , m_dwRef(1)
+            , m_iPos(0)
         {
             m_pUnk->AddRef();
         }
+
         ~CActiveXEnum()
         {
             m_pUnk->Release();
@@ -61,27 +62,44 @@ namespace DuiLib {
         {
             return ++m_dwRef;
         }
+
         STDMETHOD_(ULONG, Release)()
         {
             LONG lRef = --m_dwRef;
-            if (lRef == 0) delete this;
+            if (lRef == 0)
+                delete this;
+
             return lRef;
         }
+
         STDMETHOD(QueryInterface)(REFIID riid, LPVOID *ppvObject)
         {
             *ppvObject = NULL;
-            if (riid == IID_IUnknown) *ppvObject = static_cast<IEnumUnknown*>(this);
-            else if (riid == IID_IEnumUnknown) *ppvObject = static_cast<IEnumUnknown*>(this);
-            if (*ppvObject != NULL) AddRef();
-            return *ppvObject == NULL ? E_NOINTERFACE : S_OK;
+
+            if (riid == IID_IUnknown)
+                *ppvObject = static_cast<IEnumUnknown*>(this);
+            else if (riid == IID_IEnumUnknown)
+                *ppvObject = static_cast<IEnumUnknown*>(this);
+
+            if (*ppvObject != NULL)
+                AddRef();
+
+            return (*ppvObject == NULL) ? E_NOINTERFACE : S_OK;
         }
         STDMETHOD(Next)(ULONG celt, IUnknown **rgelt, ULONG *pceltFetched)
         {
-            if (pceltFetched != NULL) *pceltFetched = 0;
-            if (++m_iPos > 1) return S_FALSE;
+            if (pceltFetched != NULL)
+                *pceltFetched = 0;
+
+            if (++m_iPos > 1)
+                return S_FALSE;
+
             *rgelt = m_pUnk;
             (*rgelt)->AddRef();
-            if (pceltFetched != NULL) *pceltFetched = 1;
+
+            if (pceltFetched != NULL)
+                *pceltFetched = 1;
+
             return S_OK;
         }
         STDMETHOD(Skip)(ULONG celt)
@@ -89,11 +107,13 @@ namespace DuiLib {
             m_iPos += celt;
             return S_OK;
         }
+
         STDMETHOD(Reset)(void)
         {
             m_iPos = 0;
             return S_OK;
         }
+
         STDMETHOD(Clone)(IEnumUnknown **ppenum)
         {
             return E_NOTIMPL;
@@ -104,16 +124,21 @@ namespace DuiLib {
     /////////////////////////////////////////////////////////////////////////////////////
     //
     //
-
     class CActiveXFrameWnd : public IOleInPlaceFrame
     {
     public:
-        CActiveXFrameWnd(CActiveXUI* pOwner) : m_dwRef(1), m_pOwner(pOwner), m_pActiveObject(NULL)
+        CActiveXFrameWnd(CActiveXUI* pOwner)
+            : m_dwRef(1)
+            , m_pOwner(pOwner)
+            , m_pActiveObject(NULL)
         {
+
         }
+
         ~CActiveXFrameWnd()
         {
-            if (m_pActiveObject != NULL) m_pActiveObject->Release();
+            if (m_pActiveObject != NULL)
+                m_pActiveObject->Release();
         }
 
         ULONG m_dwRef;
@@ -125,75 +150,104 @@ namespace DuiLib {
         {
             return ++m_dwRef;
         }
+
         STDMETHOD_(ULONG, Release)()
         {
             ULONG lRef = --m_dwRef;
-            if (lRef == 0) delete this;
+            if (lRef == 0)
+                delete this;
+
             return lRef;
         }
+
         STDMETHOD(QueryInterface)(REFIID riid, LPVOID *ppvObject)
         {
             *ppvObject = NULL;
-            if (riid == IID_IUnknown) *ppvObject = static_cast<IOleInPlaceFrame*>(this);
-            else if (riid == IID_IOleWindow) *ppvObject = static_cast<IOleWindow*>(this);
-            else if (riid == IID_IOleInPlaceFrame) *ppvObject = static_cast<IOleInPlaceFrame*>(this);
-            else if (riid == IID_IOleInPlaceUIWindow) *ppvObject = static_cast<IOleInPlaceUIWindow*>(this);
-            if (*ppvObject != NULL) AddRef();
-            return *ppvObject == NULL ? E_NOINTERFACE : S_OK;
+            if (riid == IID_IUnknown)
+                *ppvObject = static_cast<IOleInPlaceFrame*>(this);
+            else if (riid == IID_IOleWindow)
+                *ppvObject = static_cast<IOleWindow*>(this);
+            else if (riid == IID_IOleInPlaceFrame)
+                *ppvObject = static_cast<IOleInPlaceFrame*>(this);
+            else if (riid == IID_IOleInPlaceUIWindow)
+                *ppvObject = static_cast<IOleInPlaceUIWindow*>(this);
+
+            if (*ppvObject != NULL)
+                AddRef();
+
+            return (*ppvObject == NULL) ? E_NOINTERFACE : S_OK;
         }
+
         // IOleInPlaceFrameWindow
         STDMETHOD(InsertMenus)(HMENU /*hmenuShared*/, LPOLEMENUGROUPWIDTHS /*lpMenuWidths*/)
         {
             return S_OK;
         }
+
         STDMETHOD(SetMenu)(HMENU /*hmenuShared*/, HOLEMENU /*holemenu*/, HWND /*hwndActiveObject*/)
         {
             return S_OK;
         }
+
         STDMETHOD(RemoveMenus)(HMENU /*hmenuShared*/)
         {
             return S_OK;
         }
+
         STDMETHOD(SetStatusText)(LPCOLESTR /*pszStatusText*/)
         {
             return S_OK;
         }
+
         STDMETHOD(EnableModeless)(BOOL /*fEnable*/)
         {
             return S_OK;
         }
+
         STDMETHOD(TranslateAccelerator)(LPMSG /*lpMsg*/, WORD /*wID*/)
         {
             return S_FALSE;
         }
+
         // IOleWindow
         STDMETHOD(GetWindow)(HWND* phwnd)
         {
-            if (m_pOwner == NULL) return E_UNEXPECTED;
+            if (m_pOwner == NULL)
+                return E_UNEXPECTED;
+
             *phwnd = m_pOwner->GetManager()->GetPaintWindow();
             return S_OK;
         }
+
         STDMETHOD(ContextSensitiveHelp)(BOOL /*fEnterMode*/)
         {
             return S_OK;
         }
+
         // IOleInPlaceUIWindow
         STDMETHOD(GetBorder)(LPRECT /*lprectBorder*/)
         {
             return S_OK;
         }
+
         STDMETHOD(RequestBorderSpace)(LPCBORDERWIDTHS /*pborderwidths*/)
         {
             return INPLACE_E_NOTOOLSPACE;
         }
+
         STDMETHOD(SetBorderSpace)(LPCBORDERWIDTHS /*pborderwidths*/)
         {
             return S_OK;
         }
+
         STDMETHOD(SetActiveObject)(IOleInPlaceActiveObject* pActiveObject, LPCOLESTR /*pszObjName*/)
         {
-            if (pActiveObject != NULL) pActiveObject->AddRef();
-            if (m_pActiveObject != NULL) m_pActiveObject->Release();
+            if (pActiveObject != NULL)
+                pActiveObject->AddRef();
+
+            if (m_pActiveObject != NULL)
+                m_pActiveObject->Release();
+
             m_pActiveObject = pActiveObject;
             return S_OK;
         }
@@ -201,16 +255,16 @@ namespace DuiLib {
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
-
-    class CActiveXCtrl :
-        public IOleClientSite,
-        public IOleInPlaceSiteWindowless,
-        public IOleControlSite,
-        public IObjectWithSite,
-        public IOleContainer
+    class CActiveXCtrl
+        : public IOleClientSite
+        , public IOleInPlaceSiteWindowless
+        , public IOleControlSite
+        , public IObjectWithSite
+        , public IOleContainer
     {
         friend class CActiveXUI;
         friend class CActiveXWnd;
+
     public:
         CActiveXCtrl();
         ~CActiveXCtrl();
@@ -301,31 +355,49 @@ namespace DuiLib {
         bool m_bWindowless;
     };
 
-    CActiveXCtrl::CActiveXCtrl() :
-        m_dwRef(1),
-        m_pOwner(NULL),
-        m_pWindow(NULL),
-        m_pUnkSite(NULL),
-        m_pViewObject(NULL),
-        m_pInPlaceObject(NULL),
-        m_bLocked(false),
-        m_bFocused(false),
-        m_bCaptured(false),
-        m_bWindowless(true),
-        m_bUIActivated(false),
-        m_bInPlaceActive(false)
+    CActiveXCtrl::CActiveXCtrl()
+        : m_dwRef(1)
+        , m_pOwner(NULL)
+        , m_pWindow(NULL)
+        , m_pUnkSite(NULL)
+        , m_pViewObject(NULL)
+        , m_pInPlaceObject(NULL)
+        , m_bLocked(false)
+        , m_bFocused(false)
+        , m_bCaptured(false)
+        , m_bWindowless(true)
+        , m_bUIActivated(false)
+        , m_bInPlaceActive(false)
     {
+
     }
 
     CActiveXCtrl::~CActiveXCtrl()
     {
-        if (m_pWindow != NULL) {
+        if (m_pWindow != NULL)
+        {
             ::DestroyWindow(*m_pWindow);
             delete m_pWindow;
+            m_pWindow = NULL;
         }
-        if (m_pUnkSite != NULL) m_pUnkSite->Release();
-        if (m_pViewObject != NULL) m_pViewObject->Release();
-        if (m_pInPlaceObject != NULL) m_pInPlaceObject->Release();
+
+        if (m_pUnkSite != NULL)
+        {
+            m_pUnkSite->Release();
+            m_pUnkSite = NULL;
+        }
+
+        if (m_pViewObject != NULL)
+        {
+            m_pViewObject->Release();
+            m_pViewObject = NULL;
+        }
+
+        if (m_pInPlaceObject != NULL)
+        {
+            m_pInPlaceObject->Release();
+            m_pInPlaceObject = NULL;
+        }
     }
 
     STDMETHODIMP CActiveXCtrl::QueryInterface(REFIID riid, LPVOID *ppvObject)
@@ -1078,21 +1150,24 @@ namespace DuiLib {
         IOleControl* pOleControl = NULL;
 
         HRESULT Hr = -1;
-        if (!m_sModuleName.IsEmpty()) {
+        if (!m_sModuleName.IsEmpty())
+        {
             HMODULE hModule = ::LoadLibrary((LPCTSTR)m_sModuleName);
-            if (hModule != NULL) {
+            if (hModule != NULL)
+            {
                 IClassFactory* aClassFactory = NULL;
                 DllGetClassObjectFunc aDllGetClassObjectFunc = (DllGetClassObjectFunc)::GetProcAddress(hModule, "DllGetClassObject");
                 Hr = aDllGetClassObjectFunc(m_clsid, IID_IClassFactory, (LPVOID*)&aClassFactory);
-                if (SUCCEEDED(Hr)) {
+                if (SUCCEEDED(Hr))
                     Hr = aClassFactory->CreateInstance(NULL, IID_IOleObject, (LPVOID*)&pOleControl);
-                }
+
                 aClassFactory->Release();
             }
         }
-        if (FAILED(Hr)) {
+
+        if (FAILED(Hr))
             Hr = ::CoCreateInstance(m_clsid, NULL, CLSCTX_ALL, IID_IOleControl, (LPVOID*)&pOleControl);
-        }
+
         ASSERT(SUCCEEDED(Hr));
         if (FAILED(Hr)) return false;
         pOleControl->QueryInterface(IID_IOleObject, (LPVOID*)&m_pUnk);
@@ -1116,24 +1191,37 @@ namespace DuiLib {
             pPersistStreamInit->Release();
         }
         if (FAILED(Hr)) return false;
-        if ((dwMiscStatus & OLEMISC_SETCLIENTSITEFIRST) == 0) m_pUnk->SetClientSite(pOleClientSite);
+        if ((dwMiscStatus & OLEMISC_SETCLIENTSITEFIRST) == 0)
+            m_pUnk->SetClientSite(pOleClientSite);
+
         // Grab the view...
         Hr = m_pUnk->QueryInterface(IID_IViewObjectEx, (LPVOID*)&m_pControl->m_pViewObject);
-        if (FAILED(Hr)) Hr = m_pUnk->QueryInterface(IID_IViewObject2, (LPVOID*)&m_pControl->m_pViewObject);
-        if (FAILED(Hr)) Hr = m_pUnk->QueryInterface(IID_IViewObject, (LPVOID*)&m_pControl->m_pViewObject);
+        if (FAILED(Hr))
+            Hr = m_pUnk->QueryInterface(IID_IViewObject2, (LPVOID*)&m_pControl->m_pViewObject);
+
+        if (FAILED(Hr))
+            Hr = m_pUnk->QueryInterface(IID_IViewObject, (LPVOID*)&m_pControl->m_pViewObject);
+
         // Activate and done...
         m_pUnk->SetHostNames(OLESTR("UIActiveX"), NULL);
-        if (m_pManager != NULL) m_pManager->SendNotify((CControlUI*)this, DUI_MSGTYPE_SHOWACTIVEX, 0, 0, false);
-        if ((dwMiscStatus & OLEMISC_INVISIBLEATRUNTIME) == 0) {
+
+        if (m_pManager != NULL)
+            m_pManager->SendNotify((CControlUI*)this, DUI_MSGTYPE_SHOWACTIVEX, 0, 0, false);
+
+        if ((dwMiscStatus & OLEMISC_INVISIBLEATRUNTIME) == 0)
+        {
             Hr = m_pUnk->DoVerb(OLEIVERB_INPLACEACTIVATE, NULL, pOleClientSite, 0, m_pManager->GetPaintWindow(), &m_rcItem);
             //::RedrawWindow(m_pManager->GetPaintWindow(), &m_rcItem, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_INTERNALPAINT | RDW_FRAME);
         }
+
         IObjectWithSite* pSite = NULL;
         m_pUnk->QueryInterface(IID_IObjectWithSite, (LPVOID*)&pSite);
-        if (pSite != NULL) {
+        if (pSite != NULL)
+        {
             pSite->SetSite(static_cast<IOleClientSite*>(m_pControl));
             pSite->Release();
         }
+
         return SUCCEEDED(Hr);
     }
 
