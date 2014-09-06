@@ -545,8 +545,11 @@ namespace DuiLib {
         typedef BOOL(WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
         static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress(::GetModuleHandle(_T("msimg32.dll")), "AlphaBlend");
 
-        if (lpAlphaBlend == NULL) lpAlphaBlend = AlphaBitBlt;
-        if (hBitmap == NULL) return;
+        if (lpAlphaBlend == NULL)
+            lpAlphaBlend = AlphaBitBlt;
+
+        if (hBitmap == NULL)
+            return;
 
         HDC hCloneDC = ::CreateCompatibleDC(hDC);
         HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
@@ -556,18 +559,23 @@ namespace DuiLib {
         RECT rcDest = { 0 };
 
         // 如果AlphaBlend函数可用，并且图片支持alpha通道或需要透明，则用AlphaBlend绘图（支持透明度）
-        if (lpAlphaBlend && (alphaChannel || uFade < 255)) {
+        if (lpAlphaBlend && (alphaChannel || uFade < 255))
+        {
             BLENDFUNCTION bf = { AC_SRC_OVER, 0, uFade, AC_SRC_ALPHA };
+
             // middle
-            if (!hole) {
+            if (!hole)
+            {
                 rcDest.left = rc.left + rcCorners.left;
                 rcDest.top = rc.top + rcCorners.top;
                 rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                 rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
-                    if (!xtiled && !ytiled) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
+                    if (!xtiled && !ytiled)
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -575,60 +583,77 @@ namespace DuiLib {
                             rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
                             rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
                     }
-                    else if (xtiled && ytiled) {
+                    else if (xtiled && ytiled)
+                    {
                         LONG lWidth = rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right;
                         LONG lHeight = rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom;
                         int iTimesX = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
                         int iTimesY = (rcDest.bottom - rcDest.top + lHeight - 1) / lHeight;
-                        for (int j = 0; j < iTimesY; ++j) {
+                        for (int j = 0; j < iTimesY; ++j)
+                        {
                             LONG lDestTop = rcDest.top + lHeight * j;
                             LONG lDestBottom = rcDest.top + lHeight * (j + 1);
                             LONG lDrawHeight = lHeight;
-                            if (lDestBottom > rcDest.bottom) {
+                            if (lDestBottom > rcDest.bottom)
+                            {
                                 lDrawHeight -= lDestBottom - rcDest.bottom;
                                 lDestBottom = rcDest.bottom;
                             }
-                            for (int i = 0; i < iTimesX; ++i) {
+
+                            for (int i = 0; i < iTimesX; ++i)
+                            {
                                 LONG lDestLeft = rcDest.left + lWidth * i;
                                 LONG lDestRight = rcDest.left + lWidth * (i + 1);
                                 LONG lDrawWidth = lWidth;
-                                if (lDestRight > rcDest.right) {
+
+                                if (lDestRight > rcDest.right)
+                                {
                                     lDrawWidth -= lDestRight - rcDest.right;
                                     lDestRight = rcDest.right;
                                 }
+
                                 lpAlphaBlend(hDC, rcDest.left + lWidth * i, rcDest.top + lHeight * j,
                                     lDestRight - lDestLeft, lDestBottom - lDestTop, hCloneDC,
                                     rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, lDrawWidth, lDrawHeight, bf);
                             }
                         }
                     }
-                    else if (xtiled) {
+                    else if (xtiled)
+                    {
                         LONG lWidth = rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right;
                         int iTimes = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
-                        for (int i = 0; i < iTimes; ++i) {
+                        for (int i = 0; i < iTimes; ++i)
+                        {
                             LONG lDestLeft = rcDest.left + lWidth * i;
                             LONG lDestRight = rcDest.left + lWidth * (i + 1);
                             LONG lDrawWidth = lWidth;
-                            if (lDestRight > rcDest.right) {
+                            if (lDestRight > rcDest.right)
+                            {
                                 lDrawWidth -= lDestRight - rcDest.right;
                                 lDestRight = rcDest.right;
                             }
+
                             lpAlphaBlend(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom,
                                 hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                                 lDrawWidth, rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
                         }
                     }
-                    else { // ytiled
+                    else
+                    {
+                        // ytiled
                         LONG lHeight = rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom;
                         int iTimes = (rcDest.bottom - rcDest.top + lHeight - 1) / lHeight;
-                        for (int i = 0; i < iTimes; ++i) {
+                        for (int i = 0; i < iTimes; ++i)
+                        {
                             LONG lDestTop = rcDest.top + lHeight * i;
                             LONG lDestBottom = rcDest.top + lHeight * (i + 1);
                             LONG lDrawHeight = lHeight;
-                            if (lDestBottom > rcDest.bottom) {
+                            if (lDestBottom > rcDest.bottom)
+                            {
                                 lDrawHeight -= lDestBottom - rcDest.bottom;
                                 lDestBottom = rcDest.bottom;
                             }
+
                             lpAlphaBlend(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop,
                                 hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                                 rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, bf);
@@ -638,29 +663,34 @@ namespace DuiLib {
             }
 
             // left-top
-            if (rcCorners.left > 0 && rcCorners.top > 0) {
+            if (rcCorners.left > 0 && rcCorners.top > 0)
+            {
                 rcDest.left = rc.left;
                 rcDest.top = rc.top;
                 rcDest.right = rcCorners.left;
                 rcDest.bottom = rcCorners.top;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                         rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, bf);
                 }
             }
+
             // top
-            if (rcCorners.top > 0) {
+            if (rcCorners.top > 0)
+            {
                 rcDest.left = rc.left + rcCorners.left;
                 rcDest.top = rc.top;
                 rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                 rcDest.bottom = rcCorners.top;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -668,30 +698,36 @@ namespace DuiLib {
                         rcCorners.left - rcCorners.right, rcCorners.top, bf);
                 }
             }
+
             // right-top
-            if (rcCorners.right > 0 && rcCorners.top > 0) {
+            if (rcCorners.right > 0 && rcCorners.top > 0)
+            {
                 rcDest.left = rc.right - rcCorners.right;
                 rcDest.top = rc.top;
                 rcDest.right = rcCorners.right;
                 rcDest.bottom = rcCorners.top;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                         rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, bf);
                 }
             }
+
             // left
-            if (rcCorners.left > 0) {
+            if (rcCorners.left > 0)
+            {
                 rcDest.left = rc.left;
                 rcDest.top = rc.top + rcCorners.top;
                 rcDest.right = rcCorners.left;
                 rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -699,15 +735,18 @@ namespace DuiLib {
                         rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
                 }
             }
+
             // right
-            if (rcCorners.right > 0) {
+            if (rcCorners.right > 0)
+            {
                 rcDest.left = rc.right - rcCorners.right;
                 rcDest.top = rc.top + rcCorners.top;
                 rcDest.right = rcCorners.right;
                 rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -715,30 +754,36 @@ namespace DuiLib {
                         rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
                 }
             }
+
             // left-bottom
-            if (rcCorners.left > 0 && rcCorners.bottom > 0) {
+            if (rcCorners.left > 0 && rcCorners.bottom > 0)
+            {
                 rcDest.left = rc.left;
                 rcDest.top = rc.bottom - rcCorners.bottom;
                 rcDest.right = rcCorners.left;
                 rcDest.bottom = rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                         rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, bf);
                 }
             }
+
             // bottom
-            if (rcCorners.bottom > 0) {
+            if (rcCorners.bottom > 0)
+            {
                 rcDest.left = rc.left + rcCorners.left;
                 rcDest.top = rc.bottom - rcCorners.bottom;
                 rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                 rcDest.bottom = rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -746,15 +791,18 @@ namespace DuiLib {
                         rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, bf);
                 }
             }
+
             // right-bottom
-            if (rcCorners.right > 0 && rcCorners.bottom > 0) {
+            if (rcCorners.right > 0 && rcCorners.bottom > 0)
+            {
                 rcDest.left = rc.right - rcCorners.right;
                 rcDest.top = rc.bottom - rcCorners.bottom;
                 rcDest.right = rcCorners.right;
                 rcDest.bottom = rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
-                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
                     lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -769,7 +817,8 @@ namespace DuiLib {
                 && rc.bottom - rc.top == rcBmpPart.bottom - rcBmpPart.top \
                 && rcCorners.left == 0 && rcCorners.right == 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
             {
-                if (::IntersectRect(&rcTemp, &rcPaint, &rc)) {
+                if (::IntersectRect(&rcTemp, &rcPaint, &rc))
+                {
                     ::BitBlt(hDC, rcTemp.left, rcTemp.top, rcTemp.right - rcTemp.left, rcTemp.bottom - rcTemp.top, \
                         hCloneDC, rcBmpPart.left + rcTemp.left - rc.left, rcBmpPart.top + rcTemp.top - rc.top, SRCCOPY);
                 }
@@ -777,15 +826,18 @@ namespace DuiLib {
             else
             {
                 // middle
-                if (!hole) {
+                if (!hole)
+                {
                     rcDest.left = rc.left + rcCorners.left;
                     rcDest.top = rc.top + rcCorners.top;
                     rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                     rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
-                        if (!xtiled && !ytiled) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
+                        if (!xtiled && !ytiled)
+                        {
                             rcDest.right -= rcDest.left;
                             rcDest.bottom -= rcDest.top;
                             ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -793,60 +845,76 @@ namespace DuiLib {
                                 rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
                                 rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
                         }
-                        else if (xtiled && ytiled) {
+                        else if (xtiled && ytiled)
+                        {
                             LONG lWidth = rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right;
                             LONG lHeight = rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom;
                             int iTimesX = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
                             int iTimesY = (rcDest.bottom - rcDest.top + lHeight - 1) / lHeight;
-                            for (int j = 0; j < iTimesY; ++j) {
+                            for (int j = 0; j < iTimesY; ++j)
+                            {
                                 LONG lDestTop = rcDest.top + lHeight * j;
                                 LONG lDestBottom = rcDest.top + lHeight * (j + 1);
                                 LONG lDrawHeight = lHeight;
-                                if (lDestBottom > rcDest.bottom) {
+                                if (lDestBottom > rcDest.bottom)
+                                {
                                     lDrawHeight -= lDestBottom - rcDest.bottom;
                                     lDestBottom = rcDest.bottom;
                                 }
-                                for (int i = 0; i < iTimesX; ++i) {
+
+                                for (int i = 0; i < iTimesX; ++i)
+                                {
                                     LONG lDestLeft = rcDest.left + lWidth * i;
                                     LONG lDestRight = rcDest.left + lWidth * (i + 1);
                                     LONG lDrawWidth = lWidth;
-                                    if (lDestRight > rcDest.right) {
+                                    if (lDestRight > rcDest.right)
+                                    {
                                         lDrawWidth -= lDestRight - rcDest.right;
                                         lDestRight = rcDest.right;
                                     }
+
                                     ::BitBlt(hDC, rcDest.left + lWidth * i, rcDest.top + lHeight * j, \
                                         lDestRight - lDestLeft, lDestBottom - lDestTop, hCloneDC, \
                                         rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, SRCCOPY);
                                 }
                             }
                         }
-                        else if (xtiled) {
+                        else if (xtiled)
+                        {
                             LONG lWidth = rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right;
                             int iTimes = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
-                            for (int i = 0; i < iTimes; ++i) {
+                            for (int i = 0; i < iTimes; ++i)
+                            {
                                 LONG lDestLeft = rcDest.left + lWidth * i;
                                 LONG lDestRight = rcDest.left + lWidth * (i + 1);
                                 LONG lDrawWidth = lWidth;
-                                if (lDestRight > rcDest.right) {
+                                if (lDestRight > rcDest.right)
+                                {
                                     lDrawWidth -= lDestRight - rcDest.right;
                                     lDestRight = rcDest.right;
                                 }
+
                                 ::StretchBlt(hDC, lDestLeft, rcDest.top, lDestRight - lDestLeft, rcDest.bottom,
                                     hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                                     lDrawWidth, rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
                             }
                         }
-                        else { // ytiled
+                        else
+                        {
+                            // ytiled
                             LONG lHeight = rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom;
                             int iTimes = (rcDest.bottom - rcDest.top + lHeight - 1) / lHeight;
-                            for (int i = 0; i < iTimes; ++i) {
+                            for (int i = 0; i < iTimes; ++i)
+                            {
                                 LONG lDestTop = rcDest.top + lHeight * i;
                                 LONG lDestBottom = rcDest.top + lHeight * (i + 1);
                                 LONG lDrawHeight = lHeight;
-                                if (lDestBottom > rcDest.bottom) {
+                                if (lDestBottom > rcDest.bottom)
+                                {
                                     lDrawHeight -= lDestBottom - rcDest.bottom;
                                     lDestBottom = rcDest.bottom;
                                 }
+
                                 ::StretchBlt(hDC, rcDest.left, rcDest.top + lHeight * i, rcDest.right, lDestBottom - lDestTop,
                                     hCloneDC, rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
                                     rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, lDrawHeight, SRCCOPY);
@@ -856,29 +924,34 @@ namespace DuiLib {
                 }
 
                 // left-top
-                if (rcCorners.left > 0 && rcCorners.top > 0) {
+                if (rcCorners.left > 0 && rcCorners.top > 0)
+                {
                     rcDest.left = rc.left;
                     rcDest.top = rc.top;
                     rcDest.right = rcCorners.left;
                     rcDest.bottom = rcCorners.top;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                             rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, SRCCOPY);
                     }
                 }
+
                 // top
-                if (rcCorners.top > 0) {
+                if (rcCorners.top > 0)
+                {
                     rcDest.left = rc.left + rcCorners.left;
                     rcDest.top = rc.top;
                     rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                     rcDest.bottom = rcCorners.top;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -886,30 +959,36 @@ namespace DuiLib {
                             rcCorners.left - rcCorners.right, rcCorners.top, SRCCOPY);
                     }
                 }
+
                 // right-top
-                if (rcCorners.right > 0 && rcCorners.top > 0) {
+                if (rcCorners.right > 0 && rcCorners.top > 0)
+                {
                     rcDest.left = rc.right - rcCorners.right;
                     rcDest.top = rc.top;
                     rcDest.right = rcCorners.right;
                     rcDest.bottom = rcCorners.top;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                             rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, SRCCOPY);
                     }
                 }
+
                 // left
-                if (rcCorners.left > 0) {
+                if (rcCorners.left > 0)
+                {
                     rcDest.left = rc.left;
                     rcDest.top = rc.top + rcCorners.top;
                     rcDest.right = rcCorners.left;
                     rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -917,15 +996,18 @@ namespace DuiLib {
                             rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
                     }
                 }
+
                 // right
-                if (rcCorners.right > 0) {
+                if (rcCorners.right > 0)
+                {
                     rcDest.left = rc.right - rcCorners.right;
                     rcDest.top = rc.top + rcCorners.top;
                     rcDest.right = rcCorners.right;
                     rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -933,30 +1015,36 @@ namespace DuiLib {
                             rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
                     }
                 }
+
                 // left-bottom
-                if (rcCorners.left > 0 && rcCorners.bottom > 0) {
+                if (rcCorners.left > 0 && rcCorners.bottom > 0)
+                {
                     rcDest.left = rc.left;
                     rcDest.top = rc.bottom - rcCorners.bottom;
                     rcDest.right = rcCorners.left;
                     rcDest.bottom = rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
                             rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, SRCCOPY);
                     }
                 }
+
                 // bottom
-                if (rcCorners.bottom > 0) {
+                if (rcCorners.bottom > 0)
+                {
                     rcDest.left = rc.left + rcCorners.left;
                     rcDest.top = rc.bottom - rcCorners.bottom;
                     rcDest.right = rc.right - rc.left - rcCorners.left - rcCorners.right;
                     rcDest.bottom = rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -964,15 +1052,18 @@ namespace DuiLib {
                             rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, SRCCOPY);
                     }
                 }
+
                 // right-bottom
-                if (rcCorners.right > 0 && rcCorners.bottom > 0) {
+                if (rcCorners.right > 0 && rcCorners.bottom > 0)
+                {
                     rcDest.left = rc.right - rcCorners.right;
                     rcDest.top = rc.bottom - rcCorners.bottom;
                     rcDest.right = rcCorners.right;
                     rcDest.bottom = rcCorners.bottom;
                     rcDest.right += rcDest.left;
                     rcDest.bottom += rcDest.top;
-                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
+                    if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
+                    {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
                         ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
@@ -1072,24 +1163,39 @@ namespace DuiLib {
             {
                 sItem.Empty();
                 sValue.Empty();
-                while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
-                while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' ')) {
+                while (*pStrImage > _T('\0') && *pStrImage <= _T(' '))
+                    pStrImage = ::CharNext(pStrImage);
+
+                while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' '))
+                {
                     LPTSTR pstrTemp = ::CharNext(pStrImage);
                     while (pStrImage < pstrTemp)
                     {
                         sItem += *pStrImage++;
                     }
                 }
-                while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
-                if (*pStrImage++ != _T('=')) break;
-                while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
-                if (*pStrImage++ != _T('\'')) break;
-                while (*pStrImage != _T('\0') && *pStrImage != _T('\'')) {
+
+                while (*pStrImage > _T('\0') && *pStrImage <= _T(' '))
+                    pStrImage = ::CharNext(pStrImage);
+
+                if (*pStrImage++ != _T('='))
+                    break;
+
+                while (*pStrImage > _T('\0') && *pStrImage <= _T(' '))
+                    pStrImage = ::CharNext(pStrImage);
+
+                if (*pStrImage++ != _T('\''))
+                    break;
+
+                while (*pStrImage != _T('\0') && *pStrImage != _T('\''))
+                {
                     LPTSTR pstrTemp = ::CharNext(pStrImage);
-                    while (pStrImage < pstrTemp) {
+                    while (pStrImage < pstrTemp)
+                    {
                         sValue += *pStrImage++;
                     }
                 }
+
                 if (*pStrImage++ != _T('\'')) break;
                 if (!sValue.IsEmpty())
                 {
@@ -1148,15 +1254,15 @@ namespace DuiLib {
                     }
                     else if (sItem == _T("hole"))
                     {
-                        bHole = (_tcscmp(sValue.GetData(), _T("true")) == 0);
+                        bHole = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
                     }
                     else if (sItem == _T("xtiled"))
                     {
-                        bTiledX = (_tcscmp(sValue.GetData(), _T("true")) == 0);
+                        bTiledX = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
                     }
                     else if (sItem == _T("ytiled"))
                     {
-                        bTiledY = (_tcscmp(sValue.GetData(), _T("true")) == 0);
+                        bTiledY = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
                     }
                 }
 
@@ -1210,19 +1316,26 @@ namespace DuiLib {
     {
         typedef BOOL(WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
         static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress(::GetModuleHandle(_T("msimg32.dll")), "AlphaBlend");
-        if (lpAlphaBlend == NULL) lpAlphaBlend = AlphaBitBlt;
+
+        if (lpAlphaBlend == NULL)
+            lpAlphaBlend = AlphaBitBlt;
+
         typedef BOOL(WINAPI *PGradientFill)(HDC, PTRIVERTEX, ULONG, PVOID, ULONG, ULONG);
         static PGradientFill lpGradientFill = (PGradientFill) ::GetProcAddress(::GetModuleHandle(_T("msimg32.dll")), "GradientFill");
 
         BYTE bAlpha = (BYTE)(((dwFirst >> 24) + (dwSecond >> 24)) >> 1);
-        if (bAlpha == 0) return;
+        if (bAlpha == 0)
+            return;
+
         int cx = rc.right - rc.left;
         int cy = rc.bottom - rc.top;
         RECT rcPaint = rc;
         HDC hPaintDC = hDC;
         HBITMAP hPaintBitmap = NULL;
         HBITMAP hOldPaintBitmap = NULL;
-        if (bAlpha < 255) {
+
+        if (bAlpha < 255)
+        {
             rcPaint.left = rcPaint.top = 0;
             rcPaint.right = cx;
             rcPaint.bottom = cy;
@@ -1232,6 +1345,7 @@ namespace DuiLib {
             ASSERT(hPaintBitmap);
             hOldPaintBitmap = (HBITMAP) ::SelectObject(hPaintDC, hPaintBitmap);
         }
+
         if (lpGradientFill != NULL)
         {
             TRIVERTEX triv[2] =
@@ -1239,6 +1353,7 @@ namespace DuiLib {
                 { rcPaint.left, rcPaint.top, GetBValue(dwFirst) << 8, GetGValue(dwFirst) << 8, GetRValue(dwFirst) << 8, 0xFF00 },
                 { rcPaint.right, rcPaint.bottom, GetBValue(dwSecond) << 8, GetGValue(dwSecond) << 8, GetRValue(dwSecond) << 8, 0xFF00 }
             };
+
             GRADIENT_RECT grc = { 0, 1 };
             lpGradientFill(hPaintDC, triv, 2, &grc, 1, bVertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
         }
@@ -1251,29 +1366,39 @@ namespace DuiLib {
             else if (nSteps >= 16) nShift = 4;
             else if (nSteps >= 8) nShift = 3;
             else if (nSteps >= 4) nShift = 2;
+
             int nLines = 1 << nShift;
-            for (int i = 0; i < nLines; i++) {
+            for (int i = 0; i < nLines; i++)
+            {
                 // Do a little alpha blending
                 BYTE bR = (BYTE)((GetBValue(dwSecond) * (nLines - i) + GetBValue(dwFirst) * i) >> nShift);
                 BYTE bG = (BYTE)((GetGValue(dwSecond) * (nLines - i) + GetGValue(dwFirst) * i) >> nShift);
                 BYTE bB = (BYTE)((GetRValue(dwSecond) * (nLines - i) + GetRValue(dwFirst) * i) >> nShift);
+
                 // ... then paint with the resulting color
                 HBRUSH hBrush = ::CreateSolidBrush(RGB(bR, bG, bB));
                 RECT r2 = rcPaint;
-                if (bVertical) {
+                if (bVertical)
+                {
                     r2.bottom = rc.bottom - ((i * (rc.bottom - rc.top)) >> nShift);
                     r2.top = rc.bottom - (((i + 1) * (rc.bottom - rc.top)) >> nShift);
-                    if ((r2.bottom - r2.top) > 0) ::FillRect(hDC, &r2, hBrush);
+                    if ((r2.bottom - r2.top) > 0)
+                        ::FillRect(hDC, &r2, hBrush);
                 }
-                else {
+                else
+                {
                     r2.left = rc.right - (((i + 1) * (rc.right - rc.left)) >> nShift);
                     r2.right = rc.right - ((i * (rc.right - rc.left)) >> nShift);
-                    if ((r2.right - r2.left) > 0) ::FillRect(hPaintDC, &r2, hBrush);
+                    if ((r2.right - r2.left) > 0)
+                        ::FillRect(hPaintDC, &r2, hBrush);
                 }
+
                 ::DeleteObject(hBrush);
             }
         }
-        if (bAlpha < 255) {
+
+        if (bAlpha < 255)
+        {
             BLENDFUNCTION bf = { AC_SRC_OVER, 0, bAlpha, AC_SRC_ALPHA };
             lpAlphaBlend(hDC, rc.left, rc.top, cx, cy, hPaintDC, 0, 0, cx, cy, bf);
             ::SelectObject(hPaintDC, hOldPaintBitmap);
@@ -1312,6 +1437,7 @@ namespace DuiLib {
     void CRenderEngine::DrawRect(HDC hDC, const RECT& rc, int nSize, DWORD dwPenColor)
     {
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
+
         HPEN hPen = ::CreatePen(PS_SOLID | PS_INSIDEFRAME, nSize, RGB(GetBValue(dwPenColor), GetGValue(dwPenColor), GetRValue(dwPenColor)));
         HPEN hOldPen = (HPEN)::SelectObject(hDC, hPen);
         ::SelectObject(hDC, ::GetStockObject(HOLLOW_BRUSH));
@@ -1323,6 +1449,7 @@ namespace DuiLib {
     void CRenderEngine::DrawRoundRect(HDC hDC, const RECT& rc, int nSize, int width, int height, DWORD dwPenColor)
     {
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
+
         HPEN hPen = ::CreatePen(PS_SOLID | PS_INSIDEFRAME, nSize, RGB(GetBValue(dwPenColor), GetGValue(dwPenColor), GetRValue(dwPenColor)));
         HPEN hOldPen = (HPEN)::SelectObject(hDC, hPen);
         ::SelectObject(hDC, ::GetStockObject(HOLLOW_BRUSH));
@@ -1334,7 +1461,10 @@ namespace DuiLib {
     void CRenderEngine::DrawText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, int iFont, UINT uStyle)
     {
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
-        if (pstrText == NULL || pManager == NULL) return;
+
+        if (pstrText == NULL || pManager == NULL)
+            return;
+
         ::SetBkMode(hDC, TRANSPARENT);
         ::SetTextColor(hDC, RGB(GetBValue(dwTextColor), GetGValue(dwTextColor), GetRValue(dwTextColor)));
         HFONT hOldFont = (HFONT)::SelectObject(hDC, pManager->GetFont(iFont));
@@ -1391,20 +1521,28 @@ namespace DuiLib {
             RECT rcText = { 0, 0, 9999, 100 };
             int nLinks = 0;
             DrawHtmlText(hDC, pManager, rcText, pstrText, dwTextColor, NULL, NULL, nLinks, uStyle | DT_CALCRECT);
-            if ((uStyle & DT_SINGLELINE) != 0){
-                if ((uStyle & DT_CENTER) != 0) {
+            if ((uStyle & DT_SINGLELINE) != 0)
+            {
+                if ((uStyle & DT_CENTER) != 0)
+                {
                     rc.left = rc.left + ((rc.right - rc.left) / 2) - ((rcText.right - rcText.left) / 2);
                     rc.right = rc.left + (rcText.right - rcText.left);
                 }
-                if ((uStyle & DT_RIGHT) != 0) {
+
+                if ((uStyle & DT_RIGHT) != 0)
+                {
                     rc.left = rc.right - (rcText.right - rcText.left);
                 }
             }
-            if ((uStyle & DT_VCENTER) != 0) {
+
+            if ((uStyle & DT_VCENTER) != 0)
+            {
                 rc.top = rc.top + ((rc.bottom - rc.top) / 2) - ((rcText.bottom - rcText.top) / 2);
                 rc.bottom = rc.top + (rcText.bottom - rcText.top);
             }
-            if ((uStyle & DT_BOTTOM) != 0) {
+
+            if ((uStyle & DT_BOTTOM) != 0)
+            {
                 rc.top = rc.bottom - (rcText.bottom - rcText.top);
             }
         }
@@ -1412,8 +1550,10 @@ namespace DuiLib {
         bool bHoverLink = false;
         CDuiString sHoverLink;
         POINT ptMouse = pManager->GetMousePos();
-        for (int i = 0; !bHoverLink && i < nLinkRects; i++) {
-            if (::PtInRect(prcLinks + i, ptMouse)) {
+        for (int i = 0; !bHoverLink && i < nLinkRects; i++)
+        {
+            if (::PtInRect(prcLinks + i, ptMouse))
+            {
                 sHoverLink = *(CDuiString*)(sLinks + i);
                 bHoverLink = true;
             }
@@ -1441,31 +1581,45 @@ namespace DuiLib {
         bool bLineInSelected = false;
         int cyLineHeight = 0;
         bool bLineDraw = false; // 行的第二阶段：绘制
-        while (*pstrText != _T('\0')) {
-            if (pt.x >= rc.right || *pstrText == _T('\n') || bLineEnd) {
+        while (*pstrText != _T('\0'))
+        {
+            if (pt.x >= rc.right || *pstrText == _T('\n') || bLineEnd)
+            {
                 if (*pstrText == _T('\n')) pstrText++;
                 if (bLineEnd) bLineEnd = false;
-                if (!bLineDraw) {
-                    if (bInLink && iLinkIndex < nLinkRects) {
+                if (!bLineDraw)
+                {
+                    if (bInLink && iLinkIndex < nLinkRects)
+                    {
                         ::SetRect(&prcLinks[iLinkIndex++], ptLinkStart.x, ptLinkStart.y, MIN(pt.x, rc.right), pt.y + cyLine);
                         CDuiString *pStr1 = (CDuiString*)(sLinks + iLinkIndex - 1);
                         CDuiString *pStr2 = (CDuiString*)(sLinks + iLinkIndex);
                         *pStr2 = *pStr1;
                     }
-                    for (int i = iLineLinkIndex; i < iLinkIndex; i++) {
+
+                    for (int i = iLineLinkIndex; i < iLinkIndex; i++)
+                    {
                         prcLinks[i].bottom = pt.y + cyLine;
                     }
-                    if (bDraw) {
+
+                    if (bDraw)
+                    {
                         bInLink = bLineInLink;
                         iLinkIndex = iLineLinkIndex;
                     }
                 }
-                else {
-                    if (bInLink && iLinkIndex < nLinkRects) iLinkIndex++;
+                else
+                {
+                    if (bInLink && iLinkIndex < nLinkRects)
+                        iLinkIndex++;
+
                     bLineInLink = bInLink;
                     iLineLinkIndex = iLinkIndex;
                 }
-                if ((uStyle & DT_SINGLELINE) != 0 && (!bDraw || bLineDraw)) break;
+
+                if ((uStyle & DT_SINGLELINE) != 0 && (!bDraw || bLineDraw))
+                    break;
+
                 if (bDraw) bLineDraw = !bLineDraw; // !
                 pt.x = rc.left;
                 if (!bLineDraw) pt.y += cyLine;
@@ -1476,41 +1630,52 @@ namespace DuiLib {
             }
             else if (!bInRaw && (*pstrText == _T('<') || *pstrText == _T('{'))
                 && (pstrText[1] >= _T('a') && pstrText[1] <= _T('z'))
-                && (pstrText[2] == _T(' ') || pstrText[2] == _T('>') || pstrText[2] == _T('}'))) {
+                && (pstrText[2] == _T(' ') || pstrText[2] == _T('>') || pstrText[2] == _T('}')))
+            {
                 pstrText++;
                 LPCTSTR pstrNextStart = NULL;
-                switch (*pstrText) {
+                switch (*pstrText)
+                {
                 case _T('a'):  // Link
                 {
                     pstrText++;
                     while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
-                    if (iLinkIndex < nLinkRects && !bLineDraw) {
+                    if (iLinkIndex < nLinkRects && !bLineDraw)
+                    {
                         CDuiString *pStr = (CDuiString*)(sLinks + iLinkIndex);
                         pStr->Empty();
-                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}')) {
+                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}'))
+                        {
                             LPCTSTR pstrTemp = ::CharNext(pstrText);
-                            while (pstrText < pstrTemp) {
+                            while (pstrText < pstrTemp)
+                            {
                                 *pStr += *pstrText++;
                             }
                         }
                     }
 
                     DWORD clrColor = pManager->GetDefaultLinkFontColor();
-                    if (bHoverLink && iLinkIndex < nLinkRects) {
+                    if (bHoverLink && iLinkIndex < nLinkRects)
+                    {
                         CDuiString *pStr = (CDuiString*)(sLinks + iLinkIndex);
-                        if (sHoverLink == *pStr) clrColor = pManager->GetDefaultLinkHoverFontColor();
+                        if (sHoverLink == *pStr)
+                            clrColor = pManager->GetDefaultLinkHoverFontColor();
                     }
                     //else if( prcLinks == NULL ) {
                     //    if( ::PtInRect(&rc, ptMouse) )
                     //        clrColor = pManager->GetDefaultLinkHoverFontColor();
                     //}
+
                     aColorArray.Add((LPVOID)clrColor);
                     ::SetTextColor(hDC, RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
                     TFontInfo* pFontInfo = pManager->GetDefaultFontInfo();
                     if (aFontArray.GetSize() > 0) pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
-                    if (pFontInfo->bUnderline == false) {
+                    if (pFontInfo->bUnderline == false)
+                    {
                         HFONT hFont = pManager->GetFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
-                        if (hFont == NULL) hFont = pManager->AddFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
+                        if (hFont == NULL)
+                            hFont = pManager->AddFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
+
                         pFontInfo = pManager->GetFontInfo(hFont);
                         aFontArray.Add(pFontInfo);
                         pTm = &pFontInfo->tm;
@@ -1526,7 +1691,8 @@ namespace DuiLib {
                     pstrText++;
                     TFontInfo* pFontInfo = pManager->GetDefaultFontInfo();
                     if (aFontArray.GetSize() > 0) pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
-                    if (pFontInfo->bBold == false) {
+                    if (pFontInfo->bBold == false)
+                    {
                         HFONT hFont = pManager->GetFont(pFontInfo->sFontName, pFontInfo->iSize, true, pFontInfo->bUnderline, pFontInfo->bItalic);
                         if (hFont == NULL) hFont = pManager->AddFont(pFontInfo->sFontName, pFontInfo->iSize, true, pFontInfo->bUnderline, pFontInfo->bItalic);
                         pFontInfo = pManager->GetFontInfo(hFont);
@@ -1554,36 +1720,46 @@ namespace DuiLib {
                     LPCTSTR pstrTemp = pstrText;
                     int iFont = (int)_tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 10);
                     //if( isdigit(*pstrText) ) { // debug版本会引起异常
-                    if (pstrTemp != pstrText) {
+                    if (pstrTemp != pstrText)
+                    {
                         TFontInfo* pFontInfo = pManager->GetFontInfo(iFont);
                         aFontArray.Add(pFontInfo);
                         pTm = &pFontInfo->tm;
                         ::SelectObject(hDC, pFontInfo->hFont);
                     }
-                    else {
+                    else
+                    {
                         CDuiString sFontName;
                         int iFontSize = 10;
                         CDuiString sFontAttr;
                         bool bBold = false;
                         bool bUnderline = false;
                         bool bItalic = false;
-                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}') && *pstrText != _T(' ')) {
+                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}') && *pstrText != _T(' '))
+                        {
                             pstrTemp = ::CharNext(pstrText);
-                            while (pstrText < pstrTemp) {
+                            while (pstrText < pstrTemp)
+                            {
                                 sFontName += *pstrText++;
                             }
                         }
+
                         while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
-                        if (isdigit(*pstrText)) {
+                        if (isdigit(*pstrText))
+                        {
                             iFontSize = (int)_tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 10);
                         }
+
                         while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
-                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}')) {
+                        while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}'))
+                        {
                             pstrTemp = ::CharNext(pstrText);
-                            while (pstrText < pstrTemp) {
+                            while (pstrText < pstrTemp)
+                            {
                                 sFontAttr += *pstrText++;
                             }
                         }
+
                         sFontAttr.MakeLower();
                         if (sFontAttr.Find(_T("bold")) >= 0) bBold = true;
                         if (sFontAttr.Find(_T("underline")) >= 0) bUnderline = true;
@@ -1608,17 +1784,22 @@ namespace DuiLib {
                     while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
                     const TImageInfo* pImageInfo = NULL;
                     CDuiString sName;
-                    while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}') && *pstrText != _T(' ')) {
+                    while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}') && *pstrText != _T(' '))
+                    {
                         LPCTSTR pstrTemp = ::CharNext(pstrText);
-                        while (pstrText < pstrTemp) {
+                        while (pstrText < pstrTemp)
+                        {
                             sName += *pstrText++;
                         }
                     }
-                    if (sName.IsEmpty()) { // Italic
+
+                    if (sName.IsEmpty())
+                    { // Italic
                         pstrNextStart = NULL;
                         TFontInfo* pFontInfo = pManager->GetDefaultFontInfo();
                         if (aFontArray.GetSize() > 0) pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
-                        if (pFontInfo->bItalic == false) {
+                        if (pFontInfo->bItalic == false)
+                        {
                             HFONT hFont = pManager->GetFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, pFontInfo->bUnderline, true);
                             if (hFont == NULL) hFont = pManager->AddFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, pFontInfo->bUnderline, true);
                             pFontInfo = pManager->GetFontInfo(hFont);
@@ -1628,7 +1809,8 @@ namespace DuiLib {
                             cyLine = MAX(cyLine, pTm->tmHeight + pTm->tmExternalLeading + (int)aPIndentArray.GetAt(aPIndentArray.GetSize() - 1));
                         }
                     }
-                    else {
+                    else
+                    {
                         while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
                         int iImageListNum = (int)_tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 10);
                         if (iImageListNum <= 0) iImageListNum = 1;
@@ -1642,59 +1824,80 @@ namespace DuiLib {
                             LPCTSTR pStrImage = sImageString.GetData();
                             CDuiString sItem;
                             CDuiString sValue;
-                            while (*pStrImage != _T('\0')) {
+                            while (*pStrImage != _T('\0'))
+                            {
                                 sItem.Empty();
                                 sValue.Empty();
                                 while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
-                                while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' ')) {
+                                while (*pStrImage != _T('\0') && *pStrImage != _T('=') && *pStrImage > _T(' '))
+                                {
                                     LPTSTR pstrTemp = ::CharNext(pStrImage);
-                                    while (pStrImage < pstrTemp) {
+                                    while (pStrImage < pstrTemp)
+                                    {
                                         sItem += *pStrImage++;
                                     }
                                 }
+
                                 while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
                                 if (*pStrImage++ != _T('=')) break;
                                 while (*pStrImage > _T('\0') && *pStrImage <= _T(' ')) pStrImage = ::CharNext(pStrImage);
                                 if (*pStrImage++ != _T('\'')) break;
-                                while (*pStrImage != _T('\0') && *pStrImage != _T('\'')) {
+                                while (*pStrImage != _T('\0') && *pStrImage != _T('\''))
+                                {
                                     LPTSTR pstrTemp = ::CharNext(pStrImage);
-                                    while (pStrImage < pstrTemp) {
+                                    while (pStrImage < pstrTemp)
+                                    {
                                         sValue += *pStrImage++;
                                     }
                                 }
+
                                 if (*pStrImage++ != _T('\'')) break;
-                                if (!sValue.IsEmpty()) {
-                                    if (sItem == _T("file") || sItem == _T("res")) {
+                                if (!sValue.IsEmpty())
+                                {
+                                    if (sItem == _T("file") || sItem == _T("res"))
+                                    {
                                         sImageName = sValue;
                                     }
-                                    else if (sItem == _T("restype")) {
+                                    else if (sItem == _T("restype"))
+                                    {
                                         sImageResType = sValue;
                                     }
                                 }
-                                if (*pStrImage++ != _T(' ')) break;
+
+                                if (*pStrImage++ != _T(' '))
+                                    break;
                             }
 
                             pImageInfo = pManager->GetImageEx((LPCTSTR)sImageName, sImageResType);
                         }
                         else
+                        {
                             pImageInfo = pManager->GetImageEx((LPCTSTR)sName);
+                        }
 
-                        if (pImageInfo) {
+                        if (pImageInfo)
+                        {
                             iWidth = pImageInfo->nX;
                             iHeight = pImageInfo->nY;
-                            if (iImageListNum > 1) iWidth /= iImageListNum;
+                            if (iImageListNum > 1)
+                                iWidth /= iImageListNum;
 
-                            if (pt.x + iWidth > rc.right && pt.x > rc.left && (uStyle & DT_SINGLELINE) == 0) {
+                            if (pt.x + iWidth > rc.right && pt.x > rc.left && (uStyle & DT_SINGLELINE) == 0)
+                            {
                                 bLineEnd = true;
                             }
-                            else {
+                            else
+                            {
                                 pstrNextStart = NULL;
-                                if (bDraw && bLineDraw) {
+                                if (bDraw && bLineDraw)
+                                {
                                     CDuiRect rcImage(pt.x, pt.y + cyLineHeight - iHeight, pt.x + iWidth, pt.y + cyLineHeight);
-                                    if (iHeight < cyLineHeight) {
+                                    if (iHeight < cyLineHeight)
+                                    {
                                         rcImage.bottom -= (cyLineHeight - iHeight) / 2;
                                         rcImage.top = rcImage.bottom - iHeight;
                                     }
+
                                     CDuiRect rcBmpPart(0, 0, iWidth, iHeight);
                                     rcBmpPart.left = iWidth * iImageListIndex;
                                     rcBmpPart.right = iWidth * (iImageListIndex + 1);
@@ -1709,14 +1912,19 @@ namespace DuiLib {
                                 cxMaxWidth = MAX(cxMaxWidth, pt.x);
                             }
                         }
-                        else pstrNextStart = NULL;
+                        else
+                        {
+                            pstrNextStart = NULL;
+                        }
                     }
                 }
                     break;
                 case _T('n'):  // Newline
                 {
                     pstrText++;
-                    if ((uStyle & DT_SINGLELINE) != 0) break;
+                    if ((uStyle & DT_SINGLELINE) != 0)
+                        break;
+
                     bLineEnd = true;
                 }
                     break;
@@ -1740,9 +1948,12 @@ namespace DuiLib {
                 {
                     pstrText++;
                     bInSelected = !bInSelected;
-                    if (bDraw && bLineDraw) {
-                        if (bInSelected) ::SetBkMode(hDC, OPAQUE);
-                        else ::SetBkMode(hDC, TRANSPARENT);
+                    if (bDraw && bLineDraw)
+                    {
+                        if (bInSelected)
+                            ::SetBkMode(hDC, OPAQUE);
+                        else
+                            ::SetBkMode(hDC, TRANSPARENT);
                     }
                 }
                     break;
@@ -1751,7 +1962,8 @@ namespace DuiLib {
                     pstrText++;
                     TFontInfo* pFontInfo = pManager->GetDefaultFontInfo();
                     if (aFontArray.GetSize() > 0) pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
-                    if (pFontInfo->bUnderline == false) {
+                    if (pFontInfo->bUnderline == false)
+                    {
                         HFONT hFont = pManager->GetFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
                         if (hFont == NULL) hFont = pManager->AddFont(pFontInfo->sFontName, pFontInfo->iSize, pFontInfo->bBold, true, pFontInfo->bItalic);
                         pFontInfo = pManager->GetFontInfo(hFont);
@@ -1779,9 +1991,16 @@ namespace DuiLib {
                 }
                     break;
                 }
-                if (pstrNextStart != NULL) pstrText = pstrNextStart;
-                else {
-                    while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}')) pstrText = ::CharNext(pstrText);
+
+                if (pstrNextStart != NULL)
+                {
+                    pstrText = pstrNextStart;
+                }
+                else
+                {
+                    while (*pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('}'))
+                        pstrText = ::CharNext(pstrText);
+
                     pstrText = ::CharNext(pstrText);
                 }
             }
@@ -1810,21 +2029,29 @@ namespace DuiLib {
                 {
                     pstrText++;
                     bInSelected = !bInSelected;
-                    if (bDraw && bLineDraw) {
-                        if (bInSelected) ::SetBkMode(hDC, OPAQUE);
-                        else ::SetBkMode(hDC, TRANSPARENT);
+                    if (bDraw && bLineDraw)
+                    {
+                        if (bInSelected)
+                            ::SetBkMode(hDC, OPAQUE);
+                        else
+                            ::SetBkMode(hDC, TRANSPARENT);
                     }
                 }
                     break;
                 case _T('a'):
                 {
-                    if (iLinkIndex < nLinkRects) {
-                        if (!bLineDraw) ::SetRect(&prcLinks[iLinkIndex], ptLinkStart.x, ptLinkStart.y, MIN(pt.x, rc.right), pt.y + pTm->tmHeight + pTm->tmExternalLeading);
+                    if (iLinkIndex < nLinkRects)
+                    {
+                        if (!bLineDraw)
+                            ::SetRect(&prcLinks[iLinkIndex], ptLinkStart.x, ptLinkStart.y, MIN(pt.x, rc.right), pt.y + pTm->tmHeight + pTm->tmExternalLeading);
+
                         iLinkIndex++;
                     }
                     aColorArray.Remove(aColorArray.GetSize() - 1);
                     DWORD clrColor = dwTextColor;
-                    if (aColorArray.GetSize() > 0) clrColor = (int)aColorArray.GetAt(aColorArray.GetSize() - 1);
+                    if (aColorArray.GetSize() > 0)
+                        clrColor = (int)aColorArray.GetAt(aColorArray.GetSize() - 1);
+
                     ::SetTextColor(hDC, RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
                     bInLink = false;
                 }
@@ -1837,11 +2064,13 @@ namespace DuiLib {
                     aFontArray.Remove(aFontArray.GetSize() - 1);
                     TFontInfo* pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
                     if (pFontInfo == NULL) pFontInfo = pManager->GetDefaultFontInfo();
-                    if (pTm->tmItalic && pFontInfo->bItalic == false) {
+                    if (pTm->tmItalic && pFontInfo->bItalic == false)
+                    {
                         ABC abc;
                         ::GetCharABCWidths(hDC, _T(' '), _T(' '), &abc);
                         pt.x += abc.abcC / 2; // 简单修正一下斜体混排的问题, 正确做法应该是http://support.microsoft.com/kb/244798/en-us
                     }
+
                     pTm = &pFontInfo->tm;
                     ::SelectObject(hDC, pFontInfo->hFont);
                     cyLine = MAX(cyLine, pTm->tmHeight + pTm->tmExternalLeading + (int)aPIndentArray.GetAt(aPIndentArray.GetSize() - 1));
@@ -1891,59 +2120,81 @@ namespace DuiLib {
                 LPCTSTR pstrNext;
                 SIZE szText = { 0 };
                 if (!bInRaw && *p == _T('<') || *p == _T('{')) p++, cchChars++, cchSize++;
-                while (*p != _T('\0') && *p != _T('\n')) {
+                while (*p != _T('\0') && *p != _T('\n'))
+                {
                     // This part makes sure that we're word-wrapping if needed or providing support
                     // for DT_END_ELLIPSIS. Unfortunately the GetTextExtentPoint32() call is pretty
                     // slow when repeated so often.
                     // TODO: Rewrite and use GetTextExtentExPoint() instead!
-                    if (bInRaw) {
+                    if (bInRaw)
+                    {
                         if ((*p == _T('<') || *p == _T('{')) && p[1] == _T('/')
-                            && p[2] == _T('r') && (p[3] == _T('>') || p[3] == _T('}'))) {
+                            && p[2] == _T('r') && (p[3] == _T('>') || p[3] == _T('}')))
+                        {
                             p += 4;
                             bInRaw = false;
                             break;
                         }
                     }
-                    else {
-                        if (*p == _T('<') || *p == _T('{')) break;
+                    else
+                    {
+                        if (*p == _T('<') || *p == _T('{'))
+                            break;
                     }
+
                     pstrNext = ::CharNext(p);
                     cchChars++;
                     cchSize += (int)(pstrNext - p);
                     szText.cx = cchChars * pTm->tmMaxCharWidth;
-                    if (pt.x + szText.cx >= rc.right) {
+                    if (pt.x + szText.cx >= rc.right)
+                    {
                         ::GetTextExtentPoint32(hDC, pstrText, cchSize, &szText);
                     }
-                    if (pt.x + szText.cx > rc.right) {
-                        if (pt.x + szText.cx > rc.right && pt.x != rc.left) {
+
+                    if (pt.x + szText.cx > rc.right)
+                    {
+                        if (pt.x + szText.cx > rc.right && pt.x != rc.left)
+                        {
                             cchChars--;
                             cchSize -= (int)(pstrNext - p);
                         }
-                        if ((uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0) {
+
+                        if ((uStyle & DT_WORDBREAK) != 0 && cchLastGoodWord > 0)
+                        {
                             cchChars = cchLastGoodWord;
                             cchSize = cchLastGoodSize;
                         }
-                        if ((uStyle & DT_END_ELLIPSIS) != 0 && cchChars > 0) {
+
+                        if ((uStyle & DT_END_ELLIPSIS) != 0 && cchChars > 0)
+                        {
                             cchChars -= 1;
                             LPCTSTR pstrPrev = ::CharPrev(pstrText, p);
-                            if (cchChars > 0) {
+                            if (cchChars > 0)
+                            {
                                 cchChars -= 1;
                                 pstrPrev = ::CharPrev(pstrText, pstrPrev);
                                 cchSize -= (int)(p - pstrPrev);
                             }
                             else
+                            {
                                 cchSize -= (int)(p - pstrPrev);
+                            }
                             pt.x = rc.right;
                         }
+
                         bLineEnd = true;
                         cxMaxWidth = MAX(cxMaxWidth, pt.x);
                         break;
                     }
-                    if (!((p[0] >= _T('a') && p[0] <= _T('z')) || (p[0] >= _T('A') && p[0] <= _T('Z')))) {
+
+                    if (!((p[0] >= _T('a') && p[0] <= _T('z')) || (p[0] >= _T('A') && p[0] <= _T('Z'))))
+                    {
                         cchLastGoodWord = cchChars;
                         cchLastGoodSize = cchSize;
                     }
-                    if (*p == _T(' ')) {
+
+                    if (*p == _T(' '))
+                    {
                         cchLastGoodWord = cchChars;
                         cchLastGoodSize = cchSize;
                     }
@@ -1951,25 +2202,34 @@ namespace DuiLib {
                 }
 
                 ::GetTextExtentPoint32(hDC, pstrText, cchSize, &szText);
-                if (bDraw && bLineDraw) {
-                    if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_CENTER) != 0) {
+                if (bDraw && bLineDraw)
+                {
+                    if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_CENTER) != 0)
+                    {
                         ptPos.x += (rc.right - rc.left - szText.cx) / 2;
                     }
-                    else if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_RIGHT) != 0) {
+                    else if ((uStyle & DT_SINGLELINE) == 0 && (uStyle & DT_RIGHT) != 0)
+                    {
                         ptPos.x += (rc.right - rc.left - szText.cx);
                     }
+
                     ::TextOut(hDC, ptPos.x, ptPos.y + cyLineHeight - pTm->tmHeight - pTm->tmExternalLeading, pstrText, cchSize);
                     if (pt.x >= rc.right && (uStyle & DT_END_ELLIPSIS) != 0)
                         ::TextOut(hDC, ptPos.x + szText.cx, ptPos.y, _T("..."), 3);
                 }
+
                 pt.x += szText.cx;
                 cxMaxWidth = MAX(cxMaxWidth, pt.x);
                 pstrText += cchSize;
             }
 
-            if (pt.x >= rc.right || *pstrText == _T('\n') || *pstrText == _T('\0')) bLineEnd = true;
-            if (bDraw && bLineEnd) {
-                if (!bLineDraw) {
+            if (pt.x >= rc.right || *pstrText == _T('\n') || *pstrText == _T('\0'))
+                bLineEnd = true;
+
+            if (bDraw && bLineEnd)
+            {
+                if (!bLineDraw)
+                {
                     aFontArray.Resize(aLineFontArray.GetSize());
                     ::CopyMemory(aFontArray.GetData(), aLineFontArray.GetData(), aLineFontArray.GetSize() * sizeof(LPVOID));
                     aColorArray.Resize(aLineColorArray.GetSize());
@@ -1983,15 +2243,22 @@ namespace DuiLib {
                     bInSelected = bLineInSelected;
 
                     DWORD clrColor = dwTextColor;
-                    if (aColorArray.GetSize() > 0) clrColor = (int)aColorArray.GetAt(aColorArray.GetSize() - 1);
+                    if (aColorArray.GetSize() > 0)
+                        clrColor = (int)aColorArray.GetAt(aColorArray.GetSize() - 1);
+
                     ::SetTextColor(hDC, RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
                     TFontInfo* pFontInfo = (TFontInfo*)aFontArray.GetAt(aFontArray.GetSize() - 1);
-                    if (pFontInfo == NULL) pFontInfo = pManager->GetDefaultFontInfo();
+                    if (pFontInfo == NULL)
+                        pFontInfo = pManager->GetDefaultFontInfo();
+
                     pTm = &pFontInfo->tm;
                     ::SelectObject(hDC, pFontInfo->hFont);
-                    if (bInSelected) ::SetBkMode(hDC, OPAQUE);
+
+                    if (bInSelected)
+                        ::SetBkMode(hDC, OPAQUE);
                 }
-                else {
+                else
+                {
                     aLineFontArray.Resize(aFontArray.GetSize());
                     ::CopyMemory(aLineFontArray.GetData(), aFontArray.GetData(), aFontArray.GetSize() * sizeof(LPVOID));
                     aLineColorArray.Resize(aColorArray.GetSize());
@@ -2010,12 +2277,15 @@ namespace DuiLib {
         nLinkRects = iLinkIndex;
 
         // Return size of text when requested
-        if ((uStyle & DT_CALCRECT) != 0) {
+        if ((uStyle & DT_CALCRECT) != 0)
+        {
             rc.bottom = MAX(cyMinHeight, pt.y + cyLine);
             rc.right = MIN(rc.right, cxMaxWidth);
         }
 
-        if (bDraw) ::SelectClipRgn(hDC, hOldRgn);
+        if (bDraw)
+            ::SelectClipRgn(hDC, hOldRgn);
+
         ::DeleteObject(hOldRgn);
         ::DeleteObject(hRgn);
 
@@ -2029,8 +2299,10 @@ namespace DuiLib {
 
         HDC hPaintDC = ::CreateCompatibleDC(pManager->GetPaintDC());
         HBITMAP hPaintBitmap = ::CreateCompatibleBitmap(pManager->GetPaintDC(), rc.right, rc.bottom);
-        ASSERT(hPaintDC);
-        ASSERT(hPaintBitmap);
+
+        ASSERT(hPaintDC != NULL);
+        ASSERT(hPaintBitmap != NULL);
+
         HBITMAP hOldPaintBitmap = (HBITMAP) ::SelectObject(hPaintDC, hPaintBitmap);
         pControl->DoPaint(hPaintDC, rc);
 
@@ -2045,8 +2317,10 @@ namespace DuiLib {
         LPDWORD pDest = NULL;
         HDC hCloneDC = ::CreateCompatibleDC(pManager->GetPaintDC());
         HBITMAP hBitmap = ::CreateDIBSection(pManager->GetPaintDC(), &bmi, DIB_RGB_COLORS, (LPVOID*)&pDest, NULL, 0);
-        ASSERT(hCloneDC);
-        ASSERT(hBitmap);
+
+        ASSERT(hCloneDC != NULL);
+        ASSERT(hBitmap != NULL);
+
         if (hBitmap != NULL)
         {
             HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
@@ -2068,10 +2342,13 @@ namespace DuiLib {
     {
         SIZE size = { 0, 0 };
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
-        if (pstrText == NULL || pManager == NULL) return size;
+
+        if (pstrText == NULL || pManager == NULL)
+            return size;
+
         ::SetBkMode(hDC, TRANSPARENT);
         HFONT hOldFont = (HFONT)::SelectObject(hDC, pManager->GetFont(iFont));
-        GetTextExtentPoint32(hDC, pstrText, _tcslen(pstrText), &size);
+        GetTextExtentPoint32(hDC, pstrText, lstrlen(pstrText), &size);
         ::SelectObject(hDC, hOldFont);
         return size;
     }

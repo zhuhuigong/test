@@ -424,64 +424,95 @@ namespace DuiLib {
     STDMETHODIMP_(ULONG) CActiveXCtrl::Release()
     {
         LONG lRef = --m_dwRef;
-        if (lRef == 0) delete this;
+        if (lRef == 0)
+            delete this;
+
         return lRef;
     }
 
     STDMETHODIMP CActiveXCtrl::SetSite(IUnknown *pUnkSite)
     {
         DUITRACE(_T("AX: CActiveXCtrl::SetSite"));
-        if (m_pUnkSite != NULL) {
+
+        if (m_pUnkSite != NULL)
+        {
             m_pUnkSite->Release();
             m_pUnkSite = NULL;
         }
-        if (pUnkSite != NULL) {
+
+        if (pUnkSite != NULL)
+        {
             m_pUnkSite = pUnkSite;
             m_pUnkSite->AddRef();
         }
+
         return S_OK;
     }
 
     STDMETHODIMP CActiveXCtrl::GetSite(REFIID riid, LPVOID* ppvSite)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetSite"));
-        if (ppvSite == NULL) return E_POINTER;
+
+        if (ppvSite == NULL)
+            return E_POINTER;
+
         *ppvSite = NULL;
-        if (m_pUnkSite == NULL) return E_FAIL;
+
+        if (m_pUnkSite == NULL)
+            return E_FAIL;
+
         return m_pUnkSite->QueryInterface(riid, ppvSite);
     }
 
     STDMETHODIMP CActiveXCtrl::SaveObject(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::SaveObject"));
+
         return E_NOTIMPL;
     }
 
     STDMETHODIMP CActiveXCtrl::GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker, IMoniker** ppmk)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetMoniker"));
-        if (ppmk != NULL) *ppmk = NULL;
+        if (ppmk != NULL)
+            *ppmk = NULL;
+
         return E_NOTIMPL;
     }
 
     STDMETHODIMP CActiveXCtrl::GetContainer(IOleContainer** ppContainer)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetContainer"));
-        if (ppContainer == NULL) return E_POINTER;
+
+        if (ppContainer == NULL)
+            return E_POINTER;
+
         *ppContainer = NULL;
         HRESULT Hr = E_NOTIMPL;
-        if (m_pUnkSite != NULL) Hr = m_pUnkSite->QueryInterface(IID_IOleContainer, (LPVOID*)ppContainer);
-        if (FAILED(Hr)) Hr = QueryInterface(IID_IOleContainer, (LPVOID*)ppContainer);
+
+        if (m_pUnkSite != NULL)
+            Hr = m_pUnkSite->QueryInterface(IID_IOleContainer, (LPVOID*)ppContainer);
+
+        if (FAILED(Hr))
+            Hr = QueryInterface(IID_IOleContainer, (LPVOID*)ppContainer);
+
         return Hr;
     }
 
     STDMETHODIMP CActiveXCtrl::ShowObject(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::ShowObject"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         HDC hDC = ::GetDC(m_pOwner->m_hwndHost);
-        if (hDC == NULL) return E_FAIL;
-        if (m_pViewObject != NULL) m_pViewObject->Draw(DVASPECT_CONTENT, -1, NULL, NULL, NULL, hDC, (RECTL*)&m_pOwner->m_rcItem, (RECTL*)&m_pOwner->m_rcItem, NULL, NULL);
+        if (hDC == NULL)
+            return E_FAIL;
+
+        if (m_pViewObject != NULL)
+            m_pViewObject->Draw(DVASPECT_CONTENT, -1, NULL, NULL, NULL, hDC, (RECTL*)&m_pOwner->m_rcItem, (RECTL*)&m_pOwner->m_rcItem, NULL, NULL);
+
         ::ReleaseDC(m_pOwner->m_hwndHost, hDC);
         return S_OK;
     }
@@ -489,49 +520,71 @@ namespace DuiLib {
     STDMETHODIMP CActiveXCtrl::OnShowWindow(BOOL fShow)
     {
         DUITRACE(_T("AX: CActiveXCtrl::OnShowWindow"));
+
         return E_NOTIMPL;
     }
 
     STDMETHODIMP CActiveXCtrl::RequestNewObjectLayout(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::RequestNewObjectLayout"));
+
         return E_NOTIMPL;
     }
 
     STDMETHODIMP CActiveXCtrl::CanWindowlessActivate(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::CanWindowlessActivate"));
+
         return S_OK;  // Yes, we can!!
     }
 
     STDMETHODIMP CActiveXCtrl::GetCapture(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetCapture"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         return m_bCaptured ? S_OK : S_FALSE;
     }
 
     STDMETHODIMP CActiveXCtrl::SetCapture(BOOL fCapture)
     {
         DUITRACE(_T("AX: CActiveXCtrl::SetCapture"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         m_bCaptured = (fCapture == TRUE);
-        if (fCapture) ::SetCapture(m_pOwner->m_hwndHost); else ::ReleaseCapture();
+
+        if (fCapture)
+            ::SetCapture(m_pOwner->m_hwndHost);
+        else
+            ::ReleaseCapture();
+
         return S_OK;
     }
 
     STDMETHODIMP CActiveXCtrl::GetFocus(void)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetFocus"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         return m_bFocused ? S_OK : S_FALSE;
     }
 
     STDMETHODIMP CActiveXCtrl::SetFocus(BOOL fFocus)
     {
         DUITRACE(_T("AX: CActiveXCtrl::SetFocus"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
-        if (fFocus) m_pOwner->SetFocus();
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
+        if (fFocus)
+            m_pOwner->SetFocus();
+
         m_bFocused = (fFocus == TRUE);
         return S_OK;
     }
@@ -539,20 +592,30 @@ namespace DuiLib {
     STDMETHODIMP CActiveXCtrl::GetDC(LPCRECT pRect, DWORD grfFlags, HDC* phDC)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetDC"));
-        if (phDC == NULL) return E_POINTER;
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+
+        if (phDC == NULL)
+            return E_POINTER;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         *phDC = ::GetDC(m_pOwner->m_hwndHost);
-        if ((grfFlags & OLEDC_PAINTBKGND) != 0) {
+        if ((grfFlags & OLEDC_PAINTBKGND) != 0)
+        {
             CDuiRect rcItem = m_pOwner->GetPos();
-            if (!m_bWindowless) rcItem.ResetOffset();
+            if (!m_bWindowless)
+                rcItem.ResetOffset();
+
             ::FillRect(*phDC, &rcItem, (HBRUSH)(COLOR_WINDOW + 1));
         }
+
         return S_OK;
     }
 
     STDMETHODIMP CActiveXCtrl::ReleaseDC(HDC hDC)
     {
         DUITRACE(_T("AX: CActiveXCtrl::ReleaseDC"));
+
         if (m_pOwner == NULL) return E_UNEXPECTED;
         ::ReleaseDC(m_pOwner->m_hwndHost, hDC);
         return S_OK;
@@ -588,7 +651,9 @@ namespace DuiLib {
     STDMETHODIMP CActiveXCtrl::OnDefWindowMessage(UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult)
     {
         DUITRACE(_T("AX: CActiveXCtrl::OnDefWindowMessage"));
-        if (m_pOwner == NULL) return E_UNEXPECTED;
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+
         *plResult = ::DefWindowProc(m_pOwner->m_hwndHost, msg, wParam, lParam);
         return S_OK;
     }
@@ -597,28 +662,43 @@ namespace DuiLib {
     {
         DUITRACE(_T("AX: CActiveXCtrl::OnInPlaceActivateEx"));
         ASSERT(m_pInPlaceObject == NULL);
-        if (m_pOwner == NULL) return E_UNEXPECTED;
-        if (m_pOwner->m_pUnk == NULL) return E_UNEXPECTED;
+
+        if (m_pOwner == NULL)
+            return E_UNEXPECTED;
+        if (m_pOwner->m_pUnk == NULL)
+            return E_UNEXPECTED;
+
         ::OleLockRunning(m_pOwner->m_pUnk, TRUE, FALSE);
         HWND hWndFrame = m_pOwner->GetManager()->GetPaintWindow();
+
         HRESULT Hr = E_FAIL;
-        if ((dwFlags & ACTIVATE_WINDOWLESS) != 0) {
+        if ((dwFlags & ACTIVATE_WINDOWLESS) != 0)
+        {
             m_bWindowless = true;
             Hr = m_pOwner->m_pUnk->QueryInterface(IID_IOleInPlaceObjectWindowless, (LPVOID*)&m_pInPlaceObject);
             m_pOwner->m_hwndHost = hWndFrame;
             m_pOwner->GetManager()->AddMessageFilter(m_pOwner);
         }
-        if (FAILED(Hr)) {
+
+        if (FAILED(Hr))
+        {
             m_bWindowless = false;
             Hr = CreateActiveXWnd();
-            if (FAILED(Hr)) return Hr;
+            if (FAILED(Hr))
+                return Hr;
+
             Hr = m_pOwner->m_pUnk->QueryInterface(IID_IOleInPlaceObject, (LPVOID*)&m_pInPlaceObject);
         }
-        if (m_pInPlaceObject != NULL) {
+
+        if (m_pInPlaceObject != NULL)
+        {
             CDuiRect rcItem = m_pOwner->m_rcItem;
-            if (!m_bWindowless) rcItem.ResetOffset();
+            if (!m_bWindowless)
+                rcItem.ResetOffset();
+
             m_pInPlaceObject->SetObjectRects(&rcItem, &rcItem);
         }
+
         m_bInPlaceActive = SUCCEEDED(Hr);
         return Hr;
     }
@@ -626,16 +706,21 @@ namespace DuiLib {
     STDMETHODIMP CActiveXCtrl::OnInPlaceDeactivateEx(BOOL fNoRedraw)
     {
         DUITRACE(_T("AX: CActiveXCtrl::OnInPlaceDeactivateEx"));
+
         m_bInPlaceActive = false;
-        if (m_pInPlaceObject != NULL) {
+        if (m_pInPlaceObject != NULL)
+        {
             m_pInPlaceObject->Release();
             m_pInPlaceObject = NULL;
         }
-        if (m_pWindow != NULL) {
+
+        if (m_pWindow != NULL)
+        {
             ::DestroyWindow(*m_pWindow);
             delete m_pWindow;
             m_pWindow = NULL;
         }
+
         return S_OK;
     }
 
@@ -668,15 +753,16 @@ namespace DuiLib {
     STDMETHODIMP CActiveXCtrl::GetWindowContext(IOleInPlaceFrame** ppFrame, IOleInPlaceUIWindow** ppDoc, LPRECT lprcPosRect, LPRECT lprcClipRect, LPOLEINPLACEFRAMEINFO lpFrameInfo)
     {
         DUITRACE(_T("AX: CActiveXCtrl::GetWindowContext"));
-        if (ppDoc == NULL) return E_POINTER;
-        if (ppFrame == NULL) return E_POINTER;
-        if (lprcPosRect == NULL) return E_POINTER;
-        if (lprcClipRect == NULL) return E_POINTER;
-        if (m_pWindow)
+
+        if (ppDoc == NULL || ppFrame == NULL || lprcPosRect == NULL || lprcClipRect == NULL)
+            return E_POINTER;
+
+        if (m_pWindow != NULL)
         {
             ::GetClientRect(m_pWindow->GetHWND(), lprcPosRect);
             ::GetClientRect(m_pWindow->GetHWND(), lprcClipRect);
         }
+
         *ppFrame = new CActiveXFrameWnd(m_pOwner);
         *ppDoc = NULL;
         ACCEL ac = { 0 };
@@ -860,23 +946,29 @@ namespace DuiLib {
     {
         LRESULT lRes = 0;
         BOOL bHandled = TRUE;
-        switch (uMsg) {
+        switch (uMsg)
+        {
         case WM_PAINT:         lRes = OnPaint(uMsg, wParam, lParam, bHandled); break;
         case WM_SETFOCUS:      lRes = OnSetFocus(uMsg, wParam, lParam, bHandled); break;
         case WM_KILLFOCUS:     lRes = OnKillFocus(uMsg, wParam, lParam, bHandled); break;
         case WM_ERASEBKGND:    lRes = OnEraseBkgnd(uMsg, wParam, lParam, bHandled); break;
         case WM_MOUSEACTIVATE: lRes = OnMouseActivate(uMsg, wParam, lParam, bHandled); break;
-        case WM_MOUSEWHEEL: break;
+        case WM_MOUSEWHEEL:    break;
         default:
             bHandled = FALSE;
         }
-        if (!bHandled) return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+
+        if (!bHandled)
+            return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+
         return lRes;
     }
 
     LRESULT CActiveXWnd::OnEraseBkgnd(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
-        if (m_pOwner->m_pViewObject == NULL) bHandled = FALSE;
+        if (m_pOwner->m_pViewObject == NULL)
+            bHandled = FALSE;
+
         return 1;
     }
 
@@ -922,7 +1014,12 @@ namespace DuiLib {
     //
     //
 
-    CActiveXUI::CActiveXUI() : m_pUnk(NULL), m_pControl(NULL), m_hwndHost(NULL), m_bCreated(false), m_bDelayCreate(true)
+    CActiveXUI::CActiveXUI()
+        : m_pUnk(NULL)
+        , m_pControl(NULL)
+        , m_hwndHost(NULL)
+        , m_bCreated(false)
+        , m_bDelayCreate(true)
     {
         m_clsid = IID_NULL;
     }
@@ -939,7 +1036,9 @@ namespace DuiLib {
 
     LPVOID CActiveXUI::GetInterface(LPCTSTR pstrName)
     {
-        if (_tcscmp(pstrName, DUI_CTR_ACTIVEX) == 0) return static_cast<CActiveXUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_ACTIVEX) == 0)
+            return static_cast<CActiveXUI*>(this);
+
         return CControlUI::GetInterface(pstrName);
     }
 
@@ -966,6 +1065,7 @@ namespace DuiLib {
     void CActiveXUI::SetVisible(bool bVisible)
     {
         CControlUI::SetVisible(bVisible);
+
         if (m_hwndHost != NULL && !m_pControl->m_bWindowless)
             ::ShowWindow(m_hwndHost, IsVisible() ? SW_SHOW : SW_HIDE);
     }
@@ -973,6 +1073,7 @@ namespace DuiLib {
     void CActiveXUI::SetInternVisible(bool bVisible)
     {
         CControlUI::SetInternVisible(bVisible);
+
         if (m_hwndHost != NULL && !m_pControl->m_bWindowless)
             ::ShowWindow(m_hwndHost, IsVisible() ? SW_SHOW : SW_HIDE);
     }
@@ -981,10 +1082,13 @@ namespace DuiLib {
     {
         CControlUI::SetPos(rc);
 
-        if (!m_bCreated) DoCreateControl();
+        if (!m_bCreated)
+            DoCreateControl();
 
-        if (m_pUnk == NULL) return;
-        if (m_pControl == NULL) return;
+        if (m_pUnk == NULL)
+            return;
+        if (m_pControl == NULL)
+            return;
 
         SIZEL hmSize = { 0 };
         SIZEL pxSize = { 0 };
@@ -992,15 +1096,22 @@ namespace DuiLib {
         pxSize.cy = m_rcItem.bottom - m_rcItem.top;
         PixelToHiMetric(&pxSize, &hmSize);
 
-        if (m_pUnk != NULL) {
+        if (m_pUnk != NULL)
+        {
             m_pUnk->SetExtent(DVASPECT_CONTENT, &hmSize);
         }
-        if (m_pControl->m_pInPlaceObject != NULL) {
+
+        if (m_pControl->m_pInPlaceObject != NULL)
+        {
             CDuiRect rcItem = m_rcItem;
-            if (!m_pControl->m_bWindowless) rcItem.ResetOffset();
+            if (!m_pControl->m_bWindowless)
+                rcItem.ResetOffset();
+
             m_pControl->m_pInPlaceObject->SetObjectRects(&rcItem, &rcItem);
         }
-        if (!m_pControl->m_bWindowless) {
+
+        if (!m_pControl->m_bWindowless)
+        {
             ASSERT(m_pControl->m_pWindow);
             ::MoveWindow(*m_pControl->m_pWindow, m_rcItem.left, m_rcItem.top, m_rcItem.right - m_rcItem.left, m_rcItem.bottom - m_rcItem.top, TRUE);
         }
@@ -1008,7 +1119,8 @@ namespace DuiLib {
 
     void CActiveXUI::DoPaint(HDC hDC, const RECT& rcPaint)
     {
-        if (!::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem)) return;
+        if (!::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem))
+            return;
 
         if (m_pControl != NULL && m_pControl->m_bWindowless && m_pControl->m_pViewObject != NULL)
         {
@@ -1038,33 +1150,53 @@ namespace DuiLib {
 
     LRESULT CActiveXUI::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
     {
-        if (m_pControl == NULL) return 0;
+        if (m_pControl == NULL)
+            return 0;
+
         ASSERT(m_pControl->m_bWindowless);
-        if (!m_pControl->m_bInPlaceActive) return 0;
-        if (m_pControl->m_pInPlaceObject == NULL) return 0;
-        if (!IsMouseEnabled() && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) return 0;
+        if (!m_pControl->m_bInPlaceActive)
+            return 0;
+
+        if (m_pControl->m_pInPlaceObject == NULL)
+            return 0;
+
+        if (!IsMouseEnabled() && uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST)
+            return 0;
+
         bool bWasHandled = true;
-        if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR) {
+
+        if ((uMsg >= WM_MOUSEFIRST && uMsg <= WM_MOUSELAST) || uMsg == WM_SETCURSOR)
+        {
             // Mouse message only go when captured or inside rect
             DWORD dwHitResult = m_pControl->m_bCaptured ? HITRESULT_HIT : HITRESULT_OUTSIDE;
-            if (dwHitResult == HITRESULT_OUTSIDE && m_pControl->m_pViewObject != NULL) {
+            if (dwHitResult == HITRESULT_OUTSIDE && m_pControl->m_pViewObject != NULL)
+            {
                 IViewObjectEx* pViewEx = NULL;
                 m_pControl->m_pViewObject->QueryInterface(IID_IViewObjectEx, (LPVOID*)&pViewEx);
-                if (pViewEx != NULL) {
+                if (pViewEx != NULL)
+                {
                     POINT ptMouse = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
                     pViewEx->QueryHitPoint(DVASPECT_CONTENT, &m_rcItem, ptMouse, 0, &dwHitResult);
                     pViewEx->Release();
                 }
             }
-            if (dwHitResult != HITRESULT_HIT) return 0;
-            if (uMsg == WM_SETCURSOR) bWasHandled = false;
+
+            if (dwHitResult != HITRESULT_HIT)
+                return 0;
+
+            if (uMsg == WM_SETCURSOR)
+                bWasHandled = false;
         }
-        else if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST) {
+        else if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST)
+        {
             // Keyboard messages just go when we have focus
-            if (!IsFocused()) return 0;
+            if (!IsFocused())
+                return 0;
         }
-        else {
-            switch (uMsg) {
+        else
+        {
+            switch (uMsg)
+            {
             case WM_HELP:
             case WM_CONTEXTMENU:
                 bWasHandled = false;
@@ -1073,6 +1205,7 @@ namespace DuiLib {
                 return 0;
             }
         }
+
         LRESULT lResult = 0;
         HRESULT Hr = m_pControl->m_pInPlaceObject->OnWindowMessage(uMsg, wParam, lParam, &lResult);
         if (Hr == S_OK) bHandled = bWasHandled;
@@ -1086,10 +1219,15 @@ namespace DuiLib {
 
     void CActiveXUI::SetDelayCreate(bool bDelayCreate)
     {
-        if (m_bDelayCreate == bDelayCreate) return;
-        if (bDelayCreate == false) {
-            if (m_bCreated == false && m_clsid != IID_NULL) DoCreateControl();
+        if (m_bDelayCreate == bDelayCreate)
+            return;
+
+        if (bDelayCreate == false)
+        {
+            if (m_bCreated == false && m_clsid != IID_NULL)
+                DoCreateControl();
         }
+
         m_bDelayCreate = bDelayCreate;
     }
 
@@ -1120,23 +1258,29 @@ namespace DuiLib {
     void CActiveXUI::ReleaseControl()
     {
         m_hwndHost = NULL;
-        if (m_pUnk != NULL) {
+        if (m_pUnk != NULL)
+        {
             IObjectWithSite* pSite = NULL;
             m_pUnk->QueryInterface(IID_IObjectWithSite, (LPVOID*)&pSite);
-            if (pSite != NULL) {
+            if (pSite != NULL)
+            {
                 pSite->SetSite(NULL);
                 pSite->Release();
             }
+
             m_pUnk->Close(OLECLOSE_NOSAVE);
             m_pUnk->SetClientSite(NULL);
             m_pUnk->Release();
             m_pUnk = NULL;
         }
-        if (m_pControl != NULL) {
+
+        if (m_pControl != NULL)
+        {
             m_pControl->m_pOwner = NULL;
             m_pControl->Release();
             m_pControl = NULL;
         }
+
         m_pManager->RemoveMessageFilter(this);
     }
 
@@ -1229,8 +1373,13 @@ namespace DuiLib {
     {
         ASSERT(ppRet != NULL);
         ASSERT(*ppRet == NULL);
-        if (ppRet == NULL) return E_POINTER;
-        if (m_pUnk == NULL) return E_PENDING;
+
+        if (ppRet == NULL)
+            return E_POINTER;
+
+        if (m_pUnk == NULL)
+            return E_PENDING;
+
         return m_pUnk->QueryInterface(iid, (LPVOID*)ppRet);
     }
 
