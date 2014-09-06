@@ -1,7 +1,5 @@
-﻿#ifndef WIN_IMPL_BASE_HPP
-#define WIN_IMPL_BASE_HPP
-
-#include "stdafx.h"
+﻿#include "StdAfx.h"
+#include "WinImplBase.h"
 
 namespace DuiLib
 {
@@ -12,9 +10,9 @@ namespace DuiLib
 
     DUI_BEGIN_MESSAGE_MAP(WindowImplBase, CNotifyPump)
         DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK, OnClick)
-        DUI_END_MESSAGE_MAP()
+    DUI_END_MESSAGE_MAP()
 
-        void WindowImplBase::OnFinalMessage(HWND hWnd)
+    void WindowImplBase::OnFinalMessage(HWND hWnd)
     {
         m_PaintManager.RemovePreMessageFilter(this);
         m_PaintManager.RemoveNotifier(this);
@@ -92,7 +90,9 @@ namespace DuiLib
 #if defined(WIN32) && !defined(UNDER_CE)
     LRESULT WindowImplBase::OnNcActivate(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
     {
-        if (::IsIconic(*this)) bHandled = FALSE;
+        if (::IsIconic(*this))
+            bHandled = FALSE;
+
         return (wParam == 0) ? TRUE : FALSE;
     }
 
@@ -162,11 +162,12 @@ namespace DuiLib
 
         RECT rcCaption = m_PaintManager.GetCaptionRect();
         if (pt.x >= rcClient.left + rcCaption.left && pt.x < rcClient.right - rcCaption.right \
-            && pt.y >= rcCaption.top && pt.y < rcCaption.bottom) {
+            && pt.y >= rcCaption.top && pt.y < rcCaption.bottom)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(pt));
-            if (pControl && _tcsicmp(pControl->GetClass(), _T("ButtonUI")) != 0 &&
-                _tcsicmp(pControl->GetClass(), _T("OptionUI")) != 0 &&
-                _tcsicmp(pControl->GetClass(), _T("TextUI")) != 0)
+            if (pControl && lstrcmpi(pControl->GetClass(), _T("ButtonUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("OptionUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("TextUI")) != 0)
                 return HTCAPTION;
         }
 
@@ -214,8 +215,10 @@ namespace DuiLib
     LRESULT WindowImplBase::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
         SIZE szRoundCorner = m_PaintManager.GetRoundCorner();
+
 #if defined(WIN32) && !defined(UNDER_CE)
-        if (!::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0)) {
+        if (!::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0))
+        {
             CDuiRect rcWnd;
             ::GetWindowRect(*this, &rcWnd);
             rcWnd.Offset(-rcWnd.left, -rcWnd.top);
@@ -243,11 +246,13 @@ namespace DuiLib
             SendMessage(WM_CLOSE);
             return 0;
         }
+
 #if defined(WIN32) && !defined(UNDER_CE)
         BOOL bZoomed = ::IsZoomed(*this);
         LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
         if (::IsZoomed(*this) != bZoomed)
         {
+
         }
 #else
         LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
@@ -283,6 +288,7 @@ namespace DuiLib
             HRSRC hResource = ::FindResource(m_PaintManager.GetResourceDll(), GetResourceID(), _T("ZIPRES"));
             if (hResource == NULL)
                 return 0L;
+
             DWORD dwSize = 0;
             HGLOBAL hGlobal = ::LoadResource(m_PaintManager.GetResourceDll(), hResource);
             if (hGlobal == NULL)
@@ -295,11 +301,13 @@ namespace DuiLib
             dwSize = ::SizeofResource(m_PaintManager.GetResourceDll(), hResource);
             if (dwSize == 0)
                 return 0L;
+
             m_lpResourceZIPBuffer = new BYTE[dwSize];
             if (m_lpResourceZIPBuffer != NULL)
             {
                 ::CopyMemory(m_lpResourceZIPBuffer, (LPBYTE)::LockResource(hGlobal), dwSize);
             }
+
 #if defined(WIN32) && !defined(UNDER_CE)
             ::FreeResource(hResource);
 #endif
@@ -315,7 +323,10 @@ namespace DuiLib
             pRoot = builder.Create(xml, _T("xml"), this, &m_PaintManager);
         }
         else
+        {
             pRoot = builder.Create(GetSkinFile().GetData(), (UINT)0, this, &m_PaintManager);
+        }
+
         ASSERT(pRoot);
         if (pRoot == NULL)
         {
@@ -323,6 +334,7 @@ namespace DuiLib
             ExitProcess(1);
             return 0;
         }
+
         m_PaintManager.AttachDialog(pRoot);
         m_PaintManager.AddNotifier(this);
         m_PaintManager.SetBackgroundTransparent(TRUE);
@@ -385,7 +397,7 @@ namespace DuiLib
         case WM_MOUSEWHEEL:     lRes = OnMouseWheel(uMsg, wParam, lParam, bHandled); break;
 #endif
         case WM_SIZE:           lRes = OnSize(uMsg, wParam, lParam, bHandled); break;
-        case WM_CHAR:       lRes = OnChar(uMsg, wParam, lParam, bHandled); break;
+        case WM_CHAR:           lRes = OnChar(uMsg, wParam, lParam, bHandled); break;
         case WM_SYSCOMMAND:     lRes = OnSysCommand(uMsg, wParam, lParam, bHandled); break;
         case WM_KEYDOWN:        lRes = OnKeyDown(uMsg, wParam, lParam, bHandled); break;
         case WM_KILLFOCUS:      lRes = OnKillFocus(uMsg, wParam, lParam, bHandled); break;
@@ -393,9 +405,10 @@ namespace DuiLib
         case WM_LBUTTONUP:      lRes = OnLButtonUp(uMsg, wParam, lParam, bHandled); break;
         case WM_LBUTTONDOWN:    lRes = OnLButtonDown(uMsg, wParam, lParam, bHandled); break;
         case WM_MOUSEMOVE:      lRes = OnMouseMove(uMsg, wParam, lParam, bHandled); break;
-        case WM_MOUSEHOVER: lRes = OnMouseHover(uMsg, wParam, lParam, bHandled); break;
+        case WM_MOUSEHOVER:     lRes = OnMouseHover(uMsg, wParam, lParam, bHandled); break;
         default:                bHandled = FALSE; break;
         }
+
         if (bHandled) return lRes;
 
         lRes = HandleCustomMessage(uMsg, wParam, lParam, bHandled);
@@ -403,6 +416,7 @@ namespace DuiLib
 
         if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
             return lRes;
+
         return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
     }
 
@@ -443,6 +457,7 @@ namespace DuiLib
             SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
             return;
         }
+
         return;
     }
 
