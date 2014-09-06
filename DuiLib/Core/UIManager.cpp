@@ -102,7 +102,7 @@ namespace DuiLib {
         lf.lfCharSet = DEFAULT_CHARSET;
         if (CPaintManagerUI::m_pStrDefaultFontName.GetLength() > 0)
         {
-            lstrcpyn(lf.lfFaceName, CPaintManagerUI::m_pStrDefaultFontName.GetData(), LF_FACESIZE);
+            _tcscpy_s(lf.lfFaceName, LF_FACESIZE, CPaintManagerUI::m_pStrDefaultFontName.GetData());
         }
 
         HFONT hDefaultFont = ::CreateFontIndirect(&lf);
@@ -2012,7 +2012,7 @@ namespace DuiLib {
     {
         LOGFONT lf = { 0 };
         ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-        lstrcpyn(lf.lfFaceName, pStrFontName, LF_FACESIZE);
+        _tcsncpy(lf.lfFaceName, pStrFontName, LF_FACESIZE);
         lf.lfCharSet = DEFAULT_CHARSET;
         lf.lfHeight = -nSize;
 
@@ -2055,7 +2055,7 @@ namespace DuiLib {
     {
         LOGFONT lf = { 0 };
         ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-        lstrcpyn(lf.lfFaceName, pStrFontName, LF_FACESIZE);
+        _tcsncpy(lf.lfFaceName, pStrFontName, LF_FACESIZE);
         lf.lfCharSet = DEFAULT_CHARSET;
         lf.lfHeight = -nSize;
 
@@ -2106,7 +2106,7 @@ namespace DuiLib {
     {
         LOGFONT lf = { 0 };
         ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-        lstrcpyn(lf.lfFaceName, pStrFontName, LF_FACESIZE);
+        _tcsncpy(lf.lfFaceName, pStrFontName, LF_FACESIZE);
         lf.lfCharSet = DEFAULT_CHARSET;
         lf.lfHeight = -nSize;
 

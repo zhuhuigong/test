@@ -1193,7 +1193,7 @@ namespace DuiLib {
         {
             LOGFONT lf = { 0 };
             ::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
-            lstrcpyn(lf.lfFaceName, pStrFontName, LF_FACESIZE);
+            _tcsncpy(lf.lfFaceName, pStrFontName, LF_FACESIZE);
             lf.lfCharSet = DEFAULT_CHARSET;
             lf.lfHeight = -nSize;
             if (bBold) lf.lfWeight += FW_BOLD;
