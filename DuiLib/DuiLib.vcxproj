@@ -268,6 +268,7 @@
     <ClCompile Include="Control\UIList.cpp" />
     <ClCompile Include="Control\UIOption.cpp" />
     <ClCompile Include="Control\UIProgress.cpp" />
+    <ClCompile Include="Control\UIRadioButton.cpp" />
     <ClCompile Include="Control\UIRichEdit.cpp" />
     <ClCompile Include="Control\UIScrollBar.cpp" />
     <ClCompile Include="Control\UIShadow.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="Control\UIList.h" />
     <ClInclude Include="Control\UIOption.h" />
     <ClInclude Include="Control\UIProgress.h" />
+    <ClInclude Include="Control\UIRadioButton.h" />
     <ClInclude Include="Control\UIRichEdit.h" />
     <ClInclude Include="Control\UIScrollBar.h" />
     <ClInclude Include="Control\UIShadow.h" />

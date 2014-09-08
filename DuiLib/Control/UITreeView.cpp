@@ -346,7 +346,7 @@ namespace DuiLib
     //************************************
     void CTreeNodeUI::CheckBoxSelected(bool _Selected)
     {
-        pCheckBox->Selected(_Selected);
+        pCheckBox->SetChecked(_Selected);
     }
 
     //************************************
@@ -356,7 +356,7 @@ namespace DuiLib
     //************************************
     bool CTreeNodeUI::IsCheckBoxSelected() const
     {
-        return pCheckBox->IsSelected();
+        return pCheckBox->IsChecked();
     }
 
     //************************************
@@ -1028,7 +1028,7 @@ namespace DuiLib
         {
             CCheckBoxUI* pCheckBox = (CCheckBoxUI*)pMsg->pSender;
             CTreeNodeUI* pItem = (CTreeNodeUI*)pCheckBox->GetParent()->GetParent();
-            SetItemCheckBox(pCheckBox->GetCheck(), pItem);
+            SetItemCheckBox(pCheckBox->IsChecked(), pItem);
             return true;
         }
 
@@ -1048,8 +1048,8 @@ namespace DuiLib
         {
             CCheckBoxUI* pFolder = (CCheckBoxUI*)pMsg->pSender;
             CTreeNodeUI* pItem = (CTreeNodeUI*)pFolder->GetParent()->GetParent();
-            pItem->SetVisibleTag(!pFolder->GetCheck());
-            SetItemExpand(!pFolder->GetCheck(), pItem);
+            pItem->SetVisibleTag(!pFolder->IsChecked());
+            SetItemExpand(!pFolder->IsChecked(), pItem);
             return true;
         }
 
@@ -1069,9 +1069,9 @@ namespace DuiLib
         {
             CTreeNodeUI* pItem = static_cast<CTreeNodeUI*>(pMsg->pSender);
             CCheckBoxUI* pFolder = pItem->GetFolderButton();
-            pFolder->Selected(!pFolder->IsSelected());
-            pItem->SetVisibleTag(!pFolder->GetCheck());
-            SetItemExpand(!pFolder->GetCheck(), pItem);
+            pFolder->SetChecked(!pFolder->IsChecked());
+            pItem->SetVisibleTag(!pFolder->IsChecked());
+            SetItemExpand(!pFolder->IsChecked(), pItem);
             return true;
         }
 
@@ -1095,7 +1095,7 @@ namespace DuiLib
                 for (int nIndex = 0; nIndex < nCount; nIndex++)
                 {
                     CTreeNodeUI* pItem = _TreeNode->GetChildNode(nIndex);
-                    pItem->GetCheckBox()->Selected(_Selected);
+                    pItem->GetCheckBox()->SetChecked(_Selected);
                     if (pItem->GetCountChild())
                         SetItemCheckBox(_Selected, pItem);
                 }
@@ -1109,7 +1109,7 @@ namespace DuiLib
             while (nIndex < nCount)
             {
                 CTreeNodeUI* pItem = (CTreeNodeUI*)GetItemAt(nIndex);
-                pItem->GetCheckBox()->Selected(_Selected);
+                pItem->GetCheckBox()->SetChecked(_Selected);
                 if (pItem->GetCountChild())
                     SetItemCheckBox(_Selected, pItem);
 
@@ -1140,7 +1140,7 @@ namespace DuiLib
                     CTreeNodeUI* pItem = _TreeNode->GetChildNode(nIndex);
                     pItem->SetVisible(_Expanded);
 
-                    if (pItem->GetCountChild() && !pItem->GetFolderButton()->IsSelected())
+                    if (pItem->GetCountChild() && !pItem->GetFolderButton()->IsChecked())
                         SetItemExpand(_Expanded, pItem);
                 }
             }
@@ -1155,7 +1155,7 @@ namespace DuiLib
 
                 pItem->SetVisible(_Expanded);
 
-                if (pItem->GetCountChild() && !pItem->GetFolderButton()->IsSelected())
+                if (pItem->GetCountChild() && !pItem->GetFolderButton()->IsChecked())
                     SetItemExpand(_Expanded, pItem);
 
                 nIndex++;

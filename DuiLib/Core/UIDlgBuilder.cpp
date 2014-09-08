@@ -493,6 +493,7 @@ namespace DuiLib {
                     break;
                 case 11:
                     if (lstrcmpi(pstrClass, DUI_CTR_CHILDLAYOUT) == 0)            pControl = new CChildLayoutUI;
+                    else if (lstrcmpi(pstrClass, DUI_CTR_RADIOBUTTON) == 0)       pControl = new CRadioButtonUI;
                     break;
                 case 14:
                     if (lstrcmpi(pstrClass, DUI_CTR_VERTICALLAYOUT) == 0)         pControl = new CVerticalLayoutUI;
