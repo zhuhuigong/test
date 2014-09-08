@@ -162,6 +162,9 @@
     <ClInclude Include="..\DuiLib\UIConfig.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\DuiLib\Control\UIShadow.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DuiLib\Utils\flash11.tlh">
@@ -276,6 +279,9 @@
     </ClCompile>
     <ClCompile Include="..\DuiLib\UIlib.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DuiLib\Control\UIShadow.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -162,6 +162,7 @@
     <ClInclude Include="..\DuiLib\Control\UIProgress.h" />
     <ClInclude Include="..\DuiLib\Control\UIRichEdit.h" />
     <ClInclude Include="..\DuiLib\Control\UIScrollBar.h" />
+    <ClInclude Include="..\DuiLib\Control\UIShadow.h" />
     <ClInclude Include="..\DuiLib\Control\UISlider.h" />
     <ClInclude Include="..\DuiLib\Control\UIText.h" />
     <ClInclude Include="..\DuiLib\Control\UITreeView.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="..\DuiLib\Control\UIProgress.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIRichEdit.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIScrollBar.cpp" />
+    <ClCompile Include="..\DuiLib\Control\UIShadow.cpp" />
     <ClCompile Include="..\DuiLib\Control\UISlider.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIText.cpp" />
     <ClCompile Include="..\DuiLib\Control\UITreeView.cpp" />

@@ -467,6 +467,7 @@ namespace DuiLib {
                     if (lstrcmpi(pstrClass, DUI_CTR_BUTTON) == 0)                 pControl = new CButtonUI;
                     else if (lstrcmpi(pstrClass, DUI_CTR_OPTION) == 0)            pControl = new COptionUI;
                     else if (lstrcmpi(pstrClass, DUI_CTR_SLIDER) == 0)            pControl = new CSliderUI;
+                    else if (lstrcmpi(pstrClass, DUI_CTR_SHADOW) == 0)            pControl = new CShadowUI;
                     break;
                 case 7:
                     if (lstrcmpi(pstrClass, DUI_CTR_CONTROL) == 0)                pControl = new CControlUI;

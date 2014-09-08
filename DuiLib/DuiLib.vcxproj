@@ -270,6 +270,7 @@
     <ClCompile Include="Control\UIProgress.cpp" />
     <ClCompile Include="Control\UIRichEdit.cpp" />
     <ClCompile Include="Control\UIScrollBar.cpp" />
+    <ClCompile Include="Control\UIShadow.cpp" />
     <ClCompile Include="Control\UISlider.cpp" />
     <ClCompile Include="Control\UIText.cpp" />
     <ClCompile Include="Control\UITreeView.cpp" />
@@ -333,6 +334,7 @@
     <ClInclude Include="Control\UIProgress.h" />
     <ClInclude Include="Control\UIRichEdit.h" />
     <ClInclude Include="Control\UIScrollBar.h" />
+    <ClInclude Include="Control\UIShadow.h" />
     <ClInclude Include="Control\UISlider.h" />
     <ClInclude Include="Control\UIText.h" />
     <ClInclude Include="Control\UITreeView.h" />

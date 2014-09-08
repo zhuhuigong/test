@@ -147,6 +147,9 @@
     <ClCompile Include="Utils\WinImplBase.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Control\UIShadow.cpp">
+      <Filter>Source Files\Control</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -265,6 +268,9 @@
     </ClInclude>
     <ClInclude Include="UIConfig.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\UIShadow.h">
+      <Filter>Header Files\Control</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -103,6 +103,7 @@
 
 #include "Control/UIProgress.h"
 #include "Control/UISlider.h"
+#include "Control/UIShadow.h"
 
 #include "Control/UIComboBox.h"
 #include "Control/UIRichEdit.h"
