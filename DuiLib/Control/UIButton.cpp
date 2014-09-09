@@ -371,39 +371,19 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("hotbkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetHotBkColor(clrColor);
+            SetHotBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("hottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetHotTextColor(clrColor);
+            SetHotTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("pushedtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetPushedTextColor(clrColor);
+            SetPushedTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("focusedtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetFocusedTextColor(clrColor);
+            SetFocusedTextColor(ParseColor(pstrValue));
         }
         else
         {

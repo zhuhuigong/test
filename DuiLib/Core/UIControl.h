@@ -162,6 +162,9 @@ namespace DuiLib {
         void SetVirtualWnd(LPCTSTR pstrValue);
         CDuiString GetVirtualWnd() const;
 
+    protected:
+        DWORD ParseColor(LPCTSTR lpszColor);
+
     public:
         CEventSource OnInit;
         CEventSource OnDestroy;

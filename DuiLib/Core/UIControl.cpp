@@ -887,57 +887,23 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("bkcolor")) == 0 || lstrcmpi(pstrName, _T("bkcolor1")) == 0)
         {
-            while (*pstrValue > _T('\0') && *pstrValue <= _T(' '))
-                pstrValue = ::CharNext(pstrValue);
-
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetBkColor(clrColor);
+            SetBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("bkcolor2")) == 0)
         {
-            while (*pstrValue > _T('\0') && *pstrValue <= _T(' '))
-                pstrValue = ::CharNext(pstrValue);
-
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetBkColor2(clrColor);
+            SetBkColor2(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("bkcolor3")) == 0)
         {
-            while (*pstrValue > _T('\0') && *pstrValue <= _T(' '))
-                pstrValue = ::CharNext(pstrValue);
-
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetBkColor3(clrColor);
+            SetBkColor3(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("bordercolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetBorderColor(clrColor);
+            SetBorderColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("focusbordercolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetFocusBorderColor(clrColor);
+            SetFocusBorderColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("colorhsl")) == 0)
         {
@@ -1371,6 +1337,56 @@ namespace DuiLib {
     {
         m_nBorderStyle = nStyle;
         Invalidate();
+    }
+
+    DWORD CControlUI::ParseColor(LPCTSTR lpszColor)
+    {
+        if (lpszColor[0] == _T('#'))
+            lpszColor = ::CharNext(lpszColor);
+
+        // 跳过#号后才计算长度
+        int len = lstrlen(lpszColor);
+
+        LPTSTR pstr = NULL;
+        DWORD dwColor = 0xFF000000;
+
+        // 这里只有两种写法，一种是#AARRGGBB或RRGGBB（16进制的）
+        // 否则就认为是另一种，即ARGB(A,R,G,B)或RGB(R,G,B)（10进制的，RGB或rgb）
+        if (len == 6 || len == 8)
+        {
+            dwColor = _tcstoul(lpszColor, &pstr, 16);
+
+            // 如果是6个字符的，就表示Alpha的值是255，即FF，加上它
+            dwColor = (len == 6) ? (dwColor | 0xFF000000) : dwColor;
+        }
+        else
+        {
+            // RGB就偏移4，ARGB就偏移5
+            int pos = (lpszColor[0] == 'R' || lpszColor[0] == 'r') ? 4 : 5;
+            lpszColor += pos;
+
+            if (pos == 4)
+            {
+                // 属性中的和这里计算的要反过来，R和B对调！
+                int b = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
+                int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+
+                dwColor = RGB(r, g, b) | 0xFF000000;
+            }
+            else
+            {
+                // 属性中的和这里计算的要反过来，R和B对调！
+                int a = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
+                int b = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+                int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+
+                dwColor = RGB(r, g, b) | (a << 24);
+            }
+        }
+
+        return dwColor;
     }
 
 } // namespace DuiLib
