@@ -1350,7 +1350,7 @@ namespace DuiLib {
         LPTSTR pstr = NULL;
         DWORD dwColor = 0xFF000000;
 
-        // 这里只有两种写法，一种是#AARRGGBB或RRGGBB（16进制的）
+        // 这里只有两种写法，一种是#AARRGGBB或#RRGGBB（16进制的）
         // 否则就认为是另一种，即ARGB(A,R,G,B)或RGB(R,G,B)（10进制的，RGB或rgb）
         if (len == 6 || len == 8)
         {

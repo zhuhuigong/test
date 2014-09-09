@@ -561,12 +561,7 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("nativebkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetNativeEditBkColor(clrColor);
+            SetNativeEditBkColor(ParseColor(pstrValue));
         }
         else
         {

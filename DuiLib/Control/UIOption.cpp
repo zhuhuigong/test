@@ -271,21 +271,11 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("selectedbkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelectedBkColor(clrColor);
+            SetSelectedBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("selectedtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelectedTextColor(clrColor);
+            SetSelectedTextColor(ParseColor(pstrValue));
         }
         else
         {

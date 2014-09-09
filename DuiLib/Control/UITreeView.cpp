@@ -516,39 +516,19 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemTextColor(clrColor);
+            SetItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemHotTextColor(clrColor);
+            SetItemHotTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelItemTextColor(clrColor);
+            SetSelItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelItemHotTextColor(clrColor);
+            SetSelItemHotTextColor(ParseColor(pstrValue));
         }
         else
         {
@@ -1334,39 +1314,19 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemTextColor(clrColor);
+            SetItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemHotTextColor(clrColor);
+            SetItemHotTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelItemTextColor(clrColor);
+            SetSelItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelItemHotTextColor(clrColor);
+            SetSelItemHotTextColor(ParseColor(pstrValue));
         }
         else
         {

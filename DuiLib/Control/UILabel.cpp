@@ -239,21 +239,11 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetTextColor(clrColor);
+            SetTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("disabledtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetDisabledTextColor(clrColor);
+            SetDisabledTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("textpadding")) == 0)
         {
@@ -322,39 +312,19 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("textcolor1")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetTextColor1(clrColor);
+            SetTextColor1(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("textshadowcolora")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetTextShadowColorA(clrColor);
+            SetTextShadowColorA(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("textshadowcolorb")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetTextShadowColorB(clrColor);
+            SetTextShadowColorB(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("strokecolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetStrokeColor(clrColor);
+            SetStrokeColor(ParseColor(pstrValue));
         }
         else
         {

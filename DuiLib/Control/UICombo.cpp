@@ -1004,21 +1004,11 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemTextColor(clrColor);
+            SetItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itembkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemBkColor(clrColor);
+            SetItemBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itembkimage")) == 0)
         {
@@ -1030,21 +1020,11 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemselectedtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelectedItemTextColor(clrColor);
+            SetSelectedItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemselectedbkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetSelectedItemBkColor(clrColor);
+            SetSelectedItemBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemselectedimage")) == 0)
         {
@@ -1052,21 +1032,11 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetHotItemTextColor(clrColor);
+            SetHotItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemhotbkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetHotItemBkColor(clrColor);
+            SetHotItemBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemhotimage")) == 0)
         {
@@ -1074,21 +1044,11 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledtextcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetDisabledItemTextColor(clrColor);
+            SetDisabledItemTextColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledbkcolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetDisabledItemBkColor(clrColor);
+            SetDisabledItemBkColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledimage")) == 0)
         {
@@ -1096,12 +1056,7 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemlinecolor")) == 0)
         {
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetItemLineColor(clrColor);
+            SetItemLineColor(ParseColor(pstrValue));
         }
         else if (lstrcmpi(pstrName, _T("itemshowhtml")) == 0)
         {

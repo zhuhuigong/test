@@ -2254,6 +2254,7 @@ namespace DuiLib {
             if (lstrcmpi(pstrValue, _T("true")) == 0)
                 m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
         }
+
         if (lstrcmpi(pstrName, _T("autovscroll")) == 0)
         {
             if (lstrcmpi(pstrValue, _T("true")) == 0)
@@ -2264,6 +2265,7 @@ namespace DuiLib {
             if (lstrcmpi(pstrValue, _T("true")) == 0)
                 m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
         }
+
         if (lstrcmpi(pstrName, _T("autohscroll")) == 0)
         {
             if (lstrcmpi(pstrValue, _T("true")) == 0)
@@ -2329,15 +2331,7 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
         {
-            while (*pstrValue > _T('\0') && *pstrValue <= _T(' '))
-                pstrValue = ::CharNext(pstrValue);
-
-            if (*pstrValue == _T('#'))
-                pstrValue = ::CharNext(pstrValue);
-
-            LPTSTR pstr = NULL;
-            DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-            SetTextColor(clrColor);
+            SetTextColor(ParseColor(pstrValue));
         }
         else
         {
