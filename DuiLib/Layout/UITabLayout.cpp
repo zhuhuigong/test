@@ -3,8 +3,10 @@
 
 namespace DuiLib
 {
-    CTabLayoutUI::CTabLayoutUI() : m_iCurSel(-1)
+    CTabLayoutUI::CTabLayoutUI()
+        : m_iCurSel(-1)
     {
+
     }
 
     LPCTSTR CTabLayoutUI::GetClass() const
@@ -106,19 +108,25 @@ namespace DuiLib
         m_iCurSel = iIndex;
         for (int it = 0; it < m_items.GetSize(); it++)
         {
-            if (it == iIndex) {
+            if (it == iIndex)
+            {
                 GetItemAt(it)->SetVisible(true);
                 GetItemAt(it)->SetFocus();
                 SetPos(m_rcItem);
             }
-            else GetItemAt(it)->SetVisible(false);
+            else
+            {
+                GetItemAt(it)->SetVisible(false);
+            }
         }
         NeedParentUpdate();
 
-        if (m_pManager != NULL) {
+        if (m_pManager != NULL)
+        {
             m_pManager->SetNextTabControl();
             m_pManager->SendNotify(this, DUI_MSGTYPE_TABSELECT, m_iCurSel, iOldSel);
         }
+
         return true;
     }
 
@@ -152,10 +160,12 @@ namespace DuiLib
         rc.right -= m_rcInset.right;
         rc.bottom -= m_rcInset.bottom;
 
-        for (int it = 0; it < m_items.GetSize(); it++) {
+        for (int it = 0; it < m_items.GetSize(); it++)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[it]);
             if (!pControl->IsVisible()) continue;
-            if (pControl->IsFloat()) {
+            if (pControl->IsFloat())
+            {
                 SetFloatPos(it);
                 continue;
             }
@@ -171,13 +181,15 @@ namespace DuiLib
             SIZE szAvailable = { rc.right - rc.left, rc.bottom - rc.top };
 
             SIZE sz = pControl->EstimateSize(szAvailable);
-            if (sz.cx == 0) {
+            if (sz.cx == 0)
+            {
                 sz.cx = MAX(0, szAvailable.cx);
             }
             if (sz.cx < pControl->GetMinWidth()) sz.cx = pControl->GetMinWidth();
             if (sz.cx > pControl->GetMaxWidth()) sz.cx = pControl->GetMaxWidth();
 
-            if (sz.cy == 0) {
+            if (sz.cy == 0)
+            {
                 sz.cy = MAX(0, szAvailable.cy);
             }
             if (sz.cy < pControl->GetMinHeight()) sz.cy = pControl->GetMinHeight();

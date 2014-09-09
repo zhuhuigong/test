@@ -1,15 +1,15 @@
-﻿#ifndef WIN_IMPL_BASE_HPP
-#define WIN_IMPL_BASE_HPP
+﻿#ifndef __WIN_IMPL_BASE_H__
+#define __WIN_IMPL_BASE_H__
 
 namespace DuiLib
 {
 
     enum UILIB_RESOURCETYPE
     {
-        UILIB_FILE = 1,               // 来自磁盘文件
+        UILIB_FILE = 1,                 // 来自磁盘文件
         UILIB_ZIP,                      // 来自磁盘zip压缩包
-        UILIB_RESOURCE,         // 来自资源
-        UILIB_ZIPRESOURCE,  // 来自资源的zip压缩包
+        UILIB_RESOURCE,                 // 来自资源
+        UILIB_ZIPRESOURCE,              // 来自资源的zip压缩包
     };
 
     class UILIB_API WindowImplBase
@@ -20,9 +20,9 @@ namespace DuiLib
         , public IDialogBuilderCallback
     {
     public:
-        WindowImplBase(){};
-        virtual ~WindowImplBase(){};
-        virtual void InitWindow(){};
+        WindowImplBase();
+        virtual ~WindowImplBase();
+        virtual void InitWindow();
         virtual void OnFinalMessage(HWND hWnd);
         virtual void Notify(TNotifyUI& msg);
 
@@ -34,9 +34,6 @@ namespace DuiLib
         virtual CDuiString GetSkinFile() = 0;
         virtual LPCTSTR GetWindowClassName(void) const = 0;
         LRESULT ResponseDefaultKeyEvent(WPARAM wParam);
-
-        CPaintManagerUI m_PaintManager;
-        static LPBYTE m_lpResourceZIPBuffer;
 
     public:
         virtual UINT GetClassStyle() const;
@@ -70,7 +67,11 @@ namespace DuiLib
         virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
         virtual LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
         virtual LONG GetStyle();
+
+    protected:
+        CPaintManagerUI m_PaintManager;
+        static LPBYTE m_lpResourceZIPBuffer;
     };
 }
 
-#endif // WIN_IMPL_BASE_HPP
+#endif // __WIN_IMPL_BASE_H__

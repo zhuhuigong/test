@@ -27,8 +27,10 @@ namespace DuiLib
 
     UINT CVerticalLayoutUI::GetControlFlags() const
     {
-        if (IsEnabled() && m_iSepHeight != 0) return UIFLAG_SETCURSOR;
-        else return 0;
+        if (IsEnabled() && m_iSepHeight != 0)
+            return UIFLAG_SETCURSOR;
+        else
+            return 0;
     }
 
     void CVerticalLayoutUI::SetPos(RECT rc)
@@ -44,7 +46,8 @@ namespace DuiLib
         if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) rc.right -= m_pVerticalScrollBar->GetFixedWidth();
         if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) rc.bottom -= m_pHorizontalScrollBar->GetFixedHeight();
 
-        if (m_items.GetSize() == 0) {
+        if (m_items.GetSize() == 0)
+        {
             ProcessScrollBar(rc, 0, 0);
             return;
         }
@@ -57,18 +60,22 @@ namespace DuiLib
         int nAdjustables = 0;
         int cyFixed = 0;
         int nEstimateNum = 0;
-        for (int it1 = 0; it1 < m_items.GetSize(); it1++) {
+        for (int it1 = 0; it1 < m_items.GetSize(); it1++)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[it1]);
             if (!pControl->IsVisible()) continue;
             if (pControl->IsFloat()) continue;
             SIZE sz = pControl->EstimateSize(szAvailable);
-            if (sz.cy == 0) {
+            if (sz.cy == 0)
+            {
                 nAdjustables++;
             }
-            else {
+            else
+            {
                 if (sz.cy < pControl->GetMinHeight()) sz.cy = pControl->GetMinHeight();
                 if (sz.cy > pControl->GetMaxHeight()) sz.cy = pControl->GetMaxHeight();
             }
+
             cyFixed += sz.cy + pControl->GetPadding().top + pControl->GetPadding().bottom;
             nEstimateNum++;
         }
@@ -81,19 +88,25 @@ namespace DuiLib
         // Position the elements
         SIZE szRemaining = szAvailable;
         int iPosY = rc.top;
-        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+        {
             iPosY -= m_pVerticalScrollBar->GetScrollPos();
         }
+
         int iPosX = rc.left;
-        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) {
+        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible())
+        {
             iPosX -= m_pHorizontalScrollBar->GetScrollPos();
         }
+
         int iAdjustable = 0;
         int cyFixedRemaining = cyFixed;
-        for (int it2 = 0; it2 < m_items.GetSize(); it2++) {
+        for (int it2 = 0; it2 < m_items.GetSize(); it2++)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[it2]);
             if (!pControl->IsVisible()) continue;
-            if (pControl->IsFloat()) {
+            if (pControl->IsFloat())
+            {
                 SetFloatPos(it2);
                 continue;
             }
@@ -101,17 +114,21 @@ namespace DuiLib
             RECT rcPadding = pControl->GetPadding();
             szRemaining.cy -= rcPadding.top;
             SIZE sz = pControl->EstimateSize(szRemaining);
-            if (sz.cy == 0) {
+            if (sz.cy == 0)
+            {
                 iAdjustable++;
                 sz.cy = cyExpand;
                 // Distribute remaining to last element (usually round-off left-overs)
-                if (iAdjustable == nAdjustables) {
+                if (iAdjustable == nAdjustables)
+                {
                     sz.cy = MAX(0, szRemaining.cy - rcPadding.bottom - cyFixedRemaining);
                 }
+
                 if (sz.cy < pControl->GetMinHeight()) sz.cy = pControl->GetMinHeight();
                 if (sz.cy > pControl->GetMaxHeight()) sz.cy = pControl->GetMaxHeight();
             }
-            else {
+            else
+            {
                 if (sz.cy < pControl->GetMinHeight()) sz.cy = pControl->GetMinHeight();
                 if (sz.cy > pControl->GetMaxHeight()) sz.cy = pControl->GetMaxHeight();
                 cyFixedRemaining -= sz.cy;
@@ -138,7 +155,8 @@ namespace DuiLib
 
     void CVerticalLayoutUI::DoPostPaint(HDC hDC, const RECT& rcPaint)
     {
-        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode) {
+        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode)
+        {
             RECT rcSeparator = GetThumbRect(true);
             CRenderEngine::DrawColor(hDC, rcSeparator, 0xAA000000);
         }
@@ -157,7 +175,8 @@ namespace DuiLib
     void CVerticalLayoutUI::SetSepImmMode(bool bImmediately)
     {
         if (m_bImmMode == bImmediately) return;
-        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode && m_pManager != NULL) {
+        if ((m_uButtonState & UISTATE_CAPTURED) != 0 && !m_bImmMode && m_pManager != NULL)
+        {
             m_pManager->RemovePostPaint(this);
         }
 
@@ -223,28 +242,36 @@ namespace DuiLib
                     LONG cy = event.ptMouse.y - ptLastMouse.y;
                     ptLastMouse = event.ptMouse;
                     RECT rc = m_rcNewPos;
-                    if (m_iSepHeight >= 0) {
+                    if (m_iSepHeight >= 0)
+                    {
                         if (cy > 0 && event.ptMouse.y < m_rcNewPos.bottom + m_iSepHeight) return;
                         if (cy < 0 && event.ptMouse.y > m_rcNewPos.bottom) return;
                         rc.bottom += cy;
-                        if (rc.bottom - rc.top <= GetMinHeight()) {
+                        if (rc.bottom - rc.top <= GetMinHeight())
+                        {
                             if (m_rcNewPos.bottom - m_rcNewPos.top <= GetMinHeight()) return;
                             rc.bottom = rc.top + GetMinHeight();
                         }
-                        if (rc.bottom - rc.top >= GetMaxHeight()) {
+
+                        if (rc.bottom - rc.top >= GetMaxHeight())
+                        {
                             if (m_rcNewPos.bottom - m_rcNewPos.top >= GetMaxHeight()) return;
                             rc.bottom = rc.top + GetMaxHeight();
                         }
                     }
-                    else {
+                    else
+                    {
                         if (cy > 0 && event.ptMouse.y < m_rcNewPos.top) return;
                         if (cy < 0 && event.ptMouse.y > m_rcNewPos.top + m_iSepHeight) return;
                         rc.top += cy;
-                        if (rc.bottom - rc.top <= GetMinHeight()) {
+                        if (rc.bottom - rc.top <= GetMinHeight())
+                        {
                             if (m_rcNewPos.bottom - m_rcNewPos.top <= GetMinHeight()) return;
                             rc.top = rc.bottom - GetMinHeight();
                         }
-                        if (rc.bottom - rc.top >= GetMaxHeight()) {
+
+                        if (rc.bottom - rc.top >= GetMaxHeight())
+                        {
                             if (m_rcNewPos.bottom - m_rcNewPos.top >= GetMaxHeight()) return;
                             rc.top = rc.bottom - GetMaxHeight();
                         }
@@ -254,22 +281,27 @@ namespace DuiLib
                     m_rcNewPos = rc;
                     m_cxyFixed.cy = m_rcNewPos.bottom - m_rcNewPos.top;
 
-                    if (m_bImmMode) {
+                    if (m_bImmMode)
+                    {
                         m_rcItem = m_rcNewPos;
                         NeedParentUpdate();
                     }
-                    else {
+                    else
+                    {
                         rcInvalidate.Join(GetThumbRect(true));
                         rcInvalidate.Join(GetThumbRect(false));
-                        if (m_pManager) m_pManager->Invalidate(rcInvalidate);
+                        if (m_pManager)
+                            m_pManager->Invalidate(rcInvalidate);
                     }
                     return;
                 }
             }
+
             if (event.Type == UIEVENT_SETCURSOR)
             {
                 RECT rcSeparator = GetThumbRect(false);
-                if (IsEnabled() && ::PtInRect(&rcSeparator, event.ptMouse)) {
+                if (IsEnabled() && ::PtInRect(&rcSeparator, event.ptMouse))
+                {
                     ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENS)));
                     return;
                 }

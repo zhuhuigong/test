@@ -12,6 +12,21 @@ namespace DuiLib
         DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK, OnClick)
     DUI_END_MESSAGE_MAP()
 
+    WindowImplBase::WindowImplBase()
+    {
+
+    }
+
+    WindowImplBase::~WindowImplBase()
+    {
+
+    }
+
+    void WindowImplBase::InitWindow()
+    {
+
+    }
+
     void WindowImplBase::OnFinalMessage(HWND hWnd)
     {
         m_PaintManager.RemovePreMessageFilter(this);
@@ -83,6 +98,9 @@ namespace DuiLib
 
     LRESULT WindowImplBase::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
     {
+        // 不处理，退出进程！
+        PostQuitMessage(0);
+
         bHandled = FALSE;
         return 0;
     }
@@ -134,7 +152,7 @@ namespace DuiLib
 
     LRESULT WindowImplBase::OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
-        POINT pt; pt.x = GET_X_LPARAM(lParam); pt.y = GET_Y_LPARAM(lParam);
+        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
         ::ScreenToClient(*this, &pt);
 
         RECT rcClient;
@@ -165,9 +183,12 @@ namespace DuiLib
             && pt.y >= rcCaption.top && pt.y < rcCaption.bottom)
         {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(pt));
-            if (pControl && lstrcmpi(pControl->GetClass(), _T("ButtonUI")) != 0 &&
+            if (pControl &&
+                lstrcmpi(pControl->GetClass(), _T("ButtonUI")) != 0 &&
                 lstrcmpi(pControl->GetClass(), _T("OptionUI")) != 0 &&
-                lstrcmpi(pControl->GetClass(), _T("TextUI")) != 0)
+                lstrcmpi(pControl->GetClass(), _T("TextUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("CheckBoxUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("RadioButtonUI")) != 0)
                 return HTCAPTION;
         }
 
@@ -252,7 +273,20 @@ namespace DuiLib
         LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
         if (::IsZoomed(*this) != bZoomed)
         {
-
+            if (!bZoomed)
+            {
+                CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
+                if( pControl ) pControl->SetVisible(false);
+                pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
+                if (pControl) pControl->SetVisible(true);
+            }
+            else
+            {
+                CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
+                if (pControl) pControl->SetVisible(true);
+                pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
+                if (pControl) pControl->SetVisible(false);
+            }
         }
 #else
         LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
@@ -337,7 +371,9 @@ namespace DuiLib
 
         m_PaintManager.AttachDialog(pRoot);
         m_PaintManager.AddNotifier(this);
-        m_PaintManager.SetBackgroundTransparent(TRUE);
+
+        // 和加上bktrans属性是一样的，这里注释掉了
+        //m_PaintManager.SetBackgroundTransparent(TRUE);
 
         InitWindow();
         return 0;

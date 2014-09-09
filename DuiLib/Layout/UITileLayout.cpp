@@ -29,7 +29,8 @@ namespace DuiLib
 
     void CTileLayoutUI::SetItemSize(SIZE szItem)
     {
-        if (m_szItem.cx != szItem.cx || m_szItem.cy != szItem.cy) {
+        if (m_szItem.cx != szItem.cx || m_szItem.cy != szItem.cy)
+        {
             m_szItem = szItem;
             NeedUpdate();
         }
@@ -78,7 +79,8 @@ namespace DuiLib
         rc.right -= m_rcInset.right;
         rc.bottom -= m_rcInset.bottom;
 
-        if (m_items.GetSize() == 0) {
+        if (m_items.GetSize() == 0)
+        {
             ProcessScrollBar(rc, 0, 0);
             return;
         }
@@ -98,18 +100,24 @@ namespace DuiLib
         int cyHeight = 0;
         int iCount = 0;
         POINT ptTile = { rc.left, rc.top };
-        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) {
+        if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+        {
             ptTile.y -= m_pVerticalScrollBar->GetScrollPos();
         }
+
         int iPosX = rc.left;
-        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible()) {
+        if (m_pHorizontalScrollBar && m_pHorizontalScrollBar->IsVisible())
+        {
             iPosX -= m_pHorizontalScrollBar->GetScrollPos();
             ptTile.x = iPosX;
         }
-        for (int it1 = 0; it1 < m_items.GetSize(); it1++) {
+
+        for (int it1 = 0; it1 < m_items.GetSize(); it1++)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_items[it1]);
             if (!pControl->IsVisible()) continue;
-            if (pControl->IsFloat()) {
+            if (pControl->IsFloat())
+            {
                 SetFloatPos(it1);
                 continue;
             }
@@ -119,22 +127,28 @@ namespace DuiLib
             if ((iCount % m_nColumns) == 0)
             {
                 int iIndex = iCount;
-                for (int it2 = it1; it2 < m_items.GetSize(); it2++) {
+                for (int it2 = it1; it2 < m_items.GetSize(); it2++)
+                {
                     CControlUI* pLineControl = static_cast<CControlUI*>(m_items[it2]);
                     if (!pLineControl->IsVisible()) continue;
                     if (pLineControl->IsFloat()) continue;
 
                     RECT rcPadding = pLineControl->GetPadding();
                     SIZE szAvailable = { rcTile.right - rcTile.left - rcPadding.left - rcPadding.right, 9999 };
-                    if (iIndex == iCount || (iIndex + 1) % m_nColumns == 0) {
+                    if (iIndex == iCount || (iIndex + 1) % m_nColumns == 0)
+                    {
                         szAvailable.cx -= m_iChildPadding / 2;
                     }
-                    else {
+                    else
+                    {
                         szAvailable.cx -= m_iChildPadding;
                     }
 
-                    if (szAvailable.cx < pControl->GetMinWidth()) szAvailable.cx = pControl->GetMinWidth();
-                    if (szAvailable.cx > pControl->GetMaxWidth()) szAvailable.cx = pControl->GetMaxWidth();
+                    if (szAvailable.cx < pControl->GetMinWidth())
+                        szAvailable.cx = pControl->GetMinWidth();
+
+                    if (szAvailable.cx > pControl->GetMaxWidth())
+                        szAvailable.cx = pControl->GetMaxWidth();
 
                     SIZE szTile = pLineControl->EstimateSize(szAvailable);
                     if (szTile.cx < pControl->GetMinWidth()) szTile.cx = pControl->GetMinWidth();
@@ -151,11 +165,13 @@ namespace DuiLib
 
             rcTile.left += rcPadding.left + m_iChildPadding / 2;
             rcTile.right -= rcPadding.right + m_iChildPadding / 2;
-            if ((iCount % m_nColumns) == 0) {
+            if ((iCount % m_nColumns) == 0)
+            {
                 rcTile.left -= m_iChildPadding / 2;
             }
 
-            if (((iCount + 1) % m_nColumns) == 0) {
+            if (((iCount + 1) % m_nColumns) == 0)
+            {
                 rcTile.right += m_iChildPadding / 2;
             }
 
@@ -175,16 +191,20 @@ namespace DuiLib
                 (rcTile.left + rcTile.right - szTile.cx) / 2 + szTile.cx, (rcTile.top + rcTile.bottom - szTile.cy) / 2 + szTile.cy };
             pControl->SetPos(rcPos);
 
-            if ((++iCount % m_nColumns) == 0) {
+            if ((++iCount % m_nColumns) == 0)
+            {
                 ptTile.x = iPosX;
                 ptTile.y += cyHeight + m_iChildPadding;
                 cyHeight = 0;
             }
-            else {
+            else
+            {
                 ptTile.x += cxWidth;
             }
+
             cyNeeded = rcTile.bottom - rc.top;
-            if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible()) cyNeeded += m_pVerticalScrollBar->GetScrollPos();
+            if (m_pVerticalScrollBar && m_pVerticalScrollBar->IsVisible())
+                cyNeeded += m_pVerticalScrollBar->GetScrollPos();
         }
 
         // Process the scrollbar
