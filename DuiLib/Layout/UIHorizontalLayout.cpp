@@ -33,6 +33,17 @@ namespace DuiLib
             return 0;
     }
 
+    void CHorizontalLayoutUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_SIZEWE);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
+
     void CHorizontalLayoutUI::SetPos(RECT rc)
     {
         CControlUI::SetPos(rc);
@@ -298,7 +309,7 @@ namespace DuiLib
                 RECT rcSeparator = GetThumbRect(false);
                 if (IsEnabled() && ::PtInRect(&rcSeparator, event.ptMouse))
                 {
-                    ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZEWE)));
+                    ::SetCursor(m_hCursor);
                     return;
                 }
             }

@@ -250,6 +250,7 @@ namespace DuiLib {
         LPCTSTR GetClass() const;
         LPVOID GetInterface(LPCTSTR pstrName);
         UINT GetControlFlags() const;
+        void SetCursor(LPCTSTR pStrCursor, bool bModify);
 
         void SetEnabled(bool bEnable = true);
 
@@ -377,6 +378,7 @@ namespace DuiLib {
         LPCTSTR GetClass() const;
         LPVOID GetInterface(LPCTSTR pstrName);
         UINT GetControlFlags() const;
+        void SetCursor(LPCTSTR pStrCursor, bool bModify);
 
         LPCTSTR GetText(int iIndex) const;
         void SetText(int iIndex, LPCTSTR pstrText);

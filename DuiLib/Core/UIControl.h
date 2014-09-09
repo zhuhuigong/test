@@ -115,6 +115,10 @@ namespace DuiLib {
         virtual UINT_PTR GetTag() const; // 辅助函数，供用户使用
         virtual void SetTag(UINT_PTR pTag); // 辅助函数，供用户使用
 
+        // 鼠标光标
+        virtual HCURSOR GetCursor() const;
+        virtual void SetCursor(LPCTSTR pStrCursor, bool bModify = false);
+
         // 一些重要的属性
         virtual bool IsVisible() const;
         virtual void SetVisible(bool bVisible = true);
@@ -215,6 +219,8 @@ namespace DuiLib {
         SIZE m_cxyBorderRound;
         RECT m_rcPaint;
         RECT m_rcBorderSize;
+
+        HCURSOR m_hCursor;
     };
 
 } // namespace DuiLib

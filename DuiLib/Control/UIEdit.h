@@ -16,6 +16,7 @@ namespace DuiLib
         LPCTSTR GetClass() const;
         LPVOID GetInterface(LPCTSTR pstrName);
         UINT GetControlFlags() const;
+        void SetCursor(LPCTSTR pStrCursor, bool bModify);
 
         void SetEnabled(bool bEnable = true);
         void SetText(LPCTSTR pstrText);

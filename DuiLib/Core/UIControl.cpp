@@ -26,6 +26,7 @@ namespace DuiLib {
         , m_nBorderSize(0)
         , m_nBorderStyle(PS_SOLID)
         , m_nTooltipWidth(300)
+        , m_hCursor(NULL)
     {
         m_cXY.cx = m_cXY.cy = 0;
         m_cxyFixed.cx = m_cxyFixed.cy = 0;
@@ -81,6 +82,7 @@ namespace DuiLib {
     {
         if (!IsVisible())
             return false;
+
         if (!IsEnabled())
             return false;
 
@@ -678,6 +680,84 @@ namespace DuiLib {
         NeedParentUpdate();
     }
 
+
+    HCURSOR CControlUI::GetCursor() const
+    {
+        return m_hCursor;
+    }
+
+    void CControlUI::SetCursor(LPCTSTR pStrCursor, bool /*bModify = false*/)
+    {
+        if (lstrcmpi(pStrCursor, _T("arrow")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_ARROW);
+        }
+        else if (lstrcmpi(pStrCursor, _T("hand")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_HAND);
+        }
+        else if (lstrcmpi(pStrCursor, _T("wait")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_WAIT);
+        }
+        else if (lstrcmpi(pStrCursor, _T("ibeam")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_IBEAM);
+        }
+        else if (lstrcmpi(pStrCursor, _T("cross")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_CROSS);
+        }
+        else if (lstrcmpi(pStrCursor, _T("uparrow")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_UPARROW);
+        }
+        else if (lstrcmpi(pStrCursor, _T("size")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZE);
+        }
+        else if (lstrcmpi(pStrCursor, _T("icon")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_ICON);
+        }
+        else if (lstrcmpi(pStrCursor, _T("sizenwse")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZENWSE);
+        }
+        else if (lstrcmpi(pStrCursor, _T("sizenesw")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZENESW);
+        }
+        else if (lstrcmpi(pStrCursor, _T("sizewe")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZEWE);
+        }
+        else if (lstrcmpi(pStrCursor, _T("sizens")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZENS);
+        }
+        else if (lstrcmpi(pStrCursor, _T("sizeall")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_SIZEALL);
+        }
+        else if (lstrcmpi(pStrCursor, _T("no")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_NO);
+        }
+        else if (lstrcmpi(pStrCursor, _T("appstarting")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_APPSTARTING);
+        }
+        else if (lstrcmpi(pStrCursor, _T("help")) == 0)
+        {
+            m_hCursor = LoadCursor(NULL, IDC_HELP);
+        }
+        else
+        {
+            m_hCursor = LoadCursor(NULL, IDC_ARROW);
+        }
+    }
+
     CControlUI* CControlUI::FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags)
     {
         if ((uFlags & UIFIND_VISIBLE) != 0 && !IsVisible())
@@ -783,7 +863,7 @@ namespace DuiLib {
     {
         if (event.Type == UIEVENT_SETCURSOR)
         {
-            ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+            ::SetCursor(m_hCursor);
             return;
         }
 
@@ -852,6 +932,12 @@ namespace DuiLib {
 
     void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
+        // 如果鼠标光标为空，则给一个默认光标
+        if (m_hCursor == NULL)
+        {
+            SetCursor(_T("arrow"));
+        }
+
         if (lstrcmpi(pstrName, _T("pos")) == 0)
         {
             RECT rcPos = { 0 };
@@ -1032,6 +1118,10 @@ namespace DuiLib {
         else if (lstrcmpi(pstrName, _T("virtualwnd")) == 0)
         {
             SetVirtualWnd(pstrValue);
+        }
+        else if (lstrcmpi(pstrName, _T("cursor")) == 0)
+        {
+            SetCursor(pstrValue, true);
         }
     }
 

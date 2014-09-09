@@ -1404,6 +1404,17 @@ namespace DuiLib {
             return 0;
     }
 
+    void CListHeaderItemUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_SIZEWE);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
+
     void CListHeaderItemUI::SetEnabled(bool bEnable)
     {
         CControlUI::SetEnabled(bEnable);
@@ -1729,7 +1740,7 @@ namespace DuiLib {
 
             if (IsEnabled() && m_bDragable && ::PtInRect(&rcSeparator, event.ptMouse))
             {
-                ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZEWE)));
+                ::SetCursor(m_hCursor);
                 return;
             }
         }
@@ -2357,6 +2368,17 @@ namespace DuiLib {
         return UIFLAG_WANTRETURN | ((IsEnabled() && m_nLinks > 0) ? UIFLAG_SETCURSOR : 0);
     }
 
+    void CListTextElementUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_HAND);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
+
     LPCTSTR CListTextElementUI::GetText(int iIndex) const
     {
         CDuiString* pText = static_cast<CDuiString*>(m_aTexts.GetAt(iIndex));
@@ -2420,7 +2442,7 @@ namespace DuiLib {
             {
                 if (::PtInRect(&m_rcLinks[i], event.ptMouse))
                 {
-                    ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+                    ::SetCursor(m_hCursor);
                     return;
                 }
             }

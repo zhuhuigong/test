@@ -15,6 +15,7 @@ namespace DuiLib
         CDateTimeUI();
         LPCTSTR GetClass() const;
         LPVOID GetInterface(LPCTSTR pstrName);
+        void SetCursor(LPCTSTR pStrCursor, bool bModify);
 
         SYSTEMTIME& GetTime();
         void SetTime(SYSTEMTIME* pst);

@@ -196,6 +196,17 @@ namespace DuiLib
         return UIFLAG_SETCURSOR | UIFLAG_TABSTOP;
     }
 
+    void CEditUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_IBEAM);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
+
     void CEditUI::DoEvent(TEventUI& event)
     {
         if (!IsMouseEnabled() && event.Type > UIEVENT__MOUSEBEGIN && event.Type < UIEVENT__MOUSEEND)
@@ -210,7 +221,7 @@ namespace DuiLib
 
         if (event.Type == UIEVENT_SETCURSOR && IsEnabled())
         {
-            ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+            ::SetCursor(m_hCursor);
             return;
         }
 

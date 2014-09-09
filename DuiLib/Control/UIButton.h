@@ -17,6 +17,7 @@ namespace DuiLib
         bool Activate();
         void SetEnabled(bool bEnable = true);
         void DoEvent(TEventUI& event);
+        void SetCursor(LPCTSTR pStrCursor, bool bModify);
 
         LPCTSTR GetNormalImage();
         void SetNormalImage(LPCTSTR pStrImage);

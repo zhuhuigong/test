@@ -133,12 +133,6 @@ namespace DuiLib
             // return;
         }
 
-        if (event.Type == UIEVENT_SETCURSOR)
-        {
-            ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
-            return;
-        }
-
         CLabelUI::DoEvent(event);
     }
 
@@ -151,6 +145,17 @@ namespace DuiLib
             m_pManager->SendNotify(this, DUI_MSGTYPE_CLICK);
 
         return true;
+    }
+
+    void CButtonUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_HAND);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
     }
 
     void CButtonUI::SetEnabled(bool bEnable)

@@ -30,6 +30,17 @@ namespace DuiLib
 
         return CLabelUI::GetInterface(pstrName);
     }
+    
+    void CTextUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_HAND);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
 
     UINT CTextUI::GetControlFlags() const
     {
@@ -65,7 +76,7 @@ namespace DuiLib
             {
                 if (::PtInRect(&m_rcLinks[i], event.ptMouse))
                 {
-                    ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+                    ::SetCursor(m_hCursor);
                     return;
                 }
             }

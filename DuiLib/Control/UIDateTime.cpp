@@ -187,6 +187,17 @@ namespace DuiLib
         return CLabelUI::GetInterface(pstrName);
     }
 
+    void CDateTimeUI::SetCursor(LPCTSTR pStrCursor, bool bModify)
+    {
+        m_hCursor = LoadCursor(NULL, IDC_IBEAM);
+
+        // 如果xml配置中有cursor属性，则覆盖虚函数SetCursor设置的鼠标光标
+        if (bModify)
+        {
+            CControlUI::SetCursor(pStrCursor);
+        }
+    }
+
     SYSTEMTIME& CDateTimeUI::GetTime()
     {
         return m_sysTime;
@@ -232,7 +243,7 @@ namespace DuiLib
 
         if (event.Type == UIEVENT_SETCURSOR && IsEnabled())
         {
-            ::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+            ::SetCursor(m_hCursor);
             return;
         }
         if (event.Type == UIEVENT_WINDOWSIZE)
