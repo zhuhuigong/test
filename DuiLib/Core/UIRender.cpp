@@ -1706,7 +1706,10 @@ namespace DuiLib {
                     while (*pstrText > _T('\0') && *pstrText <= _T(' '))
                         pstrText = ::CharNext(pstrText);
 
-                    DWORD clrColor = ParseColor(pstrText);
+                    if (*pstrText == _T('#'))
+                        pstrText++;
+
+                    DWORD clrColor = _tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 16);
 
                     aColorArray.Add((LPVOID)clrColor);
                     ::SetTextColor(hDC, RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
