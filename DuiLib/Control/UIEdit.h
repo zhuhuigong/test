@@ -5,8 +5,32 @@
 
 namespace DuiLib
 {
-    class CEditWnd;
+    class CEditUI;
 
+    class CEditWnd : public CWindowWnd
+    {
+    public:
+        CEditWnd();
+
+        void Init(CEditUI* pOwner);
+        RECT CalPos();
+
+        LPCTSTR GetWindowClassName() const;
+        LPCTSTR GetSuperClassName() const;
+        void OnFinalMessage(HWND hWnd);
+
+        LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+        LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnEditChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+    protected:
+        CEditUI* m_pOwner;
+        HBRUSH m_hBkBrush;
+        bool m_bInit;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
     class UILIB_API CEditUI : public CLabelUI
     {
         friend class CEditWnd;
@@ -31,6 +55,9 @@ namespace DuiLib
         void SetNumberOnly(bool bNumberOnly);
         bool IsNumberOnly() const;
         int GetWindowStyls() const;
+
+        void SetAutoComplete(bool bAutoComplete);
+        bool IsAutoComplete();
 
         LPCTSTR GetNormalImage();
         void SetNormalImage(LPCTSTR pStrImage);
@@ -63,6 +90,7 @@ namespace DuiLib
         UINT m_uMaxChar;
         bool m_bReadOnly;
         bool m_bPasswordMode;
+        bool m_bAutoComplete;
         TCHAR m_cPasswordChar;
         UINT m_uButtonState;
         CDuiString m_sNormalImage;
@@ -73,4 +101,5 @@ namespace DuiLib
         int m_iWindowStyls;
     };
 }
+
 #endif // __UIEDIT_H__

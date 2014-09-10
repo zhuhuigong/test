@@ -3,29 +3,6 @@
 
 namespace DuiLib
 {
-    class CEditWnd : public CWindowWnd
-    {
-    public:
-        CEditWnd();
-
-        void Init(CEditUI* pOwner);
-        RECT CalPos();
-
-        LPCTSTR GetWindowClassName() const;
-        LPCTSTR GetSuperClassName() const;
-        void OnFinalMessage(HWND hWnd);
-
-        LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
-        LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-        LRESULT OnEditChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-
-    protected:
-        CEditUI* m_pOwner;
-        HBRUSH m_hBkBrush;
-        bool m_bInit;
-    };
-
-
     CEditWnd::CEditWnd()
         : m_pOwner(NULL)
         , m_hBkBrush(NULL)
@@ -39,29 +16,51 @@ namespace DuiLib
         m_pOwner = pOwner;
         RECT rcPos = CalPos();
         UINT uStyle = WS_CHILD | ES_AUTOHSCROLL;
-        if (m_pOwner->IsPasswordMode()) uStyle |= ES_PASSWORD;
+
+        if (m_pOwner->IsPasswordMode())
+            uStyle |= ES_PASSWORD;
+
         Create(m_pOwner->GetManager()->GetPaintWindow(), NULL, uStyle, 0, rcPos);
+
         HFONT hFont = NULL;
         int iFontIndex = m_pOwner->GetFont();
         if (iFontIndex != -1)
             hFont = m_pOwner->GetManager()->GetFont(iFontIndex);
+
         if (hFont == NULL)
             hFont = m_pOwner->GetManager()->GetDefaultFontInfo()->hFont;
 
         SetWindowFont(m_hWnd, hFont, TRUE);
         Edit_LimitText(m_hWnd, m_pOwner->GetMaxChar());
-        if (m_pOwner->IsPasswordMode()) Edit_SetPasswordChar(m_hWnd, m_pOwner->GetPasswordChar());
+
+        if (m_pOwner->IsPasswordMode())
+            Edit_SetPasswordChar(m_hWnd, m_pOwner->GetPasswordChar());
+
         Edit_SetText(m_hWnd, m_pOwner->GetText());
         Edit_SetModify(m_hWnd, FALSE);
         SendMessage(EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(0, 0));
         Edit_Enable(m_hWnd, m_pOwner->IsEnabled() == true);
         Edit_SetReadOnly(m_hWnd, m_pOwner->IsReadOnly() == true);
+
         //Styls
         LONG styleValue = ::GetWindowLong(m_hWnd, GWL_STYLE);
         styleValue |= pOwner->GetWindowStyls();
         ::SetWindowLong(GetHWND(), GWL_STYLE, styleValue);
         ::ShowWindow(m_hWnd, SW_SHOWNOACTIVATE);
         ::SetFocus(m_hWnd);
+
+        // 设置自动完成
+        if (pOwner->IsAutoComplete())
+        {
+            HMODULE hModule = ::LoadLibrary(_T("Shlwapi.dll"));
+            typedef HRESULT(WINAPI *SHAC)(HWND, DWORD);
+            SHAC fSHAutoComplete = (SHAC) ::GetProcAddress(hModule, "SHAutoComplete");
+            if (fSHAutoComplete)
+            {
+                fSHAutoComplete(m_hWnd, SHACF_FILESYSTEM);
+            }
+        }
+
         m_bInit = true;
     }
 
@@ -74,6 +73,7 @@ namespace DuiLib
         rcPos.right -= rcInset.right;
         rcPos.bottom -= rcInset.bottom;
         LONG lEditHeight = m_pOwner->GetManager()->GetFontInfo(m_pOwner->GetFont())->tm.tmHeight;
+
         if (lEditHeight < rcPos.GetHeight())
         {
             rcPos.top += (rcPos.GetHeight() - lEditHeight) / 2;
@@ -96,8 +96,11 @@ namespace DuiLib
     void CEditWnd::OnFinalMessage(HWND /*hWnd*/)
     {
         m_pOwner->Invalidate();
+
         // Clear reference and die
-        if (m_hBkBrush != NULL) ::DeleteObject(m_hBkBrush);
+        if (m_hBkBrush != NULL)
+            ::DeleteObject(m_hBkBrush);
+
         m_pOwner->m_pWindow = NULL;
         delete this;
     }
@@ -106,36 +109,74 @@ namespace DuiLib
     {
         LRESULT lRes = 0;
         BOOL bHandled = TRUE;
-        if (uMsg == WM_KILLFOCUS) lRes = OnKillFocus(uMsg, wParam, lParam, bHandled);
-        else if (uMsg == OCM_COMMAND) {
-            if (GET_WM_COMMAND_CMD(wParam, lParam) == EN_CHANGE) lRes = OnEditChanged(uMsg, wParam, lParam, bHandled);
-            else if (GET_WM_COMMAND_CMD(wParam, lParam) == EN_UPDATE) {
+
+        if (uMsg == WM_KILLFOCUS)
+        {
+            lRes = OnKillFocus(uMsg, wParam, lParam, bHandled);
+        }
+        else if (uMsg == OCM_COMMAND)
+        {
+            if (GET_WM_COMMAND_CMD(wParam, lParam) == EN_CHANGE)
+            {
+                lRes = OnEditChanged(uMsg, wParam, lParam, bHandled);
+            }
+            else if (GET_WM_COMMAND_CMD(wParam, lParam) == EN_UPDATE)
+            {
                 RECT rcClient;
                 ::GetClientRect(m_hWnd, &rcClient);
                 ::InvalidateRect(m_hWnd, &rcClient, FALSE);
             }
         }
-        else if (uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN) {
+        else if (uMsg == WM_KEYDOWN && TCHAR(wParam) == VK_RETURN)
+        {
             m_pOwner->GetManager()->SendNotify(m_pOwner, DUI_MSGTYPE_RETURN);
         }
-        else if (uMsg == OCM__BASE + WM_CTLCOLOREDIT || uMsg == OCM__BASE + WM_CTLCOLORSTATIC) {
-            if (m_pOwner->GetNativeEditBkColor() == 0xFFFFFFFF) return NULL;
+        else if (uMsg == OCM_CTLCOLOREDIT || uMsg == OCM_CTLCOLORSTATIC)
+        {
+            // 背景透明可参考：http://blog.sina.com.cn/s/blog_4c3538470100ezhu.html
+            // http://blog.163.com/peng_dhai/blog/static/1776320062011101055938480
+            //if (m_pOwner->GetNativeEditBkColor() == 0xFFFFFFFF)
+            //{
+            //    return NULL;
+            //}
+
             ::SetBkMode((HDC)wParam, TRANSPARENT);
             DWORD dwTextColor = m_pOwner->GetTextColor();
             ::SetTextColor((HDC)wParam, RGB(GetBValue(dwTextColor), GetGValue(dwTextColor), GetRValue(dwTextColor)));
-            if (m_hBkBrush == NULL) {
+
+            if (m_hBkBrush == NULL)
+            {
                 DWORD clrColor = m_pOwner->GetNativeEditBkColor();
                 m_hBkBrush = ::CreateSolidBrush(RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
             }
+
             return (LRESULT)m_hBkBrush;
         }
-        else bHandled = FALSE;
-        if (!bHandled) return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+        else
+        {
+            bHandled = FALSE;
+        }
+
+        if (!bHandled)
+        {
+            return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+        }
+
         return lRes;
     }
 
     LRESULT CEditWnd::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
+        // 找到原因了，是WM_COMMAND消息处理不当！！！！！
+        // http://bbs.csdn.net/topics/390784850?page=1
+        // 修复编辑框失去焦点后文本丢失的问题（虽然不知道为什么会丢失！）
+        /*UINT len = m_pOwner->GetMaxChar();
+        TCHAR *szText = new TCHAR[len];
+        ZeroMemory(szText, len * sizeof(TCHAR));
+        Edit_GetText(m_hWnd, szText, m_pOwner->GetMaxChar());
+        m_pOwner->SetText(szText);
+        delete[] szText;*/
+
         LRESULT lRes = ::DefWindowProc(m_hWnd, uMsg, wParam, lParam);
         PostMessage(WM_CLOSE);
         return lRes;
@@ -143,16 +184,24 @@ namespace DuiLib
 
     LRESULT CEditWnd::OnEditChanged(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
     {
-        if (!m_bInit) return 0;
-        if (m_pOwner == NULL) return 0;
+        if (!m_bInit)
+            return 0;
+
+        if (m_pOwner == NULL)
+            return 0;
+
         // Copy text back
         int cchLen = ::GetWindowTextLength(m_hWnd) + 1;
         LPTSTR pstr = static_cast<LPTSTR>(_alloca(cchLen * sizeof(TCHAR)));
+
         ASSERT(pstr);
-        if (pstr == NULL) return 0;
+        if (pstr == NULL)
+            return 0;
+
         ::GetWindowText(m_hWnd, pstr, cchLen);
         m_pOwner->m_sText = pstr;
         m_pOwner->GetManager()->SendNotify(m_pOwner, DUI_MSGTYPE_TEXTCHANGED);
+
         return 0;
     }
 
@@ -160,12 +209,12 @@ namespace DuiLib
     /////////////////////////////////////////////////////////////////////////////////////
     //
     //
-
     CEditUI::CEditUI()
         : m_pWindow(NULL)
         , m_uMaxChar(255)
         , m_bReadOnly(false)
         , m_bPasswordMode(false)
+        , m_bAutoComplete(false)
         , m_cPasswordChar(_T('*'))
         , m_uButtonState(0)
         , m_dwEditbkColor(0xFFFFFFFF)
@@ -239,9 +288,7 @@ namespace DuiLib
 
         if (event.Type == UIEVENT_SETFOCUS && IsEnabled())
         {
-            if (m_pWindow != NULL)
-                return;
-
+            if (m_pWindow) return;
             m_pWindow = new CEditWnd();
             ASSERT(m_pWindow);
             m_pWindow->Init(this);
@@ -343,6 +390,7 @@ namespace DuiLib
     void CEditUI::SetText(LPCTSTR pstrText)
     {
         m_sText = pstrText;
+
         if (m_pWindow != NULL)
             Edit_SetText(*m_pWindow, m_sText);
 
@@ -392,7 +440,7 @@ namespace DuiLib
 
     bool CEditUI::IsNumberOnly() const
     {
-        return m_iWindowStyls&ES_NUMBER ? true : false;
+        return m_iWindowStyls & ES_NUMBER ? true : false;
     }
 
     int CEditUI::GetWindowStyls() const
@@ -414,12 +462,23 @@ namespace DuiLib
         return m_bPasswordMode;
     }
 
+    void CEditUI::SetAutoComplete(bool bAutoComplte)
+    {
+        m_bAutoComplete = bAutoComplte;
+    }
+
+    bool CEditUI::IsAutoComplete()
+    {
+        return m_bAutoComplete;
+    }
+
     void CEditUI::SetPasswordChar(TCHAR cPasswordChar)
     {
         if (m_cPasswordChar == cPasswordChar)
             return;
 
         m_cPasswordChar = cPasswordChar;
+
         if (m_pWindow != NULL)
             Edit_SetPasswordChar(*m_pWindow, m_cPasswordChar);
 
@@ -550,6 +609,10 @@ namespace DuiLib
         {
             SetPasswordMode(lstrcmpi(pstrValue, _T("true")) == 0);
         }
+        else if (lstrcmpi(pstrName, _T("autocomplete")) == 0)
+        {
+            SetAutoComplete(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
         else if (lstrcmpi(pstrName, _T("maxchar")) == 0)
         {
             SetMaxChar(_ttoi(pstrValue));
@@ -636,6 +699,7 @@ namespace DuiLib
     {
         if (m_dwTextColor == 0)
             m_dwTextColor = m_pManager->GetDefaultFontColor();
+
         if (m_dwDisabledTextColor == 0)
             m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
@@ -643,10 +707,12 @@ namespace DuiLib
             return;
 
         CDuiString sText = m_sText;
+
         if (m_bPasswordMode)
         {
             sText.Empty();
             LPCTSTR p = m_sText.GetData();
+
             while (*p != _T('\0'))
             {
                 sText += m_cPasswordChar;
@@ -659,6 +725,7 @@ namespace DuiLib
         rc.right -= m_rcTextPadding.right;
         rc.top += m_rcTextPadding.top;
         rc.bottom -= m_rcTextPadding.bottom;
+
         if (IsEnabled())
         {
             CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);

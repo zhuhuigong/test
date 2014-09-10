@@ -60,6 +60,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
+#include <Shlwapi.h>
 #include <stddef.h>
 #include <richedit.h>
 #include <tchar.h>

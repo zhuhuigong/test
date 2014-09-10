@@ -334,11 +334,15 @@ namespace DuiLib
 
     void CLabelUI::PaintText(HDC hDC)
     {
+        // 没有指定文本颜色则使用默认颜色
         if (m_dwTextColor == 0)
             m_dwTextColor = m_pManager->GetDefaultFontColor();
+
+        // 没有指定禁用时的文本颜色则使用默认禁用颜色
         if (m_dwDisabledTextColor == 0)
             m_dwDisabledTextColor = m_pManager->GetDefaultDisabledColor();
 
+        // 文本矩形区域的内边距
         RECT rc = m_rcItem;
         rc.left += m_rcTextPadding.left;
         rc.right -= m_rcTextPadding.right;
