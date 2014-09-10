@@ -396,10 +396,22 @@ namespace DuiLib {
                 // 若有控件默认配置先初始化默认属性
                 if (pManager != NULL)
                 {
+                    // 将窗口的pManager指针传给控件的m_pManager成员
                     pNode->SetManager(pManager, NULL, false);
-                    LPCTSTR pDefaultAttributes = pManager->GetDefaultAttributeList(pstrClass);
-                    if (pDefaultAttributes)
+
+                    LPCTSTR pDefaultAttributes = NULL;
+                
+                    // 如果有名称为"*"的默认属性，则会应用到所有控件中！
+                    if (pDefaultAttributes = pManager->GetDefaultAttributeList(_T("*")))
                     {
+                        // 将属性列表应用到对应的控件类，这就是默认属性列表！下面会调用SetAttribute，一个改变的机会！
+                        pNode->ApplyAttributeList(pDefaultAttributes);
+                    }
+
+                    // 如果控件有默认属性，则应用到这个控件（如果有*的，会覆盖上）
+                    if (pDefaultAttributes = pManager->GetDefaultAttributeList(pstrClass))
+                    {
+                        // 将属性列表应用到对应的控件类，这就是默认属性列表！下面会调用SetAttribute，一个改变的机会！
                         pNode->ApplyAttributeList(pDefaultAttributes);
                     }
                 }
@@ -407,9 +419,6 @@ namespace DuiLib {
                 // 解析所有属性并覆盖默认属性
                 if (node.HasAttributes())
                 {
-                    //TCHAR szValue[500] = { 0 };
-                    //SIZE_T cchLen = lengthof(szValue) - 1;
-                    // Set ordinary attributes
                     int nAttributes = node.GetAttributeCount();
                     for (int i = 0; i < nAttributes; i++)
                     {
@@ -441,6 +450,7 @@ namespace DuiLib {
                     if (!pTreeView->Add(pNode))
                     {
                         delete pNode;
+                        pNode = NULL;
                         continue;
                     }
                 }
@@ -573,6 +583,7 @@ namespace DuiLib {
                     if (!pContainer->Add(pControl))
                     {
                         delete pControl;
+                        pControl = NULL;
                         continue;
                     }
                 }
@@ -583,8 +594,18 @@ namespace DuiLib {
             {
                 // 将窗口的pManager指针传给控件的m_pManager成员
                 pControl->SetManager(pManager, NULL, false);
-                LPCTSTR pDefaultAttributes = pManager->GetDefaultAttributeList(pstrClass);
-                if (pDefaultAttributes)
+
+                LPCTSTR pDefaultAttributes = NULL;
+                
+                // 如果有名称为"*"的默认属性，则会应用到所有控件中！
+                if (pDefaultAttributes = pManager->GetDefaultAttributeList(_T("*")))
+                {
+                    // 将属性列表应用到对应的控件类，这就是默认属性列表！下面会调用SetAttribute，一个改变的机会！
+                    pControl->ApplyAttributeList(pDefaultAttributes);
+                }
+
+                // 如果控件有默认属性，则应用到这个控件（如果有*的，会覆盖上）
+                if (pDefaultAttributes = pManager->GetDefaultAttributeList(pstrClass))
                 {
                     // 将属性列表应用到对应的控件类，这就是默认属性列表！下面会调用SetAttribute，一个改变的机会！
                     pControl->ApplyAttributeList(pDefaultAttributes);
@@ -594,9 +615,6 @@ namespace DuiLib {
             // 解析属性并应用
             if (node.HasAttributes())
             {
-                TCHAR szValue[500] = { 0 };
-                SIZE_T cchLen = lengthof(szValue) - 1;
-
                 int nAttributes = node.GetAttributeCount();
                 for (int i = 0; i < nAttributes; i++)
                 {
