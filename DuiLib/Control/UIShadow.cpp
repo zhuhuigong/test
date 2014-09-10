@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "UIShadow.h"
 
 
@@ -51,10 +51,10 @@ namespace DuiLib
                 dwExStyle |= WS_EX_TRANSPARENT;
             }
 
-            // ´´½¨ÒõÓ°´°¿Ú
+            // åˆ›å»ºé˜´å½±çª—å£
             Create(m_hWndOwner, _T(""), dwStyle, dwExStyle);
     
-            // ·¢ËÍWM_ACTIVATEAPPÏûÏ¢¸øÖ÷´°¿Ú£¬ÕâÑù¿ÉÒÔ¼¤»îËü£¡
+            // å‘é€WM_ACTIVATEAPPæ¶ˆæ¯ç»™ä¸»çª—å£ï¼Œè¿™æ ·å¯ä»¥æ¿€æ´»å®ƒï¼
             ::PostMessage(m_hWndOwner, WM_ACTIVATEAPP, TRUE, 0);
         }
     }
@@ -93,7 +93,7 @@ namespace DuiLib
         }
         else
         {
-            // ´°¿Ú·Ç¼¤»îÊ±Èç¹ûÖ¸¶¨ÁË·Ç¼¤»îÍ¼Æ¬ÔòÓÃ£¬·ñÔòÓÃ¼¤»îµÄÍ¼Æ¬£¨²»±ä£©
+            // çª—å£éæ¿€æ´»æ—¶å¦‚æœæŒ‡å®šäº†éæ¿€æ´»å›¾ç‰‡åˆ™ç”¨ï¼Œå¦åˆ™ç”¨æ¿€æ´»çš„å›¾ç‰‡ï¼ˆä¸å˜ï¼‰
             if (*szDeactiveImage != '\0')
             {
                 m_pManager->GetRoot()->SetBkImage(szDeactiveImage);
@@ -107,7 +107,7 @@ namespace DuiLib
 
     void CShadowWindow::MoveWindowWithOwner(int lParam)
     {
-        // ¼ÆËãÒõÓ°´°¿ÚµÄÎ»ÖÃ£¨×óÉÏ½Ç£©
+        // è®¡ç®—é˜´å½±çª—å£çš„ä½ç½®ï¼ˆå·¦ä¸Šè§’ï¼‰
         int x = (int)(short) LOWORD(lParam) - m_pShadowUI->GetOffsetX();
         int y = (int)(short) HIWORD(lParam) - m_pShadowUI->GetOffsetY();
         ::SetWindowPos(m_hWnd, m_hWndOwner, x, y, -1, -1, SWP_NOSIZE | SWP_NOREDRAW | SWP_NOACTIVATE);
@@ -118,29 +118,29 @@ namespace DuiLib
         if (m_hWnd != NULL && IsWindow(m_hWnd) && IsWindowVisible(m_hWnd) &&
             m_hWndOwner != NULL && IsWindow(m_hWndOwner) && IsWindowVisible(m_hWndOwner))
         {
-            // ÖØĞÂ¼ÆËãÒõÓ°µÄ´óĞ¡
+            // é‡æ–°è®¡ç®—é˜´å½±çš„å¤§å°
             SIZE sz = m_pShadowUI->GetManager()->GetInitSize();
 
-            // Ö÷´°¿Ú³õÊ¼¿í¸ß
+            // ä¸»çª—å£åˆå§‹å®½é«˜
             int w1 = sz.cx;
             int h1 = sz.cy;
 
-            // Ö÷´°¿ÚĞÂµÄ¿í¸ß
+            // ä¸»çª—å£æ–°çš„å®½é«˜
             int w2 = LOWORD(lParam);
             int h2 = HIWORD(lParam);
 
-            // ÒõÓ°´°¿Ú³õÊ¼¿í¸ß
+            // é˜´å½±çª—å£åˆå§‹å®½é«˜
             int w = m_pShadowUI->GetFixedWidth();
             int h = m_pShadowUI->GetFixedHeight();
             
-            // ¸ù¾İÖ÷´°¿Ú¿í¸ßµÄ±ä»¯£¨ÈçÔö¸ß10px£©£¬ÄÇÃ´ÒõÓ°´°¿ÚÒ²ÏàÓ¦Ôö¼Ó
+            // æ ¹æ®ä¸»çª—å£å®½é«˜çš„å˜åŒ–ï¼ˆå¦‚å¢é«˜10pxï¼‰ï¼Œé‚£ä¹ˆé˜´å½±çª—å£ä¹Ÿç›¸åº”å¢åŠ 
             int width = w + (w2 - w1);
             int height = h + (h2 - h1);
 
             //m_pShadowUI->SetFixedWidth(width);
             //m_pShadowUI->SetFixedHeight(height);
 
-            // ÉèÖÃÒõÓ°´°¿ÚĞÂµÄ¿í¸ß
+            // è®¾ç½®é˜´å½±çª—å£æ–°çš„å®½é«˜
             ::SetWindowPos(m_hWnd, m_hWndOwner, -1, -1, width, height, SWP_NOMOVE | SWP_NOREDRAW | SWP_NOACTIVATE);
         }
     }
@@ -165,7 +165,7 @@ namespace DuiLib
 
     LRESULT CShadowWindow::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
-        // Ê¹ÓÃxml×Ö·û´®ĞÎÊ½¼ÓÔØÆ¤·ô£¬ÄÚÈİºÜ¼òµ¥£¬Ò»¸öContainer¿Ø¼ş¾Í¹»ÁË£¡WindowÒªÓĞbktransÊôĞÔ
+        // ä½¿ç”¨xmlå­—ç¬¦ä¸²å½¢å¼åŠ è½½çš®è‚¤ï¼Œå†…å®¹å¾ˆç®€å•ï¼Œä¸€ä¸ªContaineræ§ä»¶å°±å¤Ÿäº†ï¼Windowè¦æœ‰bktranså±æ€§
         CDuiString xml;
         xml.Append(_T("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>"));
         xml.Append(_T("<Window size=\"%d,%d\" bktrans=\"true\">"));
@@ -179,14 +179,14 @@ namespace DuiLib
         CControlUI* pRoot = builder.Create((LPCTSTR)xml, (UINT)0, NULL, m_pManager);
         if (pRoot == NULL)
         {
-            MessageBox(m_hWnd, _T("¼ÓÔØ×ÊÔ´ÎÄ¼şÊ§°Ü"), _T("´íÎó"), MB_OK | MB_ICONERROR);
+            MessageBox(m_hWnd, _T("åŠ è½½èµ„æºæ–‡ä»¶å¤±è´¥"), _T("é”™è¯¯"), MB_OK | MB_ICONERROR);
             ExitProcess(1);
             return 0;
         }
 
         m_pManager->AttachDialog(pRoot);
 
-        // ÎªÖ÷´°¿ÚÉèÖÃÒ»¸öÊôĞÔ£¬ÄÚÈİÎªÒõÓ°´°¿ÚµÄÖ¸Õë£¬È»ºó×ÓÀà»¯Ö÷´°¿Ú
+        // ä¸ºä¸»çª—å£è®¾ç½®ä¸€ä¸ªå±æ€§ï¼Œå†…å®¹ä¸ºé˜´å½±çª—å£çš„æŒ‡é’ˆï¼Œç„¶åå­ç±»åŒ–ä¸»çª—å£
         ::SetProp(m_hWndOwner, SHADOW_WINDOW_PROP, (HANDLE) this);
         m_pOldOwnerProc = (WNDPROC) ::SetWindowLongPtr(m_hWndOwner, GWL_WNDPROC, (LONG) OwnerProc);
         return 0;
@@ -267,7 +267,7 @@ namespace DuiLib
 
     void CShadowUI::DoPaint(HDC hDC, const RECT& rcPaint)
     {
-        // ÖØĞ´DoPaint£¬Ê²Ã´Ò²²»×ö£¡
+        // é‡å†™DoPaintï¼Œä»€ä¹ˆä¹Ÿä¸åšï¼
     }
 
     void CShadowUI::SetVisible(bool bVisible)

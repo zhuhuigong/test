@@ -1,13 +1,13 @@
-#ifndef __UISHADOW_H__
+ï»¿#ifndef __UISHADOW_H__
 #define __UISHADOW_H__
 
 #pragma once
 
-// ÐÂÔöÀà£¬Îª´°¿Ú¸½ÉÏÒ»¸ö¡°ÒõÓ°¡±´°¿Ú£¬¿ÉÅäÖÃ
+// æ–°å¢žç±»ï¼Œä¸ºçª—å£é™„ä¸Šä¸€ä¸ªâ€œé˜´å½±â€çª—å£ï¼Œå¯é…ç½®
 
 namespace DuiLib
 {
-    // ÀàÇ°ÏòÉùÃ÷£¬·ñÔò±¨´í
+    // ç±»å‰å‘å£°æ˜Žï¼Œå¦åˆ™æŠ¥é”™
     class CShadowUI;
 
     class CShadowWindow : public CWindowWnd
