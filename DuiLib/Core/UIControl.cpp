@@ -1125,15 +1125,24 @@ namespace DuiLib {
         }
     }
 
+    // 应用属性列表，如字符串为pos="130,5,0,0" width="270" height="31"
     CControlUI* CControlUI::ApplyAttributeList(LPCTSTR pstrList)
     {
         CDuiString sItem;
         CDuiString sValue;
+
+        // 后面注释的两行代码换成这样，就是跳过空白字符！这样的话就修复了以前属
+        // 性之间一定是有且只有一个空格的情况！现在你可以0个空格，1个空格或更多！
+        // 放在这里可以跳过前面的空格！！
+        while (*pstrList == _T(' ') || *pstrList == _T('\t'))
+            pstrList++;
+
         while (*pstrList != _T('\0'))
         {
             sItem.Empty();
             sValue.Empty();
 
+            // 得到键字符串，用sItem变量保存，读到=号为止
             while (*pstrList != _T('\0') && *pstrList != _T('='))
             {
                 LPTSTR pstrTemp = ::CharNext(pstrList);
@@ -1142,14 +1151,18 @@ namespace DuiLib {
                     sItem += *pstrList++;
                 }
             }
+
+            // 当前pstrList指针肯定指向=号那里了，不然不是合法的属性列表！
             ASSERT(*pstrList == _T('='));
             if (*pstrList++ != _T('='))
                 return this;
 
+            // pstrList下一指向肯定是"号，不然不是合法的属性列表！
             ASSERT(*pstrList == _T('\"'));
             if (*pstrList++ != _T('\"'))
                 return this;
 
+            // 然后读取值字符串，用sValue变量保存，读到"号为止
             while (*pstrList != _T('\0') && *pstrList != _T('\"'))
             {
                 LPTSTR pstrTemp = ::CharNext(pstrList);
@@ -1159,14 +1172,19 @@ namespace DuiLib {
                 }
             }
 
+            // 同样当前指向肯定是"号那里，不然不是合法属性列表！
             ASSERT(*pstrList == _T('\"'));
             if (*pstrList++ != _T('\"'))
                 return this;
 
+            // 读取完成一个属性，设置此控件的属性！！
             SetAttribute(sItem, sValue);
 
-            if (*pstrList++ != _T(' '))
-                return this;
+            // 后面注释的两行代码换成这样，就是跳过空白字符！这样的话就修复了以前属
+            // 性之间一定是有且只有一个空格的情况！现在你可以0个空格，1个空格或更多！
+            // 放在这里可以跳过后面的空格！！
+            while (*pstrList == _T(' ') || *pstrList == _T('\t'))
+                pstrList++;
         }
 
         return this;
