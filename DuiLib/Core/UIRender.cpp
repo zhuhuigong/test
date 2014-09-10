@@ -538,7 +538,7 @@ namespace DuiLib {
 
     void CRenderEngine::DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RECT& rcPaint,
         const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel,
-        BYTE uFade, bool hole, bool xtiled, bool ytiled)
+        BYTE uFade, bool hole, bool line, bool xtiled, bool ytiled)
     {
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
 
@@ -553,7 +553,7 @@ namespace DuiLib {
 
         HDC hCloneDC = ::CreateCompatibleDC(hDC);
         HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
-        ::SetStretchBltMode(hDC, HALFTONE);
+        int nOldStretchBltMode = ::SetStretchBltMode(hDC, HALFTONE);
 
         RECT rcTemp = { 0 };
         RECT rcDest = { 0 };
@@ -563,7 +563,7 @@ namespace DuiLib {
         {
             BLENDFUNCTION bf = { AC_SRC_OVER, 0, uFade, AC_SRC_ALPHA };
 
-            // middle
+            // 如果hole="false"则绘制中间部分，否则不绘制
             if (!hole)
             {
                 rcDest.left = rc.left + rcCorners.left;
@@ -572,16 +572,54 @@ namespace DuiLib {
                 rcDest.bottom = rc.bottom - rc.top - rcCorners.top - rcCorners.bottom;
                 rcDest.right += rcDest.left;
                 rcDest.bottom += rcDest.top;
+
                 if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
                 {
+                    // x方向和y方向都不平铺
                     if (!xtiled && !ytiled)
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
-                            rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
-                            rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left减1个，top减1个，width、height各加2个，source不用变，因为内容是一样的，会铺满
+                                lpAlphaBlend(hDC, rcDest.left - 1, rcDest.top - 1, rcDest.right + 2, rcDest.bottom + 2, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // left减1个，top不变，width加2个，height不变
+                                lpAlphaBlend(hDC, rcDest.left - 1, rcDest.top, rcDest.right + 2, rcDest.bottom, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // left不变，top减1个，width不变，height加2个
+                                lpAlphaBlend(hDC, rcDest.left, rcDest.top - 1, rcDest.right, rcDest.bottom + 2, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                            }
+                        }
                     }
                     else if (xtiled && ytiled)
                     {
@@ -662,7 +700,7 @@ namespace DuiLib {
                 }
             }
 
-            // left-top
+            // 绘制左上角
             if (rcCorners.left > 0 && rcCorners.top > 0)
             {
                 rcDest.left = rc.left;
@@ -675,12 +713,40 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有，此时是左上角，对应的右下角也要有
+                            // left不变，top不变，width、height各减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.top, rcCorners.left - 1, rcCorners.top - 1, bf);
+                        }
+                        //else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        //{
+                        //  // 只有left,right
+                        //  // 
+                        //  
+                        //}
+                        //else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        //{
+                        //  // 只有top,bottom
+                        //  // 
+                        //  
+                        //}
+                    }
                 }
             }
 
-            // top
+            // 绘制上边
             if (rcCorners.top > 0)
             {
                 rcDest.left = rc.left + rcCorners.left;
@@ -693,13 +759,44 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
-                        rcCorners.left - rcCorners.right, rcCorners.top, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                            rcCorners.left - rcCorners.right, rcCorners.top, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left减1个，top不变，width加2个，height减1个，source的height减1个
+                            lpAlphaBlend(hDC, rcDest.left - 1, rcDest.top, rcDest.right + 2, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                                rcCorners.left - rcCorners.right, rcCorners.top - 1, bf);
+                        }
+                        //else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        //{
+                        //  // 只有left,right
+                        //  // 
+                        //  
+                        //}
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom，top对应的是bottom
+                            // left不变，top不变，width不变，height减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                                rcCorners.left - rcCorners.right, rcCorners.top - 1, bf);
+                        }
+                    }
                 }
             }
 
-            // right-top
+            // 绘制右上角
             if (rcCorners.right > 0 && rcCorners.top > 0)
             {
                 rcDest.left = rc.right - rcCorners.right;
@@ -712,12 +809,40 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left加1个，top不变，width减1个，height减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left + 1, rcDest.top, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top, rcCorners.right - 1, rcCorners.top - 1, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // 
+
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            // 
+
+                        }
+                    }
                 }
             }
 
-            // left
+            // 绘制左边
             if (rcCorners.left > 0)
             {
                 rcDest.left = rc.left;
@@ -730,13 +855,44 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left, rcBmpPart.bottom - \
-                        rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left, rcBmpPart.bottom - \
+                            rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left不变，top减1个，width减1个，height加2个，source只有width减1个
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top - 1, rcDest.right - 1, rcDest.bottom + 2, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left - 1, rcBmpPart.bottom - \
+                                rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // left不变，top不变，width减1个，height不变，source也一样
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right - 1, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left - 1, rcBmpPart.bottom - \
+                                rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            // 
+
+                        }
+                    }
                 }
             }
 
-            // right
+            // 绘制右边
             if (rcCorners.right > 0)
             {
                 rcDest.left = rc.right - rcCorners.right;
@@ -749,13 +905,44 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.right - rcCorners.right, rcBmpPart.top + rcCorners.top, rcCorners.right, \
-                        rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.right - rcCorners.right, rcBmpPart.top + rcCorners.top, rcCorners.right, \
+                            rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left加1个，top减1个，width减1个，height加2个，source的left加1个，top不变，width减1个，height不变
+                            lpAlphaBlend(hDC, rcDest.left + 1, rcDest.top - 1, rcDest.right - 1, rcDest.bottom + 2, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top + rcCorners.top, rcCorners.right - 1, \
+                                rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // left加1个，top不变，width减1个，height不变，source也一样
+                            lpAlphaBlend(hDC, rcDest.left + 1, rcDest.top, rcDest.right - 1, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top + rcCorners.top, rcCorners.right - 1, \
+                                rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, bf);
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            // 
+
+                        }
+                    }
                 }
             }
 
-            // left-bottom
+            // 绘制左下角
             if (rcCorners.left > 0 && rcCorners.bottom > 0)
             {
                 rcDest.left = rc.left;
@@ -768,12 +955,40 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left不变，top加1个，width减1个，height减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top + 1, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom + 1, rcCorners.left - 1, rcCorners.bottom - 1, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // 
+
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            // 
+
+                        }
+                    }
                 }
             }
 
-            // bottom
+            // 绘制下边
             if (rcCorners.bottom > 0)
             {
                 rcDest.left = rc.left + rcCorners.left;
@@ -786,13 +1001,44 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom, \
-                        rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom, \
+                            rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left减1个，top加1个，width加2个，height减1个，source的left不变，top加1个，width不变，height减1个
+                            lpAlphaBlend(hDC, rcDest.left - 1, rcDest.top + 1, rcDest.right + 2, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom + 1, \
+                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom - 1, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // 
+
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            // left不变，top加1个，width不变，height减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left, rcDest.top + 1, rcDest.right, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom + 1, \
+                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom - 1, bf);
+                        }
+                    }
                 }
             }
 
-            // right-bottom
+            // 绘制右下角
             if (rcCorners.right > 0 && rcCorners.bottom > 0)
             {
                 rcDest.left = rc.right - rcCorners.right;
@@ -805,9 +1051,38 @@ namespace DuiLib {
                 {
                     rcDest.right -= rcDest.left;
                     rcDest.bottom -= rcDest.top;
-                    lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                        rcBmpPart.right - rcCorners.right, rcBmpPart.bottom - rcCorners.bottom, rcCorners.right, \
-                        rcCorners.bottom, bf);
+
+                    // 没有线的普通图片
+                    if (!line)
+                    {
+                        lpAlphaBlend(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                            rcBmpPart.right - rcCorners.right, rcBmpPart.bottom - rcCorners.bottom, rcCorners.right, \
+                            rcCorners.bottom, bf);
+                    }
+                    else
+                    {
+                        // 有线的图片，支持三种类型
+                        if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                        {
+                            // left,top,right,bottom都有
+                            // left加1个，top加1个，width减1个，height减1个，source也一样
+                            lpAlphaBlend(hDC, rcDest.left + 1, rcDest.top + 1, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right + 1, rcBmpPart.bottom - rcCorners.bottom + 1, rcCorners.right - 1, \
+                                rcCorners.bottom - 1, bf);
+                        }
+                        else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                        {
+                            // 只有left,right
+                            // 
+
+                        }
+                        else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                        {
+                            // 只有top,bottom
+                            //
+
+                        }
+                    }
                 }
             }
         }
@@ -825,7 +1100,7 @@ namespace DuiLib {
             }
             else
             {
-                // middle
+                // 绘制中间部分（当hole="false"时）
                 if (!hole)
                 {
                     rcDest.left = rc.left + rcCorners.left;
@@ -836,14 +1111,50 @@ namespace DuiLib {
                     rcDest.bottom += rcDest.top;
                     if (::IntersectRect(&rcTemp, &rcPaint, &rcDest))
                     {
+                        // x方向和y方向都不平铺
                         if (!xtiled && !ytiled)
                         {
                             rcDest.right -= rcDest.left;
                             rcDest.bottom -= rcDest.top;
-                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                                rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
-                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
-                                rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+
+                            if (!line)
+                            {
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                            }
+                            else
+                            {
+                                // 有线的图片，支持三种类型
+                                if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                                {
+                                    // left,top,right,bottom都有
+                                    // left减1个，top减1个，width、height各加2个，source不用变，因为内容是一样的，会铺满
+                                    ::StretchBlt(hDC, rcDest.left - 1, rcDest.top - 1, rcDest.right + 2, rcDest.bottom + 2, hCloneDC, \
+                                        rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                        rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                        rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                                }
+                                else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                                {
+                                    // 只有left,right
+                                    // left减1个，top不变，width加2个，height不变
+                                    ::StretchBlt(hDC, rcDest.left - 1, rcDest.top, rcDest.right + 2, rcDest.bottom, hCloneDC, \
+                                        rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                        rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                        rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                                }
+                                else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                                {
+                                    // 只有top,bottom
+                                    // left不变，top减1个，width不变，height加2个
+                                    ::StretchBlt(hDC, rcDest.left, rcDest.top - 1, rcDest.right, rcDest.bottom + 2, hCloneDC, \
+                                        rcBmpPart.left + rcCorners.left, rcBmpPart.top + rcCorners.top, \
+                                        rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, \
+                                        rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                                }
+                            }
                         }
                         else if (xtiled && ytiled)
                         {
@@ -923,7 +1234,7 @@ namespace DuiLib {
                     }
                 }
 
-                // left-top
+                // 绘制左上角
                 if (rcCorners.left > 0 && rcCorners.top > 0)
                 {
                     rcDest.left = rc.left;
@@ -936,12 +1247,40 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.top, rcCorners.left, rcCorners.top, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有，此时是左上角，对应的右下角也要有
+                                // left不变，top不变，width、height各减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left, rcBmpPart.top, rcCorners.left - 1, rcCorners.top - 1, SRCCOPY);
+                            }
+                            //else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            //{
+                            //  // 只有left,right
+                            //  // 
+                            //  
+                            //}
+                            //else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            //{
+                            //  // 只有top,bottom
+                            //  // 
+                            //  
+                            //}
+                        }
                     }
                 }
 
-                // top
+                // 绘制上边
                 if (rcCorners.top > 0)
                 {
                     rcDest.left = rc.left + rcCorners.left;
@@ -954,13 +1293,44 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
-                            rcCorners.left - rcCorners.right, rcCorners.top, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                                rcCorners.left - rcCorners.right, rcCorners.top, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left减1个，top不变，width加2个，height减1个，source的height减1个
+                                ::StretchBlt(hDC, rcDest.left - 1, rcDest.top, rcDest.right + 2, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                                    rcCorners.left - rcCorners.right, rcCorners.top - 1, SRCCOPY);
+                            }
+                            //else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            //{
+                            //  // 只有left,right
+                            //  // 
+                            //  
+                            //}
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom，top对应的是bottom
+                                // left不变，top不变，width不变，height减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.top, rcBmpPart.right - rcBmpPart.left - \
+                                    rcCorners.left - rcCorners.right, rcCorners.top - 1, SRCCOPY);
+                            }
+                        }
                     }
                 }
 
-                // right-top
+                // 绘制右上角
                 if (rcCorners.right > 0 && rcCorners.top > 0)
                 {
                     rcDest.left = rc.right - rcCorners.right;
@@ -973,12 +1343,40 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right, rcBmpPart.top, rcCorners.right, rcCorners.top, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left加1个，top不变，width减1个，height减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left + 1, rcDest.top, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top, rcCorners.right - 1, rcCorners.top - 1, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // 
+
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // 
+
+                            }
+                        }
                     }
                 }
 
-                // left
+                // 绘制左边
                 if (rcCorners.left > 0)
                 {
                     rcDest.left = rc.left;
@@ -991,13 +1389,44 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left, rcBmpPart.bottom - \
-                            rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left, rcBmpPart.bottom - \
+                                rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left不变，top减1个，width减1个，height加2个，source只有width减1个
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top - 1, rcDest.right - 1, rcDest.bottom + 2, hCloneDC, \
+                                    rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left - 1, rcBmpPart.bottom - \
+                                    rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // left不变，top不变，width减1个，height不变，source也一样
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right - 1, rcDest.bottom, hCloneDC, \
+                                    rcBmpPart.left, rcBmpPart.top + rcCorners.top, rcCorners.left - 1, rcBmpPart.bottom - \
+                                    rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // 
+
+                            }
+                        }
                     }
                 }
 
-                // right
+                // 绘制右边
                 if (rcCorners.right > 0)
                 {
                     rcDest.left = rc.right - rcCorners.right;
@@ -1010,13 +1439,44 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.right - rcCorners.right, rcBmpPart.top + rcCorners.top, rcCorners.right, \
-                            rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right, rcBmpPart.top + rcCorners.top, rcCorners.right, \
+                                rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left加1个，top减1个，width减1个，height加2个，source的left加1个，top不变，width减1个，height不变
+                                ::StretchBlt(hDC, rcDest.left + 1, rcDest.top - 1, rcDest.right - 1, rcDest.bottom + 2, hCloneDC, \
+                                    rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top + rcCorners.top, rcCorners.right - 1, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // left加1个，top不变，width减1个，height不变，source也一样
+                                ::StretchBlt(hDC, rcDest.left + 1, rcDest.top, rcDest.right - 1, rcDest.bottom, hCloneDC, \
+                                    rcBmpPart.right - rcCorners.right + 1, rcBmpPart.top + rcCorners.top, rcCorners.right - 1, \
+                                    rcBmpPart.bottom - rcBmpPart.top - rcCorners.top - rcCorners.bottom, SRCCOPY);
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // 
+
+                            }
+                        }
                     }
                 }
 
-                // left-bottom
+                // 绘制左下角
                 if (rcCorners.left > 0 && rcCorners.bottom > 0)
                 {
                     rcDest.left = rc.left;
@@ -1029,12 +1489,40 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom, rcCorners.left, rcCorners.bottom, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left不变，top加1个，width减1个，height减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top + 1, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left, rcBmpPart.bottom - rcCorners.bottom + 1, rcCorners.left - 1, rcCorners.bottom - 1, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // 
+
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // 
+
+                            }
+                        }
                     }
                 }
 
-                // bottom
+                // 绘制下边
                 if (rcCorners.bottom > 0)
                 {
                     rcDest.left = rc.left + rcCorners.left;
@@ -1047,13 +1535,44 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom, \
-                            rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom, \
+                                rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left减1个，top加1个，width加2个，height减1个，source的left不变，top加1个，width不变，height减1个
+                                ::StretchBlt(hDC, rcDest.left - 1, rcDest.top + 1, rcDest.right + 2, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom + 1, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right, rcCorners.bottom - 1, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // 
+
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                // left不变，top加1个，width不变，height减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left, rcDest.top + 1, rcDest.right, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.left + rcCorners.left, rcBmpPart.bottom - rcCorners.bottom + 1, \
+                                    rcBmpPart.right - rcBmpPart.left - rcCorners.left - rcCorners.right - 1, rcCorners.bottom, SRCCOPY);
+                            }
+                        }
                     }
                 }
 
-                // right-bottom
+                // 绘制右下角
                 if (rcCorners.right > 0 && rcCorners.bottom > 0)
                 {
                     rcDest.left = rc.right - rcCorners.right;
@@ -1066,14 +1585,45 @@ namespace DuiLib {
                     {
                         rcDest.right -= rcDest.left;
                         rcDest.bottom -= rcDest.top;
-                        ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
-                            rcBmpPart.right - rcCorners.right, rcBmpPart.bottom - rcCorners.bottom, rcCorners.right, \
-                            rcCorners.bottom, SRCCOPY);
+
+                        // 没有线的普通图片
+                        if (!line)
+                        {
+                            ::StretchBlt(hDC, rcDest.left, rcDest.top, rcDest.right, rcDest.bottom, hCloneDC, \
+                                rcBmpPart.right - rcCorners.right, rcBmpPart.bottom - rcCorners.bottom, rcCorners.right, \
+                                rcCorners.bottom, SRCCOPY);
+                        }
+                        else
+                        {
+                            // 有线的图片，支持三种类型
+                            if (rcCorners.left > 0 && rcCorners.top > 0 && rcCorners.right > 0 && rcCorners.bottom > 0)
+                            {
+                                // left,top,right,bottom都有
+                                // left加1个，top加1个，width减1个，height减1个，source也一样
+                                ::StretchBlt(hDC, rcDest.left + 1, rcDest.top + 1, rcDest.right - 1, rcDest.bottom - 1, hCloneDC, \
+                                    rcBmpPart.right - rcCorners.right + 1, rcBmpPart.bottom - rcCorners.bottom + 1, rcCorners.right - 1, \
+                                    rcCorners.bottom - 1, SRCCOPY);
+                            }
+                            else if (rcCorners.left > 0 && rcCorners.right > 0 && rcCorners.top == 0 && rcCorners.bottom == 0)
+                            {
+                                // 只有left,right
+                                // 
+
+                            }
+                            else if (rcCorners.top > 0 && rcCorners.bottom > 0 && rcCorners.left == 0 && rcCorners.right == 0)
+                            {
+                                // 只有top,bottom
+                                //
+
+                            }
+                        }
                     }
                 }
             }
         }
 
+        // 恢复原来的拉伸模式！！
+        ::SetStretchBltMode(hDC, nOldStretchBltMode);
         ::SelectObject(hCloneDC, hOldBitmap);
         ::DeleteDC(hCloneDC);
     }
@@ -1081,7 +1631,7 @@ namespace DuiLib {
 
     bool DrawImage(HDC hDC, CPaintManagerUI* pManager, const RECT& rc, const RECT& rcPaint, const CDuiString& sImageName, \
         const CDuiString& sImageResType, RECT rcItem, RECT rcBmpPart, RECT rcCorner, DWORD dwMask, BYTE bFade, \
-        bool bHole, bool bTiledX, bool bTiledY)
+        bool bHole, bool bLine, bool bTiledX, bool bTiledY)
     {
         if (sImageName.IsEmpty())
         {
@@ -1120,7 +1670,7 @@ namespace DuiLib {
         if (!::IntersectRect(&rcTemp, &rcItem, &rcPaint))
             return true;
 
-        CRenderEngine::DrawImage(hDC, data->hBitmap, rcItem, rcPaint, rcBmpPart, rcCorner, data->alphaChannel, bFade, bHole, bTiledX, bTiledY);
+        CRenderEngine::DrawImage(hDC, data->hBitmap, rcItem, rcPaint, rcBmpPart, rcCorner, data->alphaChannel, bFade, bHole, bLine, bTiledX, bTiledY);
 
         return true;
     }
@@ -1134,6 +1684,7 @@ namespace DuiLib {
         // 1、aaa.jpg
         // 2、file='aaa.jpg' res='' restype='0' dest='0,0,0,0' source='0,0,0,0' corner='0,0,0,0' 
         // mask='#FF0000' fade='255' hole='false' xtiled='false' ytiled='false'
+        // 增加一个属性line，默认为false，如果为true，则认为图片是"有线的"
 
         CDuiString sImageName = pStrImage;
         CDuiString sImageResType;
@@ -1143,6 +1694,7 @@ namespace DuiLib {
         DWORD dwMask = 0;
         BYTE bFade = 0xFF;
         bool bHole = false;
+        bool bLine = false;
         bool bTiledX = false;
         bool bTiledY = false;
 
@@ -1154,6 +1706,7 @@ namespace DuiLib {
 
         for (int i = 0; i < 2; ++i, image_count = 0)
         {
+            // 循环2次，第2次的时候由pStrModify指定修改的机会
             if (i == 1)
                 pStrImage = pStrModify;
 
@@ -1203,7 +1756,7 @@ namespace DuiLib {
                     {
                         if (image_count > 0)
                             DuiLib::DrawImage(hDC, pManager, rc, rcPaint, sImageName, sImageResType,
-                            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bTiledX, bTiledY);
+                            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bLine, bTiledX, bTiledY);
 
                         sImageName = sValue;
                         if (sItem == _T("file"))
@@ -1213,7 +1766,7 @@ namespace DuiLib {
                     {
                         if (image_count > 0)
                             DuiLib::DrawImage(hDC, pManager, rc, rcPaint, sImageName, sImageResType,
-                            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bTiledX, bTiledY);
+                            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bLine,  bTiledX, bTiledY);
 
                         sImageResType = sValue;
                         ++image_count;
@@ -1253,6 +1806,10 @@ namespace DuiLib {
                     {
                         bHole = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
                     }
+                    else if (sItem == _T("line"))
+                    {
+                        bLine = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
+                    }
                     else if (sItem == _T("xtiled"))
                     {
                         bTiledX = (lstrcmpi(sValue.GetData(), _T("true")) == 0);
@@ -1269,7 +1826,7 @@ namespace DuiLib {
         }
 
         DuiLib::DrawImage(hDC, pManager, rc, rcPaint, sImageName, sImageResType,
-            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bTiledX, bTiledY);
+            rcItem, rcBmpPart, rcCorner, dwMask, bFade, bHole, bLine, bTiledX, bTiledY);
 
         return true;
     }

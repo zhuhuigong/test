@@ -4,9 +4,9 @@
 #pragma once
 
 namespace DuiLib {
+
     /////////////////////////////////////////////////////////////////////////////////////
     //
-
     class UILIB_API CRenderClip
     {
     public:
@@ -23,8 +23,7 @@ namespace DuiLib {
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
-    //
-
+    // duilib核心渲染类，所有的绘制操作均由此类完成，成员全都是静态成员函数！
     class UILIB_API CRenderEngine
     {
     public:
@@ -33,7 +32,7 @@ namespace DuiLib {
         static void FreeImage(const TImageInfo* bitmap);
         static void DrawImage(HDC hDC, HBITMAP hBitmap, const RECT& rc, const RECT& rcPaint, \
             const RECT& rcBmpPart, const RECT& rcCorners, bool alphaChannel, BYTE uFade = 255,
-            bool hole = false, bool xtiled = false, bool ytiled = false);
+            bool hole = false, bool line = false, bool xtiled = false, bool ytiled = false);
         static bool DrawImageString(HDC hDC, CPaintManagerUI* pManager, const RECT& rcItem, const RECT& rcPaint,
             LPCTSTR pStrImage, LPCTSTR pStrModify = NULL);
         static void DrawColor(HDC hDC, const RECT& rc, DWORD color);

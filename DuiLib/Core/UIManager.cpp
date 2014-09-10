@@ -1189,7 +1189,7 @@ namespace DuiLib {
                 if (pHover == NULL)
                     break;
 
-                // Generate mouse hover event
+                // 生成鼠标悬停事件
                 if (m_pEventHover != NULL)
                 {
                     TEventUI event = { 0 };
@@ -1200,7 +1200,7 @@ namespace DuiLib {
                     m_pEventHover->Event(event);
                 }
 
-                // Create tooltip information
+                // 创建tooltip信息
                 CDuiString sToolTip = pHover->GetToolTip();
                 if (sToolTip.IsEmpty())
                     return true;
@@ -1237,7 +1237,7 @@ namespace DuiLib {
             break;
         case WM_MOUSEMOVE:
             {
-                // Start tracking this entire window again...
+                // 开始再次跟踪整个窗口
                 if (!m_bMouseTracking)
                 {
                     TRACKMOUSEEVENT tme = { 0 };
@@ -1249,7 +1249,7 @@ namespace DuiLib {
                     m_bMouseTracking = true;
                 }
 
-                // Generate the appropriate mouse messages
+                // 生成合适的鼠标消息
                 POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
                 m_ptLastMousePos = pt;
                 CControlUI* pNewHover = FindControl(pt);
