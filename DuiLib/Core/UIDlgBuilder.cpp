@@ -102,10 +102,7 @@ namespace DuiLib {
                     }
                     else if (lstrcmpi(pstrName, _T("mask")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        mask = _tcstoul(pstrValue, &pstr, 16);
+                        mask = ParseColor(pstrValue);
                     }
                 }
 
@@ -261,48 +258,23 @@ namespace DuiLib {
                     }
                     else if (lstrcmpi(pstrName, _T("disabledfontcolor")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        LPTSTR pstr = NULL;
-                        DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-                        pManager->SetDefaultDisabledColor(clrColor);
+                        pManager->SetDefaultDisabledColor(ParseColor(pstrValue));
                     }
                     else if (lstrcmpi(pstrName, _T("defaultfontcolor")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        LPTSTR pstr = NULL;
-                        DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-                        pManager->SetDefaultFontColor(clrColor);
+                        pManager->SetDefaultFontColor(ParseColor(pstrValue));
                     }
                     else if (lstrcmpi(pstrName, _T("linkfontcolor")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        LPTSTR pstr = NULL;
-                        DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-                        pManager->SetDefaultLinkFontColor(clrColor);
+                        pManager->SetDefaultLinkFontColor(ParseColor(pstrValue));
                     }
                     else if (lstrcmpi(pstrName, _T("linkhoverfontcolor")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        LPTSTR pstr = NULL;
-                        DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-                        pManager->SetDefaultLinkHoverFontColor(clrColor);
+                        pManager->SetDefaultLinkHoverFontColor(ParseColor(pstrValue));
                     }
                     else if (lstrcmpi(pstrName, _T("selectedcolor")) == 0)
                     {
-                        if (*pstrValue == _T('#'))
-                            pstrValue = ::CharNext(pstrValue);
-
-                        LPTSTR pstr = NULL;
-                        DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
-                        pManager->SetDefaultSelectedBkColor(clrColor);
+                        pManager->SetDefaultSelectedBkColor(ParseColor(pstrValue));
                     }
                 }
             }

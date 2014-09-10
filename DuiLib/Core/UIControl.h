@@ -5,9 +5,11 @@
 
 namespace DuiLib {
 
+    // 全局函数，解析颜色的
+    DWORD ParseColor(LPCTSTR lpszColor);
+
     /////////////////////////////////////////////////////////////////////////////////////
     //
-
     typedef CControlUI* (CALLBACK* FINDCONTROLPROC)(CControlUI*, LPVOID);
 
     class UILIB_API CControlUI
@@ -165,9 +167,6 @@ namespace DuiLib {
         //虚拟窗口参数
         void SetVirtualWnd(LPCTSTR pstrValue);
         CDuiString GetVirtualWnd() const;
-
-    protected:
-        DWORD ParseColor(LPCTSTR lpszColor);
 
     public:
         CEventSource OnInit;

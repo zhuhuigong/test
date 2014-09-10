@@ -1243,10 +1243,7 @@ namespace DuiLib {
                     }
                     else if (sItem == _T("mask"))
                     {
-                        if (sValue[0] == _T('#'))
-                            dwMask = _tcstoul(sValue.GetData() + 1, &pstr, 16);
-                        else
-                            dwMask = _tcstoul(sValue.GetData(), &pstr, 16);
+                        dwMask = ParseColor(sValue.GetData());
                     }
                     else if (sItem == _T("fade"))
                     {
@@ -1706,9 +1703,11 @@ namespace DuiLib {
                 case _T('c'):  // Color
                 {
                     pstrText++;
-                    while (*pstrText > _T('\0') && *pstrText <= _T(' ')) pstrText = ::CharNext(pstrText);
-                    if (*pstrText == _T('#')) pstrText++;
-                    DWORD clrColor = _tcstol(pstrText, const_cast<LPTSTR*>(&pstrText), 16);
+                    while (*pstrText > _T('\0') && *pstrText <= _T(' '))
+                        pstrText = ::CharNext(pstrText);
+
+                    DWORD clrColor = ParseColor(pstrText);
+
                     aColorArray.Add((LPVOID)clrColor);
                     ::SetTextColor(hDC, RGB(GetBValue(clrColor), GetGValue(clrColor), GetRValue(clrColor)));
                 }
