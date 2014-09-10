@@ -27,6 +27,7 @@ namespace DuiLib {
 // 窗口Prop
 #define SUBCLASS_WINDOW_PROP    _T("#16000")
 #define SUPCLASS_WINDOW_PROP    _T("#16001")
+#define SHADOW_WINDOW_PROP      _T("#16002")
 
 /////////////////////////////////////////////////////////////////////////////////////
 //

@@ -187,7 +187,7 @@ namespace DuiLib
         m_pManager->AttachDialog(pRoot);
 
         // 为主窗口设置一个属性，内容为阴影窗口的指针，然后子类化主窗口
-        ::SetProp(m_hWndOwner, _T("#16383"), (HANDLE) this);
+        ::SetProp(m_hWndOwner, SHADOW_WINDOW_PROP, (HANDLE) this);
         m_pOldOwnerProc = (WNDPROC) ::SetWindowLongPtr(m_hWndOwner, GWL_WNDPROC, (LONG) OwnerProc);
         return 0;
     }
@@ -199,7 +199,7 @@ namespace DuiLib
 
     LRESULT CALLBACK CShadowWindow::OwnerProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        CShadowWindow *pThis = (CShadowWindow*) ::GetProp(hWnd, _T("#16383"));
+        CShadowWindow *pThis = (CShadowWindow*) ::GetProp(hWnd, SHADOW_WINDOW_PROP);
 
         switch (uMsg)
         {
