@@ -21,14 +21,14 @@ namespace DuiLib
 
     LPVOID CCheckBoxUI::GetInterface(LPCTSTR pstrName)
     {
-        if (lstrcmpi(pstrName, DUI_CTR_CHECKBOX) == 0) 
+        if (lstrcmpi(pstrName, DUI_CTR_CHECKBOX) == 0)
         {
             return static_cast<CCheckBoxUI*>(this);
         }
 
         return CButtonUI::GetInterface(pstrName);
     }
-    
+
     bool CCheckBoxUI::IsChecked() const
     {
         return m_bChecked;
@@ -36,22 +36,22 @@ namespace DuiLib
 
     void CCheckBoxUI::SetChecked(bool bChecked)
     {
-        if (m_bChecked == bChecked) 
+        if (m_bChecked == bChecked)
         {
             return;
         }
 
         m_bChecked = bChecked;
-        if (m_bChecked) 
+        if (m_bChecked)
         {
             m_uButtonState |= UISTATE_SELECTED;
         }
-        else 
+        else
         {
             m_uButtonState &= ~UISTATE_SELECTED;
         }
 
-        if (m_pManager != NULL) 
+        if (m_pManager != NULL)
         {
             m_pManager->SendNotify(this, DUI_MSGTYPE_SELECTCHANGED);
         }
@@ -66,9 +66,6 @@ namespace DuiLib
             return false;
         }
 
-        //if( !m_sGroupName.IsEmpty() ) SetChecked(true);
-        //else SetChecked(!m_bChecked);
-
         SetChecked(!m_bChecked);
         return true;
     }
@@ -77,7 +74,7 @@ namespace DuiLib
     {
         CControlUI::SetEnabled(bEnable);
 
-        if (!IsEnabled()) 
+        if (!IsEnabled())
         {
             m_uButtonState = m_bChecked ? UISTATE_SELECTED : 0;
         }
@@ -99,7 +96,7 @@ namespace DuiLib
         return m_sCheckedHotImage;
     }
 
-    void CCheckBoxUI::SetCheckedHotImage( LPCTSTR pStrImage )
+    void CCheckBoxUI::SetCheckedHotImage(LPCTSTR pStrImage)
     {
         m_sCheckedHotImage = pStrImage;
         Invalidate();
@@ -140,7 +137,7 @@ namespace DuiLib
 
     SIZE CCheckBoxUI::EstimateSize(SIZE szAvailable)
     {
-        if (m_cxyFixed.cy == 0) 
+        if (m_cxyFixed.cy == 0)
         {
             return CSize(m_cxyFixed.cx, m_pManager->GetFontInfo(GetFont())->tm.tmHeight + 8);
         }
@@ -150,27 +147,27 @@ namespace DuiLib
 
     void CCheckBoxUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (lstrcmpi(pstrName, _T("checked")) == 0) 
+        if (lstrcmpi(pstrName, _T("checked")) == 0)
         {
             SetChecked(lstrcmpi(pstrValue, _T("true")) == 0);
         }
-        else if (lstrcmpi(pstrName, _T("checkednormalimage")) == 0) 
+        else if (lstrcmpi(pstrName, _T("checkednormalimage")) == 0)
         {
             SetCheckedNormalImage(pstrValue);
         }
-        else if (lstrcmpi(pstrName, _T("checkedhotimage")) == 0) 
+        else if (lstrcmpi(pstrName, _T("checkedhotimage")) == 0)
         {
             SetCheckedHotImage(pstrValue);
         }
-        else if (lstrcmpi(pstrName, _T("checkedpushedimage")) == 0) 
+        else if (lstrcmpi(pstrName, _T("checkedpushedimage")) == 0)
         {
             SetCheckedPushedImage(pstrValue);
         }
-        else if (lstrcmpi(pstrName, _T("checkedfocusedimage")) == 0) 
+        else if (lstrcmpi(pstrName, _T("checkedfocusedimage")) == 0)
         {
             SetCheckedFocusedImage(pstrValue);
         }
-        else if (lstrcmpi(pstrName, _T("checkeddisabledimage")) == 0) 
+        else if (lstrcmpi(pstrName, _T("checkeddisabledimage")) == 0)
         {
             SetCheckedDisabledImage(pstrValue);
         }
@@ -179,14 +176,14 @@ namespace DuiLib
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetCheckedBkColor(clrColor);
-        }
-        else if(lstrcmpi(pstrName, _T("selectedtextcolor")) == 0 ) {
+            }
+            else if(lstrcmpi(pstrName, _T("selectedtextcolor")) == 0 ) {
             if( *pstrValue == _T('#')) pstrValue = ::CharNext(pstrValue);
             LPTSTR pstr = NULL;
             DWORD clrColor = _tcstoul(pstrValue, &pstr, 16);
             SetCheckedTextColor(clrColor);
-        }*/
-        else 
+            }*/
+        else
         {
             CButtonUI::SetAttribute(pstrName, pstrValue);
         }
@@ -194,29 +191,29 @@ namespace DuiLib
 
     void CCheckBoxUI::PaintStatusImage(HDC hDC)
     {
-        if (IsFocused()) 
+        if (IsFocused())
         {
             m_uButtonState |= UISTATE_FOCUSED;
         }
-        else 
+        else
         {
-            m_uButtonState &= ~ UISTATE_FOCUSED;
+            m_uButtonState &= ~UISTATE_FOCUSED;
         }
 
-        if (!IsEnabled()) 
+        if (!IsEnabled())
         {
             m_uButtonState |= UISTATE_DISABLED;
         }
-        else 
+        else
         {
-            m_uButtonState &= ~ UISTATE_DISABLED;
+            m_uButtonState &= ~UISTATE_DISABLED;
         }
 
-        if (IsChecked()) 
+        if (IsChecked())
         {
             m_uButtonState |= UISTATE_SELECTED;
         }
-        else 
+        else
         {
             m_uButtonState &= ~UISTATE_SELECTED;
         }
@@ -228,80 +225,89 @@ namespace DuiLib
         }
         else
         {
-            do 
+            do
             {
                 // 绘制状态图片时，各种状态之间是互斥的，绘制了一种状态图，就不能再绘制另一种状态图
                 // 否则会出现状态图重叠现象，此时的效果就不是你想要的了，避免用goto这里用了do..while
-                if ((m_uButtonState & UISTATE_DISABLED) != 0) 
+                if ((m_uButtonState & UISTATE_DISABLED) != 0)
                 {
                     if (!m_sCheckedDisabledImage.IsEmpty())
                     {
-                        if (!DrawImage(hDC, (LPCTSTR)m_sCheckedDisabledImage)) 
+                        if (!DrawImage(hDC, (LPCTSTR)m_sCheckedDisabledImage))
                         {
                             m_sCheckedDisabledImage.Empty();
                         }
-                        else 
+                        else
                         {
                             break;
                         }
                     }
                 }
-                else if ((m_uButtonState & UISTATE_PUSHED) != 0) 
+                else if ((m_uButtonState & UISTATE_PUSHED) != 0)
                 {
-                    if (!m_sCheckedPushedImage.IsEmpty()) 
+                    if (!m_sCheckedPushedImage.IsEmpty())
                     {
                         if (!DrawImage(hDC, (LPCTSTR)m_sCheckedPushedImage))
                         {
                             m_sCheckedPushedImage.Empty();
                         }
-                        else 
+                        else
                         {
                             break;
                         }
                     }
                 }
-                else if ((m_uButtonState & UISTATE_HOT) != 0) 
+                else if ((m_uButtonState & UISTATE_HOT) != 0)
                 {
-                    if ( !m_sCheckedHotImage.IsEmpty()) 
+                    if (!m_sCheckedHotImage.IsEmpty())
                     {
                         if (!DrawImage(hDC, (LPCTSTR)m_sCheckedHotImage))
                         {
                             m_sCheckedHotImage.Empty();
                         }
-                        else 
+                        else
                         {
                             break;
                         }
                     }
                 }
-                else if ((m_uButtonState & UISTATE_FOCUSED) != 0) 
+                else if ((m_uButtonState & UISTATE_FOCUSED) != 0)
                 {
-                    if (!m_sCheckedFocusedImage.IsEmpty()) 
+                    if (!m_sCheckedFocusedImage.IsEmpty())
                     {
-                        if (!DrawImage(hDC, (LPCTSTR)m_sCheckedFocusedImage)) 
+                        if (!DrawImage(hDC, (LPCTSTR)m_sCheckedFocusedImage))
                         {
                             m_sCheckedFocusedImage.Empty();
                         }
-                        else 
+                        else
                         {
                             break;
                         }
                     }
                 }
 
-                // 都不是以上状态，那么就是正常状态
-                if (!m_sCheckedNormalImage.IsEmpty()) 
+                // 都不是以上状态，那么就是正常状态或使用前景图片
+                if (!m_sCheckedNormalImage.IsEmpty())
                 {
-                    if (!DrawImage(hDC, (LPCTSTR)m_sCheckedNormalImage)) 
+                    if (!DrawImage(hDC, (LPCTSTR)m_sCheckedNormalImage))
                     {
                         m_sCheckedNormalImage.Empty();
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
 
             } while (false);
-        }
 
-        // other 
+            // 注意顺序，前景图放到最后才绘制，不然怎么叫“前景”图呢？
+            if (!m_sForeImage.IsEmpty())
+            {
+                if (!DrawImage(hDC, (LPCTSTR)m_sForeImage))
+                    m_sForeImage.Empty();
+            }
+        }
     }
 
 }
