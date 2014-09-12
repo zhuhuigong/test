@@ -9,6 +9,9 @@ namespace DuiLib
         , m_dwPushedTextColor(0)
         , m_dwFocusedTextColor(0)
         , m_dwHotBkColor(0)
+        , m_dwPushedBkColor(0)
+        , m_dwFocusedBkColor(0)
+        , m_dwDisabledBkColor(0)
     {
         m_uTextStyle = DT_SINGLELINE | DT_VCENTER | DT_CENTER;
     }
@@ -195,6 +198,36 @@ namespace DuiLib
         return m_dwHotBkColor;
     }
 
+    void CButtonUI::SetPushedBkColor(DWORD dwColor)
+    {
+        m_dwPushedBkColor = dwColor;
+    }
+
+    DWORD CButtonUI::GetPushedBkColor() const
+    {
+        return m_dwPushedBkColor;
+    }
+
+    void CButtonUI::SetFocusedBkColor(DWORD dwColor)
+    {
+        m_dwFocusedBkColor = dwColor;
+    }
+
+    DWORD CButtonUI::GetFocusedBkColor() const
+    {
+        return m_dwFocusedBkColor;
+    }
+
+    void CButtonUI::SetDisabledBkColor(DWORD dwColor)
+    {
+        m_dwDisabledBkColor = dwColor;
+    }
+
+    DWORD CButtonUI::GetDisabledBkColor() const
+    {
+        return m_dwDisabledBkColor;
+    }
+
     void CButtonUI::SetHotTextColor(DWORD dwColor)
     {
         m_dwHotTextColor = dwColor;
@@ -378,6 +411,18 @@ namespace DuiLib
         {
             SetHotBkColor(ParseColor(pstrValue));
         }
+        else if (lstrcmpi(pstrName, _T("pushedbkcolor")) == 0)
+        {
+            SetPushedBkColor(ParseColor(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("focusedbkcolor")) == 0)
+        {
+            SetFocusedBkColor(ParseColor(pstrValue));
+        }
+        else if (lstrcmpi(pstrName, _T("disabledbkcolor")) == 0)
+        {
+            SetDisabledBkColor(ParseColor(pstrValue));
+        }
         else if (lstrcmpi(pstrName, _T("hottextcolor")) == 0)
         {
             SetHotTextColor(ParseColor(pstrValue));
@@ -394,6 +439,32 @@ namespace DuiLib
         {
             CLabelUI::SetAttribute(pstrName, pstrValue);
         }
+    }
+
+    void CButtonUI::PaintBkColor(HDC hDC)
+    {
+        if (IsFocused())
+            m_uButtonState |= UISTATE_FOCUSED;
+        else
+            m_uButtonState &= ~UISTATE_FOCUSED;
+
+        if (!IsEnabled())
+            m_uButtonState |= UISTATE_DISABLED;
+        else
+            m_uButtonState &= ~UISTATE_DISABLED;
+
+        DWORD clrColor = IsEnabled() ? m_dwBackColor : m_dwDisabledBkColor;
+
+        // push状态和hot状态判断顺序不可调换！！
+        if (((m_uButtonState & UISTATE_PUSHED) != 0) && (GetPushedBkColor() != 0))
+            clrColor = GetPushedBkColor();
+        else if (((m_uButtonState & UISTATE_HOT) != 0) && (GetHotBkColor() != 0))
+            clrColor = GetHotBkColor();
+        else if (((m_uButtonState & UISTATE_FOCUSED) != 0) && (GetFocusedBkColor() != 0))
+            clrColor = GetFocusedBkColor();
+
+        if (clrColor != 0)
+            CRenderEngine::DrawColor(hDC, m_rcPaint, GetAdjustColor(clrColor));
     }
 
     void CButtonUI::PaintText(HDC hDC)
@@ -503,11 +574,6 @@ namespace DuiLib
                 {
                     goto Label_ForeImage;
                 }
-            }
-            else if (m_dwHotBkColor != 0)
-            {
-                CRenderEngine::DrawColor(hDC, m_rcPaint, GetAdjustColor(m_dwHotBkColor));
-                return;
             }
         }
         else if ((m_uButtonState & UISTATE_FOCUSED) != 0)
