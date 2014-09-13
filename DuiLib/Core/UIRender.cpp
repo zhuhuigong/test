@@ -2012,113 +2012,8 @@ namespace DuiLib {
         ::DeleteObject(hPen);
     }
 
-    HBITMAP CreateAlphaTextBitmap(LPCTSTR pstrText, HFONT hFont, COLORREF clrColor)
-    {
-        int TextLength = lstrlen(pstrText);
-        if (TextLength <= 0)
-            return NULL;
-
-        // Create DC and select font into it 
-        HDC hTextDC = CreateCompatibleDC(NULL);
-        HFONT hOldFont = (HFONT)SelectObject(hTextDC, hFont);
-        HBITMAP hMyDIB = NULL;
-
-        // Get text area 
-        RECT TextArea = { 0, 0, 0, 0 };
-        DrawText(hTextDC, pstrText, TextLength, &TextArea, DT_CALCRECT);
-        if ((TextArea.right > TextArea.left) && (TextArea.bottom > TextArea.top))
-        {
-            BITMAPINFOHEADER BMIH;
-            memset(&BMIH, 0x0, sizeof(BITMAPINFOHEADER));
-            void *pvBits = NULL;
-
-            // Specify DIB setup 
-            BMIH.biSize = sizeof(BMIH);
-            BMIH.biWidth = TextArea.right - TextArea.left;
-            BMIH.biHeight = TextArea.bottom - TextArea.top;
-            BMIH.biPlanes = 1;
-            BMIH.biBitCount = 32;
-            BMIH.biCompression = BI_RGB;
-
-            // Create and select DIB into DC 
-            hMyDIB = CreateDIBSection(hTextDC, (LPBITMAPINFO)&BMIH, 0, (LPVOID*)&pvBits, NULL, 0);
-            HBITMAP hOldBMP = (HBITMAP)SelectObject(hTextDC, hMyDIB);
-            if (hOldBMP != NULL)
-            {
-                // Set up DC properties 
-                SetTextColor(hTextDC, 0x00FFFFFF);
-                SetBkColor(hTextDC, 0x00000000);
-                SetBkMode(hTextDC, OPAQUE);
-
-                // Draw text to buffer 
-                DrawText(hTextDC, pstrText, TextLength, &TextArea, DT_NOCLIP);
-                BYTE* DataPtr = (BYTE*)pvBits;
-                BYTE FillR = GetBValue(clrColor);
-                BYTE FillG = GetGValue(clrColor);
-                BYTE FillB = GetRValue(clrColor);
-                BYTE ThisA;
-                for (int LoopY = 0; LoopY < BMIH.biHeight; LoopY++)
-                {
-                    for (int LoopX = 0; LoopX < BMIH.biWidth; LoopX++)
-                    {
-                        ThisA = *DataPtr; // Move alpha and pre-multiply with RGB 
-                        *DataPtr++ = (FillB * ThisA) >> 8;
-                        *DataPtr++ = (FillG * ThisA) >> 8;
-                        *DataPtr++ = (FillR * ThisA) >> 8;
-                        *DataPtr++ = ThisA; // Set Alpha 
-                    }
-                }
-
-                // De-select bitmap 
-                SelectObject(hTextDC, hOldBMP);
-            }
-        }
-
-        // De-select font and destroy temp DC 
-        SelectObject(hTextDC, hOldFont);
-        DeleteDC(hTextDC);
-
-        // Return DIBSection 
-        return hMyDIB;
-    }
-
     void CRenderEngine::DrawText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, int iFont, UINT uStyle)
     {
-#if 0
-        HBITMAP MyBMP = CreateAlphaTextBitmap(pstrText, pManager->GetFont(iFont), dwTextColor);
-        if (MyBMP)
-        {
-            // Create temporary DC and select new Bitmap into it 
-            HDC hTempDC = CreateCompatibleDC(hDC);
-            HBITMAP hOldBMP = (HBITMAP)SelectObject(hTempDC, MyBMP);
-            if (hOldBMP)
-            {
-                // Get Bitmap image size
-                BITMAP BMInf;
-                GetObject(MyBMP, sizeof(BITMAP), &BMInf);
-
-                // Fill blend function and blend new text to window 
-                BLENDFUNCTION bf;
-                bf.BlendOp = AC_SRC_OVER;
-                bf.BlendFlags = 0;
-                bf.SourceConstantAlpha = 0x80;
-                bf.AlphaFormat = AC_SRC_ALPHA;
-
-                typedef BOOL(WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
-                static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress(::GetModuleHandle(_T("msimg32.dll")), "AlphaBlend");
-
-                if (lpAlphaBlend == NULL)
-                    lpAlphaBlend = AlphaBitBlt;
-
-                lpAlphaBlend(hDC, rc.left, rc.top, BMInf.bmWidth, BMInf.bmHeight, hTempDC, 0, 0, BMInf.bmWidth, BMInf.bmHeight, bf);
-
-                // Clean up 
-                SelectObject(hTempDC, hOldBMP);
-                DeleteObject(MyBMP);
-                DeleteDC(hTempDC);
-            }
-        }
-#else
         ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
 
         if (pstrText == NULL || pManager == NULL)
@@ -2129,7 +2024,112 @@ namespace DuiLib {
         HFONT hOldFont = (HFONT)::SelectObject(hDC, pManager->GetFont(iFont));
         ::DrawText(hDC, pstrText, -1, &rc, uStyle | DT_NOPREFIX);
         ::SelectObject(hDC, hOldFont);
-#endif
+    }
+
+    HBITMAP CreateAlphaTextBitmap(RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, HFONT hFont, UINT uStyle)
+    {
+        int TextLength = lstrlen(pstrText);
+        if (TextLength <= 0)
+            return NULL;
+
+        // 创建一个内存DC，用于绘制文字上去
+        HDC hTextDC = CreateCompatibleDC(NULL);
+        HFONT hOldFont = (HFONT)SelectObject(hTextDC, hFont);
+
+        // 由于是创建的内存DC，绘制的区域就是传进来的rc，只是此时没有left,top
+        RECT rcTextArea = { 0, 0, rc.right - rc.left, rc.bottom - rc.top };
+
+        // 位图的宽高就是原DrawText传入的rc矩形的宽高！
+        BITMAPINFOHEADER bih = { 0 };
+        bih.biSize = sizeof(BITMAPINFOHEADER);
+        bih.biWidth = rcTextArea.right - rcTextArea.left;
+        bih.biHeight = rcTextArea.bottom - rcTextArea.top;
+        bih.biPlanes = 1;
+        bih.biBitCount = 32;
+        bih.biCompression = BI_RGB;
+
+        // 创建一个DIB位图，并选到内存DC中
+        void *pvBits = NULL;
+        HBITMAP hTextBitmap = CreateDIBSection(hTextDC, (LPBITMAPINFO)&bih, 0, (LPVOID*)&pvBits, NULL, 0);
+        HBITMAP hOldBitmap = (HBITMAP)SelectObject(hTextDC, hTextBitmap);
+        if (hOldBitmap != NULL)
+        {
+            // 设置DC属性
+            SetTextColor(hTextDC, 0x00FFFFFF);
+            SetBkColor(hTextDC, 0x00000000);
+            SetBkMode(hTextDC, OPAQUE);
+
+            // 绘制文字到内存DC中
+            DrawText(hTextDC, pstrText, TextLength, &rcTextArea, uStyle);
+
+            BYTE* DataPtr = (BYTE*)pvBits;
+            BYTE FillR = GetBValue(dwTextColor);
+            BYTE FillG = GetGValue(dwTextColor);
+            BYTE FillB = GetRValue(dwTextColor);
+
+            for (int i = 0; i < bih.biHeight; i++)
+            {
+                for (int j = 0; j < bih.biWidth; j++)
+                {
+                    // 移动alpha值并与RGB左乘 
+                    BYTE ThisA = *DataPtr;
+
+                    // 设置文字颜色（通过修改位图数据）
+                    *DataPtr++ = (FillB * ThisA) >> 8;
+                    *DataPtr++ = (FillG * ThisA) >> 8;
+                    *DataPtr++ = (FillR * ThisA) >> 8;
+
+                    // 设置alpha值
+                    *DataPtr++ = ThisA;
+                }
+            }
+
+            SelectObject(hTextDC, hOldBitmap);
+        }
+        
+        SelectObject(hTextDC, hOldFont);
+        DeleteDC(hTextDC);
+
+        return hTextBitmap;
+    }
+
+    void CRenderEngine::DrawTextEx(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, int iFont, UINT uStyle)
+    {
+        ASSERT(::GetObjectType(hDC) == OBJ_DC || ::GetObjectType(hDC) == OBJ_MEMDC);
+
+        if (pstrText == NULL || pManager == NULL)
+            return;
+
+        // 创建文本位图！！！
+        HBITMAP hTextBitmap = CreateAlphaTextBitmap(rc, pstrText, dwTextColor, pManager->GetFont(iFont), uStyle | DT_NOPREFIX);
+        if (hTextBitmap == NULL)
+            return;
+
+        // 创建一个内存DC并选择这个文本位图进去
+        HDC hMemDC = CreateCompatibleDC(hDC);
+        HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC, hTextBitmap);
+        if (hOldBitmap != NULL)
+        {
+            BLENDFUNCTION bf;
+            bf.BlendOp = AC_SRC_OVER;
+            bf.BlendFlags = 0;
+            bf.SourceConstantAlpha = (dwTextColor >> 24);
+            bf.AlphaFormat = AC_SRC_ALPHA;
+
+            typedef BOOL(WINAPI *LPALPHABLEND)(HDC, int, int, int, int, HDC, int, int, int, int, BLENDFUNCTION);
+            static LPALPHABLEND lpAlphaBlend = (LPALPHABLEND) ::GetProcAddress(::GetModuleHandle(_T("msimg32.dll")), "AlphaBlend");
+
+            if (lpAlphaBlend == NULL)
+                lpAlphaBlend = AlphaBitBlt;
+
+            // 把文本位图贴上去，支持alpha通道！
+            lpAlphaBlend(hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, 
+                hMemDC, 0, 0, rc.right - rc.left, rc.bottom - rc.top, bf);
+
+            SelectObject(hMemDC, hOldBitmap);
+            DeleteObject(hTextBitmap);
+            DeleteDC(hMemDC);
+        }
     }
 
     void CRenderEngine::DrawHtmlText(HDC hDC, CPaintManagerUI* pManager, RECT& rc, LPCTSTR pstrText, DWORD dwTextColor, RECT* prcLinks, CDuiString* sLinks, int& nLinkRects, UINT uStyle)
