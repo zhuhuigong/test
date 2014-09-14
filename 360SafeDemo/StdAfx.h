@@ -1,4 +1,4 @@
-#ifndef __STDAFX_H__
+ï»¿#ifndef __STDAFX_H__
 #define __STDAFX_H__
 
 #pragma once
@@ -6,7 +6,7 @@
 #define WIN32_LEAN_AND_MEAN	
 #define _CRT_SECURE_NO_DEPRECATE
 
-// ÊÇ·ñ¾²Ì¬Á´½Ó£¡
+// æ˜¯å¦é™æ€é“¾æ¥ï¼
 #define STATIC_LINK 0
 
 #include <windows.h>

@@ -1,54 +1,54 @@
-#pragma once
+﻿#pragma once
 
 class CAbout : public WindowImplBase,CSkinSetting
 {
 public:
-	bool m_bModal;
+    bool m_bModal;
 public:
-	CAbout(HWND hWndParent,const RECT rc);
-	~CAbout(void);
+    CAbout(HWND hWndParent,const RECT rc);
+    ~CAbout(void);
 
-	DWORD DoModal();
+    DWORD DoModal();
 
-	LPCTSTR GetWindowClassName() const;
+    LPCTSTR GetWindowClassName() const;
 
-	virtual void OnFinalMessage(HWND hWnd);
+    virtual void OnFinalMessage(HWND hWnd);
 
-	void InitWindow();
+    void InitWindow();
 
-	DWORD GetBkColor();
+    DWORD GetBkColor();
 
-	void SetBkImage(LPCTSTR szImageName);
+    void SetBkImage(LPCTSTR szImageName);
 
-	void SetBkColor(DWORD dwBackColor);
+    void SetBkColor(DWORD dwBackColor);
 
-	virtual CDuiString GetSkinFile();
+    virtual CDuiString GetSkinFile();
 
-	virtual CDuiString GetSkinFolder();
+    virtual CDuiString GetSkinFolder();
 
-	virtual UILIB_RESOURCETYPE GetResourceType() const;
+    virtual UILIB_RESOURCETYPE GetResourceType() const;
 
-	virtual LPCTSTR GetResourceID() const;
+    virtual LPCTSTR GetResourceID() const;
 
-	CDuiString GetZIPFileName() const;
+    CDuiString GetZIPFileName() const;
 
-	virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     
-	virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-	virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-	virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-	virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+    virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 private:
 
-	//RECT parent_window_rect_;
+    //RECT parent_window_rect_;
 
 protected:
 
-	void Notify(TNotifyUI& msg);
+    void Notify(TNotifyUI& msg);
 
-	void OnPrepare(TNotifyUI& msg);
+    void OnPrepare(TNotifyUI& msg);
 };
 

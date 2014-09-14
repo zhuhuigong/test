@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
@@ -37,8 +37,8 @@ typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess,
 //-----------------------------------------------------------------------------
 CMiniDumper::CMiniDumper( bool bPromptUserForMiniDump )
 {
-	// Our CMiniDumper should act alone as a singleton.
-	assert( !s_pMiniDumper );
+    // Our CMiniDumper should act alone as a singleton.
+    assert( !s_pMiniDumper );
 
     s_pMiniDumper = this;
     m_bPromptUserForMiniDump = bPromptUserForMiniDump;
@@ -49,7 +49,7 @@ CMiniDumper::CMiniDumper( bool bPromptUserForMiniDump )
     // that is not being debugged, and the exception makes it to the 
     // unhandled exception filter, that filter will call the exception 
     // filter function specified by the lpTopLevelExceptionFilter parameter.
-	::SetUnhandledExceptionFilter( unhandledExceptionHandler );
+    ::SetUnhandledExceptionFilter( unhandledExceptionHandler );
 
     // Since DBGHELP.dll is not inherently thread-safe, making calls into it 
     // from more than one thread simultaneously may yield undefined behavior. 
@@ -82,10 +82,10 @@ CMiniDumper::~CMiniDumper( void )
 //-----------------------------------------------------------------------------
 LONG CMiniDumper::unhandledExceptionHandler( _EXCEPTION_POINTERS *pExceptionInfo )
 {
-	if( !s_pMiniDumper )
-		return EXCEPTION_CONTINUE_SEARCH;
+    if( !s_pMiniDumper )
+        return EXCEPTION_CONTINUE_SEARCH;
 
-	return s_pMiniDumper->writeMiniDump( pExceptionInfo );
+    return s_pMiniDumper->writeMiniDump( pExceptionInfo );
 }
 
 //-----------------------------------------------------------------------------
@@ -176,63 +176,63 @@ BOOL CMiniDumper::restorePrivilege( HANDLE hToken, TOKEN_PRIVILEGES* ptpOld )
 //-----------------------------------------------------------------------------
 LONG CMiniDumper::writeMiniDump( _EXCEPTION_POINTERS *pExceptionInfo )
 {
-	LONG retval = EXCEPTION_CONTINUE_SEARCH;
-	m_pExceptionInfo = pExceptionInfo;
+    LONG retval = EXCEPTION_CONTINUE_SEARCH;
+    m_pExceptionInfo = pExceptionInfo;
 
     HANDLE hImpersonationToken = NULL;
     if( !getImpersonationToken( &hImpersonationToken ) )
         return FALSE;
 
-	// You have to find the right dbghelp.dll. 
-	// Look next to the EXE first since the one in System32 might be old (Win2k)
-	
-	HMODULE hDll = NULL;
-	TCHAR szDbgHelpPath[MAX_PATH];
+    // You have to find the right dbghelp.dll. 
+    // Look next to the EXE first since the one in System32 might be old (Win2k)
+    
+    HMODULE hDll = NULL;
+    TCHAR szDbgHelpPath[MAX_PATH];
 
-	if( GetModuleFileName( NULL, m_szAppPath, _MAX_PATH ) )
-	{
-		TCHAR *pSlash = _tcsrchr( m_szAppPath, '\\' );
+    if( GetModuleFileName( NULL, m_szAppPath, _MAX_PATH ) )
+    {
+        TCHAR *pSlash = _tcsrchr( m_szAppPath, '\\' );
 
-		if( pSlash )
-		{
-			_tcscpy_s( m_szAppBaseName, pSlash + 1);
-			*(pSlash+1) = 0;
-		}
+        if( pSlash )
+        {
+            _tcscpy_s( m_szAppBaseName, pSlash + 1);
+            *(pSlash+1) = 0;
+        }
 
-		_tcscpy_s( szDbgHelpPath, m_szAppPath );
+        _tcscpy_s( szDbgHelpPath, m_szAppPath );
         _tcscat_s( szDbgHelpPath, _T("DBGHELP.DLL") );
-		hDll = ::LoadLibrary( szDbgHelpPath );
-	}
+        hDll = ::LoadLibrary( szDbgHelpPath );
+    }
 
-	if( hDll == NULL )
-	{
-		// If we haven't found it yet - try one more time.
-		hDll = ::LoadLibrary( _T("DBGHELP.DLL") );
-	}
+    if( hDll == NULL )
+    {
+        // If we haven't found it yet - try one more time.
+        hDll = ::LoadLibrary( _T("DBGHELP.DLL") );
+    }
 
-	LPCTSTR szResult = NULL;
+    LPCTSTR szResult = NULL;
 
-	if( hDll )
-	{
+    if( hDll )
+    {
         // Get the address of the MiniDumpWriteDump function, which writes 
         // user-mode mini-dump information to a specified file.
-		MINIDUMPWRITEDUMP MiniDumpWriteDump = 
+        MINIDUMPWRITEDUMP MiniDumpWriteDump = 
             (MINIDUMPWRITEDUMP)::GetProcAddress( hDll, "MiniDumpWriteDump" );
 
-		if( MiniDumpWriteDump != NULL )
+        if( MiniDumpWriteDump != NULL )
         {
-			TCHAR szScratch[USER_DATA_BUFFER_SIZE];
+            TCHAR szScratch[USER_DATA_BUFFER_SIZE];
 
-			setMiniDumpFileName();
+            setMiniDumpFileName();
 
-			// Ask the user if he or she wants to save a mini-dump file...
-			_tcssprintf( szScratch,
+            // Ask the user if he or she wants to save a mini-dump file...
+            _tcssprintf( szScratch,
                          _T("There was an unexpected error:\n\nWould you ")
                          _T("like to create a mini-dump file?\n\n%s " ),
                          m_szMiniDumpPath);
 
-			// Create the mini-dump file...
-			HANDLE hFile = ::CreateFile( m_szMiniDumpPath, 
+            // Create the mini-dump file...
+            HANDLE hFile = ::CreateFile( m_szMiniDumpPath, 
                                             GENERIC_WRITE, 
                                             FILE_SHARE_WRITE, 
                                             NULL, 
@@ -240,12 +240,12 @@ LONG CMiniDumper::writeMiniDump( _EXCEPTION_POINTERS *pExceptionInfo )
                                             FILE_ATTRIBUTE_NORMAL, 
                                             NULL );
 
-			if( hFile != INVALID_HANDLE_VALUE )
-			{
-				_MINIDUMP_EXCEPTION_INFORMATION ExInfo;
-				ExInfo.ThreadId          = ::GetCurrentThreadId();
-				ExInfo.ExceptionPointers = pExceptionInfo;
-				ExInfo.ClientPointers    = NULL;
+            if( hFile != INVALID_HANDLE_VALUE )
+            {
+                _MINIDUMP_EXCEPTION_INFORMATION ExInfo;
+                ExInfo.ThreadId          = ::GetCurrentThreadId();
+                ExInfo.ExceptionPointers = pExceptionInfo;
+                ExInfo.ClientPointers    = NULL;
 
                 // We need the SeDebugPrivilege to be able to run MiniDumpWriteDump
                 TOKEN_PRIVILEGES tp;
@@ -256,7 +256,7 @@ LONG CMiniDumper::writeMiniDump( _EXCEPTION_POINTERS *pExceptionInfo )
                 // DBGHELP.dll is not thread-safe, so we need to restrict access...
                 EnterCriticalSection( s_pCriticalSection );
                 {
-					// Write out the mini-dump data to the file...
+                    // Write out the mini-dump data to the file...
                     bOk = MiniDumpWriteDump( GetCurrentProcess(),
                                                 GetCurrentProcessId(),
                                                 hFile,
@@ -269,51 +269,51 @@ LONG CMiniDumper::writeMiniDump( _EXCEPTION_POINTERS *pExceptionInfo )
 
                 // Restore the privileges when done
                 if( bPrivilegeEnabled )
-	                restorePrivilege( hImpersonationToken, &tp );
+                    restorePrivilege( hImpersonationToken, &tp );
 
                 if( bOk )
-				{
-					szResult = NULL;
-					retval = EXCEPTION_EXECUTE_HANDLER;
-				}
-				else
-				{
-					_tcssprintf( szScratch,
+                {
+                    szResult = NULL;
+                    retval = EXCEPTION_EXECUTE_HANDLER;
+                }
+                else
+                {
+                    _tcssprintf( szScratch,
                                     _T("Failed to save the mini-dump file to '%s' (error %d)"),
                                     m_szMiniDumpPath,
                                     GetLastError() );
 
-					szResult = szScratch;
-				}
+                    szResult = szScratch;
+                }
 
-				::CloseHandle( hFile );
-			}
-			else
-			{
-				_tcssprintf( szScratch,
+                ::CloseHandle( hFile );
+            }
+            else
+            {
+                _tcssprintf( szScratch,
                                 _T("Failed to create the mini-dump file '%s' (error %d)"),
                                 m_szMiniDumpPath,
                                 GetLastError() );
 
-				szResult = szScratch;
-			}
-		}
-		else
-		{
-			szResult = _T( "Call to GetProcAddress failed to find MiniDumpWriteDump. ")
+                szResult = szScratch;
+            }
+        }
+        else
+        {
+            szResult = _T( "Call to GetProcAddress failed to find MiniDumpWriteDump. ")
                        _T("The DBGHELP.DLL is possibly outdated." );
-		}
-	}
-	else
-	{
-		szResult = _T( "Call to LoadLibrary failed to find DBGHELP.DLL." );
-	}
+        }
+    }
+    else
+    {
+        szResult = _T( "Call to LoadLibrary failed to find DBGHELP.DLL." );
+    }
 
-	if( szResult && m_bPromptUserForMiniDump )
-		::MessageBox( NULL, szResult, NULL, MB_OK );
+    if( szResult && m_bPromptUserForMiniDump )
+        ::MessageBox( NULL, szResult, NULL, MB_OK );
 
-	TerminateProcess( GetCurrentProcess(), 0 );
+    TerminateProcess( GetCurrentProcess(), 0 );
 
-	return retval;
+    return retval;
 }
 

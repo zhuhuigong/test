@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "RichListWnd.h"
 
 
@@ -7,97 +7,97 @@
 
 
 DUI_BEGIN_MESSAGE_MAP(CPage1, CNotifyPump)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
 DUI_END_MESSAGE_MAP()
 
 CPage1::CPage1()
 {
-	m_pPaintManager = NULL;
+    m_pPaintManager = NULL;
 }
 
 void CPage1::SetPaintMagager(CPaintManagerUI* pPaintMgr)
 {
-	m_pPaintManager = pPaintMgr;
+    m_pPaintManager = pPaintMgr;
 }
 
 void CPage1::OnClick(TNotifyUI& msg)
 {
-	if(msg.pSender->GetName() == _T("down_ico"))
-	{                
-		CControlUI *find_ctrl =m_pPaintManager->FindSubControlByName(msg.pSender->GetParent()->GetParent(), _T("down_name"));
+    if(msg.pSender->GetName() == _T("down_ico"))
+    {                
+        CControlUI *find_ctrl =m_pPaintManager->FindSubControlByName(msg.pSender->GetParent()->GetParent(), _T("down_name"));
 
-		if(find_ctrl)
-		{
-			MessageBox(NULL, 
-				find_ctrl->GetText()+_T(" ÑİÊ¾Î´Ñ¡ÖĞĞĞÖĞµÄ°´Å¥´¥·¢¶¯×÷£¬ÒÀ¸Ã°´Å¥¸¸½áµãµÄÕÒµ½ËùÊôĞĞlistcontainer.."), 
-				_T("DUILIB DEMO"), MB_OK);   
-			((CLabelUI *)find_ctrl)->SetText(_T("ÓÉ³ÌĞò¶¯Ì¬ÉèÖÃºóµÄÃû³Æ..."));
-		}
-		}
-	else if(msg.pSender->GetName() == _T("down_del"))
-	{
-		CListUI *down_list = 
-			static_cast<CListUI*>(m_pPaintManager->FindControl(_T("down_list_tab")));
-		if(!down_list)
-			return;
+        if(find_ctrl)
+        {
+            MessageBox(NULL, 
+                find_ctrl->GetText()+_T(" æ¼”ç¤ºæœªé€‰ä¸­è¡Œä¸­çš„æŒ‰é’®è§¦å‘åŠ¨ä½œï¼Œä¾è¯¥æŒ‰é’®çˆ¶ç»“ç‚¹çš„æ‰¾åˆ°æ‰€å±è¡Œlistcontainer.."), 
+                _T("DUILIB DEMO"), MB_OK);   
+            ((CLabelUI *)find_ctrl)->SetText(_T("ç”±ç¨‹åºåŠ¨æ€è®¾ç½®åçš„åç§°..."));
+        }
+        }
+    else if(msg.pSender->GetName() == _T("down_del"))
+    {
+        CListUI *down_list = 
+            static_cast<CListUI*>(m_pPaintManager->FindControl(_T("down_list_tab")));
+        if(!down_list)
+            return;
 
-		down_list->RemoveAt(down_list->GetCurSel());                   
-	}
-	else if(msg.pSender->GetName() == _T("down_new"))
-	{
-		CListUI *down_list = static_cast<CListUI*>(m_pPaintManager->FindControl(_T("down_list_tab")));
-		if(!down_list)
-			return;
+        down_list->RemoveAt(down_list->GetCurSel());                   
+    }
+    else if(msg.pSender->GetName() == _T("down_new"))
+    {
+        CListUI *down_list = static_cast<CListUI*>(m_pPaintManager->FindControl(_T("down_list_tab")));
+        if(!down_list)
+            return;
 
-		CListContainerElementUI *new_node = new CListContainerElementUI;
-		new_node->ApplyAttributeList(_T("height=\"45\""));
+        CListContainerElementUI *new_node = new CListContainerElementUI;
+        new_node->ApplyAttributeList(_T("height=\"45\""));
 
-		CHorizontalLayoutUI *new_h_lay = new CHorizontalLayoutUI;
-		new_h_lay->ApplyAttributeList(_T("float=\"false\" ")\
-			_T("childpadding=\"10\" inset=\"3,5,3,5\""));
+        CHorizontalLayoutUI *new_h_lay = new CHorizontalLayoutUI;
+        new_h_lay->ApplyAttributeList(_T("float=\"false\" ")\
+            _T("childpadding=\"10\" inset=\"3,5,3,5\""));
 
-		CButtonUI *new_btn_1 = new CButtonUI;
-		new_btn_1->ApplyAttributeList(
-			_T("name=\"down_ico\" float=\"false\" ")\
-			_T("bordersize=\"0\" width=\"32\" maxheight=\"26\" ")\
-			_T("bkimage=\"downlist_app.png\" ")\
-			_T("normalimage=\"file='downlist_run.png' dest='20,14,32,26'\""));
+        CButtonUI *new_btn_1 = new CButtonUI;
+        new_btn_1->ApplyAttributeList(
+            _T("name=\"down_ico\" float=\"false\" ")\
+            _T("bordersize=\"0\" width=\"32\" maxheight=\"26\" ")\
+            _T("bkimage=\"downlist_app.png\" ")\
+            _T("normalimage=\"file='downlist_run.png' dest='20,14,32,26'\""));
 
-		CVerticalLayoutUI *new_v_lay = new CVerticalLayoutUI;
-		new_h_lay->Add(new_btn_1);
-		new_h_lay->Add(new_v_lay);
+        CVerticalLayoutUI *new_v_lay = new CVerticalLayoutUI;
+        new_h_lay->Add(new_btn_1);
+        new_h_lay->Add(new_v_lay);
 
-		CLabelUI *new_label = new CLabelUI;
-		new_label->ApplyAttributeList(_T("textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
-		new_label->SetText(_T("new added item.exe"));
-		new_label->SetName(_T("down_name"));
-		CProgressUI *new_progress = new CProgressUI;
-		new_progress->SetMinValue(0);
-		new_progress->SetMaxValue(100);
-		new_progress->SetValue(1);
-		new_progress->SetMaxWidth(200);
-		new_progress->SetMaxHeight(7);
-		new_progress->SetForeImage(_T("progress_fore.png"));
-		new_progress->SetName(_T("down_progress"));
-		new_v_lay->Add(new_label);
-		new_v_lay->Add(new_progress);
+        CLabelUI *new_label = new CLabelUI;
+        new_label->ApplyAttributeList(_T("textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
+        new_label->SetText(_T("new added item.exe"));
+        new_label->SetName(_T("down_name"));
+        CProgressUI *new_progress = new CProgressUI;
+        new_progress->SetMinValue(0);
+        new_progress->SetMaxValue(100);
+        new_progress->SetValue(1);
+        new_progress->SetMaxWidth(200);
+        new_progress->SetMaxHeight(7);
+        new_progress->SetForeImage(_T("progress_fore.png"));
+        new_progress->SetName(_T("down_progress"));
+        new_v_lay->Add(new_label);
+        new_v_lay->Add(new_progress);
 
-		CLabelUI *new_label2 = new CLabelUI;
-		CLabelUI *new_label3 = new CLabelUI;
-		CVerticalLayoutUI *new_v_lay2 = new CVerticalLayoutUI;
-		new_h_lay->Add(new_v_lay2);
-		new_v_lay2->Add(new_label2);
-		new_v_lay2->Add(new_label3);
-		new_label2->ApplyAttributeList(
-			_T("align=\"right\" text=\"\" textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
-		new_label3->ApplyAttributeList(
-			_T("align=\"right\" text=\"0.00K/34.33M \" textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
+        CLabelUI *new_label2 = new CLabelUI;
+        CLabelUI *new_label3 = new CLabelUI;
+        CVerticalLayoutUI *new_v_lay2 = new CVerticalLayoutUI;
+        new_h_lay->Add(new_v_lay2);
+        new_v_lay2->Add(new_label2);
+        new_v_lay2->Add(new_label3);
+        new_label2->ApplyAttributeList(
+            _T("align=\"right\" text=\"\" textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
+        new_label3->ApplyAttributeList(
+            _T("align=\"right\" text=\"0.00K/34.33M \" textcolor=\"#FFAAAAAA\" showhtml=\"true\""));
 
-		new_node->Add(new_h_lay);
-		down_list->Add(new_node);
-	}
+        new_node->Add(new_h_lay);
+        down_list->Add(new_node);
+    }
 }
 
 void CPage1::OnSelectChanged( TNotifyUI &msg )
@@ -114,20 +114,20 @@ void CPage1::OnItemClick( TNotifyUI &msg )
 ///
 
 DUI_BEGIN_MESSAGE_MAP(CPage2, CNotifyPump)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
 DUI_END_MESSAGE_MAP()
 
 
 CPage2::CPage2()
 {
-	m_pPaintManager = NULL;
+    m_pPaintManager = NULL;
 }
 
 void CPage2::SetPaintMagager(CPaintManagerUI* pPaintMgr)
 {
-	m_pPaintManager = pPaintMgr;
+    m_pPaintManager = pPaintMgr;
 }
 
 void CPage2::OnClick(TNotifyUI& msg)
@@ -149,221 +149,221 @@ void CPage2::OnItemClick( TNotifyUI &msg )
 ///
 
 DUI_BEGIN_MESSAGE_MAP(CRichListWnd, WindowImplBase)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
-	DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_CLICK,OnClick)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_SELECTCHANGED,OnSelectChanged)
+    DUI_ON_MSGTYPE(DUI_MSGTYPE_ITEMCLICK,OnItemClick)
 DUI_END_MESSAGE_MAP()
 
 CRichListWnd::CRichListWnd(void)
 {
-	m_Page1.SetPaintMagager(&m_PaintManager);
-	m_Page2.SetPaintMagager(&m_PaintManager);
+    m_Page1.SetPaintMagager(&m_PaintManager);
+    m_Page2.SetPaintMagager(&m_PaintManager);
 
-	AddVirtualWnd(_T("page1"),&m_Page1);
-	AddVirtualWnd(_T("page2"),&m_Page2);
+    AddVirtualWnd(_T("page1"),&m_Page1);
+    AddVirtualWnd(_T("page2"),&m_Page2);
 }
 
 CRichListWnd::~CRichListWnd(void)
 {
-	RemoveVirtualWnd(_T("page1"));
-	RemoveVirtualWnd(_T("page2"));
+    RemoveVirtualWnd(_T("page1"));
+    RemoveVirtualWnd(_T("page2"));
 }
 
 void CRichListWnd::OnFinalMessage( HWND hWnd)
 {
-	__super::OnFinalMessage(hWnd);
-	delete this;
+    __super::OnFinalMessage(hWnd);
+    delete this;
 }
 
 DuiLib::CDuiString CRichListWnd::GetSkinFolder()
 {
 #ifdef _DEBUG
-	return _T("skin\\RichListRes\\");
+    return _T("skin\\RichListRes\\");
 #else
-	return _T("skin\\");
+    return _T("skin\\");
 #endif
-	
+    
 }
 
 DuiLib::CDuiString CRichListWnd::GetSkinFile()
 {
-	return _T("duilib.xml");
+    return _T("duilib.xml");
 }
 
 UILIB_RESOURCETYPE CRichListWnd::GetResourceType() const
 {
 #ifdef _DEBUG
-	return UILIB_FILE;
+    return UILIB_FILE;
 #else
-	return UILIB_ZIP;
+    return UILIB_ZIP;
 #endif
 }
 
 DuiLib::CDuiString CRichListWnd::GetZIPFileName() const
 {
-	return _T("RichListRes.zip");
+    return _T("RichListRes.zip");
 }
 
 LPCTSTR CRichListWnd::GetWindowClassName( void ) const
 {
-	return _T("RichListWnd");
+    return _T("RichListWnd");
 }
 
 void CRichListWnd::OnClick( TNotifyUI &msg )
 {
-	if( msg.pSender == m_pCloseBtn ) 
-	{ 
-		PostQuitMessage(0); // ÒòÎªactivexµÄÔ­Òò£¬Ê¹ÓÃclose¿ÉÄÜ»á³öÏÖ´íÎó
-		return; 
-	}else if( msg.pSender == m_pMinBtn ) 
-	{ 
-		SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); 
-		return; 
-	}else if( msg.pSender == m_pMaxBtn ) 
-	{ 
-		SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0); 
-		return; 
-	}else if( msg.pSender == m_pRestoreBtn ) 
-	{
-		SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
-		return;
-	}
-	else if( msg.pSender->GetName() == _T("quitbtn") ) 
-	{
-		PostQuitMessage(0); // ÒòÎªactivexµÄÔ­Òò£¬Ê¹ÓÃclose¿ÉÄÜ»á³öÏÖ´íÎó
-	}
+    if( msg.pSender == m_pCloseBtn ) 
+    { 
+        PostQuitMessage(0); // å› ä¸ºactivexçš„åŸå› ï¼Œä½¿ç”¨closeå¯èƒ½ä¼šå‡ºç°é”™è¯¯
+        return; 
+    }else if( msg.pSender == m_pMinBtn ) 
+    { 
+        SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); 
+        return; 
+    }else if( msg.pSender == m_pMaxBtn ) 
+    { 
+        SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0); 
+        return; 
+    }else if( msg.pSender == m_pRestoreBtn ) 
+    {
+        SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
+        return;
+    }
+    else if( msg.pSender->GetName() == _T("quitbtn") ) 
+    {
+        PostQuitMessage(0); // å› ä¸ºactivexçš„åŸå› ï¼Œä½¿ç”¨closeå¯èƒ½ä¼šå‡ºç°é”™è¯¯
+    }
 }
 
 void CRichListWnd::OnSelectChanged( TNotifyUI &msg )
 {
-	if(msg.pSender->GetName() == _T("down_list"))
-	{
-		static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_main")))->SelectItem(0);
-	}
-	else if(msg.pSender->GetName() == _T("down_his"))
-	{
-		static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_main")))->SelectItem(1);
-	}
+    if(msg.pSender->GetName() == _T("down_list"))
+    {
+        static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_main")))->SelectItem(0);
+    }
+    else if(msg.pSender->GetName() == _T("down_his"))
+    {
+        static_cast<CTabLayoutUI*>(m_PaintManager.FindControl(_T("tab_main")))->SelectItem(1);
+    }
 }
 
 void CRichListWnd::OnItemClick( TNotifyUI &msg )
 {
-	TCHAR alert_msg[64] = {0};
-	int index = ((CListContainerElementUI *)msg.pSender)->GetIndex();
-	wsprintf(alert_msg, _T("Ñ¡ÖĞÁËĞĞ%d, ²éÕÒ±¾ĞĞÄÚµÄÏÂÔØÏîÄ¿Ãû..."), index);
-	MessageBox(NULL, alert_msg, _T("DUILIB DEMO"), MB_OK);            
+    TCHAR alert_msg[64] = {0};
+    int index = ((CListContainerElementUI *)msg.pSender)->GetIndex();
+    wsprintf(alert_msg, _T("é€‰ä¸­äº†è¡Œ%d, æŸ¥æ‰¾æœ¬è¡Œå†…çš„ä¸‹è½½é¡¹ç›®å..."), index);
+    MessageBox(NULL, alert_msg, _T("DUILIB DEMO"), MB_OK);            
 
-	CControlUI *find_ctrl =m_PaintManager.FindSubControlByName(msg.pSender, _T("down_name"));
+    CControlUI *find_ctrl =m_PaintManager.FindSubControlByName(msg.pSender, _T("down_name"));
 
-	if(find_ctrl)
-	{
-		MessageBox(NULL, 
-			find_ctrl->GetText()+_T(" Ñ¡ÖĞĞĞµÄÏÂÔØÏîÄ¿Ãû³Æ.."), 
-			_T("DUILIB DEMO"), MB_OK);   
-		((CLabelUI *)find_ctrl)->SetText(_T("ÓÉ³ÌĞò¶¯Ì¬ÉèÖÃºóµÄÃû³Æ..."));
-	}
-	else
-	{
-		MessageBox(NULL, _T("±¾²âÊÔĞĞÎ´Îª¿Ø¼şÉèÖÃname£¬¹ÊÕÒ²»µ½Òª²Ù×÷µÄ¿Ø¼ş"), 
-			_T("DUILIB DEMO"), MB_OK);   
-	}
+    if(find_ctrl)
+    {
+        MessageBox(NULL, 
+            find_ctrl->GetText()+_T(" é€‰ä¸­è¡Œçš„ä¸‹è½½é¡¹ç›®åç§°.."), 
+            _T("DUILIB DEMO"), MB_OK);   
+        ((CLabelUI *)find_ctrl)->SetText(_T("ç”±ç¨‹åºåŠ¨æ€è®¾ç½®åçš„åç§°..."));
+    }
+    else
+    {
+        MessageBox(NULL, _T("æœ¬æµ‹è¯•è¡Œæœªä¸ºæ§ä»¶è®¾ç½®nameï¼Œæ•…æ‰¾ä¸åˆ°è¦æ“ä½œçš„æ§ä»¶"), 
+            _T("DUILIB DEMO"), MB_OK);   
+    }
 
-	find_ctrl =m_PaintManager.FindSubControlByName(msg.pSender, _T("down_progress"));
+    find_ctrl =m_PaintManager.FindSubControlByName(msg.pSender, _T("down_progress"));
 
-	if(find_ctrl)
-	{
-		TCHAR alert_msg[256] = {0};
-		wsprintf(alert_msg, _T("½ø¶ÈÌõÖµ:%d"), ((CProgressUI *)find_ctrl)->GetValue());
-		MessageBox(NULL, alert_msg, _T("DUILIB DEMO"), MB_OK);   
+    if(find_ctrl)
+    {
+        TCHAR alert_msg[256] = {0};
+        wsprintf(alert_msg, _T("è¿›åº¦æ¡å€¼:%d"), ((CProgressUI *)find_ctrl)->GetValue());
+        MessageBox(NULL, alert_msg, _T("DUILIB DEMO"), MB_OK);   
 
-		((CProgressUI *)find_ctrl)->SetValue(30);
-		MessageBox(NULL, _T("ĞŞ¸ÄÁË½ø¶ÈÌõÖµ"), _T("DUILIB DEMO"), MB_OK);   
-	}
+        ((CProgressUI *)find_ctrl)->SetValue(30);
+        MessageBox(NULL, _T("ä¿®æ”¹äº†è¿›åº¦æ¡å€¼"), _T("DUILIB DEMO"), MB_OK);   
+    }
 }
 
 void CRichListWnd::Notify( TNotifyUI &msg )
 {
-	return WindowImplBase::Notify(msg);
+    return WindowImplBase::Notify(msg);
 }
 
 LRESULT CRichListWnd::OnMouseWheel( UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled )
 {
-	// ½â¾öie¿Ø¼şÊÕ²»µ½¹ö¶¯ÏûÏ¢µÄÎÊÌâ
-	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	::ScreenToClient(m_PaintManager.GetPaintWindow(), &pt);
-	CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("ie")));
-	if( pControl && pControl->IsVisible() ) {
-		RECT rc = pControl->GetPos();
-		if( ::PtInRect(&rc, pt) ) {
-			return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
-		}
-	}
+    // è§£å†³ieæ§ä»¶æ”¶ä¸åˆ°æ»šåŠ¨æ¶ˆæ¯çš„é—®é¢˜
+    POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+    ::ScreenToClient(m_PaintManager.GetPaintWindow(), &pt);
+    CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("ie")));
+    if( pControl && pControl->IsVisible() ) {
+        RECT rc = pControl->GetPos();
+        if( ::PtInRect(&rc, pt) ) {
+            return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+        }
+    }
 
-	bHandled = FALSE;
-	return 0;
+    bHandled = FALSE;
+    return 0;
 }
 
 LRESULT CRichListWnd::OnSysCommand( UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled )
 {
-	// ÓĞÊ±»áÔÚÊÕµ½WM_NCDESTROYºóÊÕµ½wParamÎªSC_CLOSEµÄWM_SYSCOMMAND
-	if( wParam == SC_CLOSE ) {
-		::PostQuitMessage(0L);
-		bHandled = TRUE;
-		return 0;
-	}
-	BOOL bZoomed = ::IsZoomed(*this);
-	LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
-	if( ::IsZoomed(*this) != bZoomed ) {
-		if( !bZoomed ) {
-			CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
-			if( pControl ) pControl->SetVisible(false);
-			pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
-			if( pControl ) pControl->SetVisible(true);
-		}
-		else {
-			CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
-			if( pControl ) pControl->SetVisible(true);
-			pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
-			if( pControl ) pControl->SetVisible(false);
-		}
-	}
-	return lRes;
+    // æœ‰æ—¶ä¼šåœ¨æ”¶åˆ°WM_NCDESTROYåæ”¶åˆ°wParamä¸ºSC_CLOSEçš„WM_SYSCOMMAND
+    if( wParam == SC_CLOSE ) {
+        ::PostQuitMessage(0L);
+        bHandled = TRUE;
+        return 0;
+    }
+    BOOL bZoomed = ::IsZoomed(*this);
+    LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
+    if( ::IsZoomed(*this) != bZoomed ) {
+        if( !bZoomed ) {
+            CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
+            if( pControl ) pControl->SetVisible(false);
+            pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
+            if( pControl ) pControl->SetVisible(true);
+        }
+        else {
+            CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("maxbtn")));
+            if( pControl ) pControl->SetVisible(true);
+            pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(_T("restorebtn")));
+            if( pControl ) pControl->SetVisible(false);
+        }
+    }
+    return lRes;
 }
 
 void CRichListWnd::InitWindow()
 {
-	m_pCloseBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("closebtn")));
-	m_pMaxBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("maxbtn")));
-	m_pRestoreBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("restorebtn")));
-	m_pMinBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("minbtn")));
+    m_pCloseBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("closebtn")));
+    m_pMaxBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("maxbtn")));
+    m_pRestoreBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("restorebtn")));
+    m_pMinBtn = static_cast<CButtonUI*>(m_PaintManager.FindControl(_T("minbtn")));
 }
 
 LRESULT CRichListWnd::OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	CControlUI* pHover = m_PaintManager.FindControl(pt);
-	if( pHover == NULL ) return 0;
-	/*ÑİÊ¾ĞüÍ£ÔÚÏÂÔØÁĞ±íµÄÍ¼±êÉÏÊ±£¬¶¯Ì¬±ä»»ÏÂÔØÍ¼±ê×´Ì¬ÏÔÊ¾*/
-	if(pHover->GetName() == _T("down_ico"))
-	{
-		MessageBox(NULL, _T("Êó±êÔÚÄ³¿Ø¼şÀıÈç°´Å¥ÉÏĞüÍ£ºó£¬¶ÔÄ¿±ê¿Ø¼ş²Ù×÷£¬ÕâÀï¸Ä±äÁË×´Ì¬Í¼±ê´óĞ¡"), _T("DUILIB DEMO"), MB_OK);
-		((CButtonUI *)pHover)->ApplyAttributeList(
-			_T("normalimage=\"file='downlist_pause.png' dest='15,9,32,26'\""));                
-	}
-	return 0;
+    POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+    CControlUI* pHover = m_PaintManager.FindControl(pt);
+    if( pHover == NULL ) return 0;
+    /*æ¼”ç¤ºæ‚¬åœåœ¨ä¸‹è½½åˆ—è¡¨çš„å›¾æ ‡ä¸Šæ—¶ï¼ŒåŠ¨æ€å˜æ¢ä¸‹è½½å›¾æ ‡çŠ¶æ€æ˜¾ç¤º*/
+    if(pHover->GetName() == _T("down_ico"))
+    {
+        MessageBox(NULL, _T("é¼ æ ‡åœ¨æŸæ§ä»¶ä¾‹å¦‚æŒ‰é’®ä¸Šæ‚¬åœåï¼Œå¯¹ç›®æ ‡æ§ä»¶æ“ä½œï¼Œè¿™é‡Œæ”¹å˜äº†çŠ¶æ€å›¾æ ‡å¤§å°"), _T("DUILIB DEMO"), MB_OK);
+        ((CButtonUI *)pHover)->ApplyAttributeList(
+            _T("normalimage=\"file='downlist_pause.png' dest='15,9,32,26'\""));                
+    }
+    return 0;
 }
 
 LRESULT CRichListWnd::OnChar( UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled )
 {
-	/*ÑİÊ¾¼üÅÌÏûÏ¢µÄ´¦Àí*/
-	TCHAR press_char = (TCHAR)wParam;
-	if(press_char == VK_BACK)
-	{
-		MessageBox(NULL, _T("°´ÏÂÁË»ØÍË¼ü"), _T("DUILIB DEMO"), MB_OK);
-	}
-	else
-	{
-		bHandled = FALSE;
-	}
-	return 0;
+    /*æ¼”ç¤ºé”®ç›˜æ¶ˆæ¯çš„å¤„ç†*/
+    TCHAR press_char = (TCHAR)wParam;
+    if(press_char == VK_BACK)
+    {
+        MessageBox(NULL, _T("æŒ‰ä¸‹äº†å›é€€é”®"), _T("DUILIB DEMO"), MB_OK);
+    }
+    else
+    {
+        bHandled = FALSE;
+    }
+    return 0;
 }

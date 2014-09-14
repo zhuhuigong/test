@@ -1,4 +1,4 @@
-#ifndef _UICRACK_H_
+﻿#ifndef _UICRACK_H_
 #define _UICRACK_H_
 
 #ifdef _MSC_VER

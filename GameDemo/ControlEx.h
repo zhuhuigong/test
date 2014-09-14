@@ -1,4 +1,4 @@
-#ifndef __CONTROLEX_H__
+ï»¿#ifndef __CONTROLEX_H__
 #define __CONTROLEX_H__
 
 #include <vector>
@@ -24,9 +24,9 @@ public:
 
     class Node
     {
-        typedef std::vector <Node*>	Children;
-        Children	_children;
-        Node*		_parent;
+        typedef std::vector <Node*> Children;
+        Children    _children;
+        Node*       _parent;
         NodeData    _data;
 
     private:
@@ -35,17 +35,17 @@ public:
     public:
         Node() : _parent (NULL) {}
         explicit Node(NodeData t) : _data (t), _parent (NULL) {}
-        Node(NodeData t, Node* parent)	: _data (t), _parent (parent) {}
+        Node(NodeData t, Node* parent)  : _data (t), _parent (parent) {}
         ~Node() 
         {
             for (int i = 0; i < num_children(); i++)
                 delete _children[i]; 
         }
-        NodeData& data() { return _data; }	
+        NodeData& data() { return _data; }  
         int num_children() const { return _children.size(); }
-        Node* child(int i)	{ return _children[i]; }
-        Node* parent() { return ( _parent);	}
-        bool has_children() const {	return num_children() > 0; }
+        Node* child(int i)  { return _children[i]; }
+        Node* parent() { return ( _parent); }
+        bool has_children() const { return num_children() > 0; }
         void add_child(Node* child) 
         {
             child->set_parent(this); 
@@ -71,7 +71,7 @@ public:
             }
             else return this;
         }
-    };	
+    };  
 
     GameListUI() : _root(NULL), m_dwDelayDeltaY(0), m_dwDelayNum(0), m_dwDelayLeft(0)
     {
@@ -104,32 +104,32 @@ public:
         if( !pControl ) return false;
         if( _tcscmp(pControl->GetClass(), _T("ListLabelElementUI")) != 0 ) return false;
 
-		if (reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()) == NULL)
-			return CListUI::Remove(pControl);
-		else
-			return RemoveNode(reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()));
+        if (reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()) == NULL)
+            return CListUI::Remove(pControl);
+        else
+            return RemoveNode(reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()));
     }
 
     bool RemoveAt(int iIndex)
     {
         CControlUI* pControl = GetItemAt(iIndex);
-		if( !pControl ) return false;
-		if( _tcscmp(pControl->GetClass(), _T("ListLabelElementUI")) != 0 ) return false;
+        if( !pControl ) return false;
+        if( _tcscmp(pControl->GetClass(), _T("ListLabelElementUI")) != 0 ) return false;
 
-		if (reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()) == NULL)
-			return CListUI::RemoveAt(iIndex);
-		else
-			return RemoveNode(reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()));
-	}
+        if (reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()) == NULL)
+            return CListUI::RemoveAt(iIndex);
+        else
+            return RemoveNode(reinterpret_cast<Node*>(static_cast<CListLabelElementUI*>(pControl->GetInterface(_T("ListLabelElement")))->GetTag()));
+    }
 
     void RemoveAll()
     {
-		CListUI::RemoveAll();
-		for (int i = 0; i < _root->num_children(); ++i)
-		{
-			Node* child = _root->child(i);
-			RemoveNode(child);
-		}
+        CListUI::RemoveAll();
+        for (int i = 0; i < _root->num_children(); ++i)
+        {
+            Node* child = _root->child(i);
+            RemoveNode(child);
+        }
         delete _root;
         _root = new Node;
         _root->data()._level = -1;
@@ -261,7 +261,7 @@ public:
         CListUI::Remove(node->data()._pListElement);
         node->parent()->remove_child(node);
         delete node;
-		return true;
+        return true;
     }
 
     void ExpandNode(Node* node, bool expand)
@@ -304,8 +304,8 @@ public:
         if( node->data()._level >= 3 ) return CSize();
 
         SIZE szExpander = {0};
-        szExpander.cx = 6 + 24 * node->data()._level - 4/*ÊÊµ±·Å´óÒ»µã*/;
-        szExpander.cy = szExpander.cx + 16 + 8/*ÊÊµ±·Å´óÒ»µã*/;
+        szExpander.cx = 6 + 24 * node->data()._level - 4/*é€‚å½“æ”¾å¤§ä¸€ç‚¹*/;
+        szExpander.cy = szExpander.cx + 16 + 8/*é€‚å½“æ”¾å¤§ä¸€ç‚¹*/;
         return szExpander;
     }
 
