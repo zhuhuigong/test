@@ -165,6 +165,9 @@
     <ClInclude Include="..\DuiLib\Control\UIShadow.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="..\DuiLib\Control\UIRadioButton.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DuiLib\Utils\flash11.tlh">
@@ -282,6 +285,12 @@
     </ClCompile>
     <ClCompile Include="..\DuiLib\Control\UIShadow.cpp">
       <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DuiLib\Control\UIRadioButton.cpp">
+      <Filter>源文件\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DuiLib\Utils\Utils.cpp">
+      <Filter>源文件\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

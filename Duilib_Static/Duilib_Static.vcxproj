@@ -89,6 +89,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;UILIB_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Duilib</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,6 +161,7 @@
     <ClInclude Include="..\DuiLib\Control\UIList.h" />
     <ClInclude Include="..\DuiLib\Control\UIOption.h" />
     <ClInclude Include="..\DuiLib\Control\UIProgress.h" />
+    <ClInclude Include="..\DuiLib\Control\UIRadioButton.h" />
     <ClInclude Include="..\DuiLib\Control\UIRichEdit.h" />
     <ClInclude Include="..\DuiLib\Control\UIScrollBar.h" />
     <ClInclude Include="..\DuiLib\Control\UIShadow.h" />
@@ -206,6 +208,7 @@
     <ClCompile Include="..\DuiLib\Control\UIList.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIOption.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIProgress.cpp" />
+    <ClCompile Include="..\DuiLib\Control\UIRadioButton.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIRichEdit.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIScrollBar.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIShadow.cpp" />
@@ -239,6 +242,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='UnicodeDebug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\DuiLib\Utils\UIDelegate.cpp" />
+    <ClCompile Include="..\DuiLib\Utils\Utils.cpp" />
     <ClCompile Include="..\DuiLib\Utils\WinImplBase.cpp" />
     <ClCompile Include="..\DuiLib\Utils\XUnzip.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

@@ -1,20 +1,40 @@
-
-#if !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
-#define AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_
+#ifndef __STDAFX_H__
+#define __STDAFX_H__
 
 #pragma once
 
 #define WIN32_LEAN_AND_MEAN	
 #define _CRT_SECURE_NO_DEPRECATE
 
+// ÊÇ·ñ¾²Ì¬Á´½Ó£¡
+#define STATIC_LINK 0
+
 #include <windows.h>
 #include <objbase.h>
 #include <zmouse.h>
 
+#if STATIC_LINK == 1
+#define UILIB_STATIC
+#endif
 #include "..\DuiLib\UIlib.h"
 
 using namespace DuiLib;
 
+#if STATIC_LINK == 1
+#ifdef _DEBUG
+#   ifdef _UNICODE
+#       pragma comment(lib, "..\\Lib\\DuiLib_Static_ud.lib")
+#   else
+#       pragma comment(lib, "..\\Lib\\DuiLib_Static_d.lib")
+#   endif
+#else
+#   ifdef _UNICODE
+#       pragma comment(lib, "..\\Lib\\DuiLib_Static_u.lib")
+#   else
+#       pragma comment(lib, "..\\Lib\\DuiLib_Static.lib")
+#   endif
+#endif
+#else
 #ifdef _DEBUG
 #   ifdef _UNICODE
 #       pragma comment(lib, "..\\Lib\\DuiLib_ud.lib")
@@ -28,8 +48,7 @@ using namespace DuiLib;
 #       pragma comment(lib, "..\\Lib\\DuiLib.lib")
 #   endif
 #endif
+#endif
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
+#endif
