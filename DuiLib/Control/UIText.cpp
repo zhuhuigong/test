@@ -161,7 +161,14 @@ namespace DuiLib
         }
         else
         {
-            CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, m_dwTextColor, m_iFont, DT_CALCRECT | m_uTextStyle);
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, m_dwTextColor, m_iFont, DT_CALCRECT | m_uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, m_dwTextColor, m_iFont, DT_CALCRECT | m_uTextStyle);
+            }
         }
 
         SIZE cXY =
@@ -202,16 +209,38 @@ namespace DuiLib
         if (IsEnabled())
         {
             if (m_bShowHtml)
+            {
                 CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_rcLinks, m_sLinks, m_nLinks, m_uTextStyle);
+            }
             else
-                CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, m_uTextStyle);
+            {
+                if (m_pManager->IsBackgroundTransparent())
+                {
+                    CRenderEngine::DrawTextEx(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, m_uTextStyle);
+                }
+                else
+                {
+                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, m_uTextStyle);
+                }
+            }
         }
         else
         {
             if (m_bShowHtml)
+            {
                 CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_rcLinks, m_sLinks, m_nLinks, m_uTextStyle);
+            }
             else
-                CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+            {
+                if (m_pManager->IsBackgroundTransparent())
+                {
+                    CRenderEngine::DrawTextEx(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+                }
+                else
+                {
+                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+                }
+            }
         }
     }
 }

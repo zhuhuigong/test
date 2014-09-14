@@ -344,9 +344,20 @@ namespace DuiLib
             rc.bottom -= m_rcTextPadding.bottom;
 
             if (m_bShowHtml)
+            {
                 CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, IsEnabled() ? m_dwTextColor : m_dwDisabledTextColor, NULL, NULL, nLinks, m_uTextStyle);
+            }
             else
-                CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, IsEnabled() ? m_dwTextColor : m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+            {
+                if (m_pManager->IsBackgroundTransparent())
+                {
+                    CRenderEngine::DrawTextEx(hDC, m_pManager, rc, m_sText, IsEnabled() ? m_dwTextColor : m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+                }
+                else
+                {
+                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, IsEnabled() ? m_dwTextColor : m_dwDisabledTextColor, m_iFont, m_uTextStyle);
+                }
+            }
 
             m_dwTextColor = oldTextColor;
         }

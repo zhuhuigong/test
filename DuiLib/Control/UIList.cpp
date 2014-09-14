@@ -1853,11 +1853,23 @@ namespace DuiLib {
 
         int nLinks = 0;
         if (m_bShowHtml)
+        {
             CRenderEngine::DrawHtmlText(hDC, m_pManager, rcText, m_sText, m_dwTextColor, \
-            NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+                NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+        }
         else
-            CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, m_dwTextColor, \
-            m_iFont, DT_SINGLELINE | m_uTextStyle);
+        {
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(hDC, m_pManager, rcText, m_sText, m_dwTextColor, \
+                    m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, m_dwTextColor, \
+                    m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -2269,7 +2281,14 @@ namespace DuiLib {
             }
             else
             {
-                CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, 0, pInfo->nFont, DT_SINGLELINE | DT_CALCRECT | pInfo->uTextStyle & ~DT_RIGHT & ~DT_CENTER);
+                if (m_pManager->IsBackgroundTransparent())
+                {
+                    CRenderEngine::DrawTextEx(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, 0, pInfo->nFont, DT_SINGLELINE | DT_CALCRECT | pInfo->uTextStyle & ~DT_RIGHT & ~DT_CENTER);
+                }
+                else
+                {
+                    CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, 0, pInfo->nFont, DT_SINGLELINE | DT_CALCRECT | pInfo->uTextStyle & ~DT_RIGHT & ~DT_CENTER);
+                }
             }
 
             cXY.cx = rcText.right - rcText.left + pInfo->rcTextPadding.left + pInfo->rcTextPadding.right;
@@ -2319,11 +2338,23 @@ namespace DuiLib {
         rcText.bottom -= pInfo->rcTextPadding.bottom;
 
         if (pInfo->bShowHtml)
+        {
             CRenderEngine::DrawHtmlText(hDC, m_pManager, rcText, m_sText, iTextColor, \
-            NULL, NULL, nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+                NULL, NULL, nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+        }
         else
-            CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, iTextColor, \
-            pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+        {
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(hDC, m_pManager, rcText, m_sText, iTextColor, \
+                    pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, iTextColor, \
+                    pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+            }
+        }
     }
 
 
@@ -2552,11 +2583,23 @@ namespace DuiLib {
                 strText.Assign(GetText(i));
 
             if (pInfo->bShowHtml)
+            {
                 CRenderEngine::DrawHtmlText(hDC, m_pManager, rcItem, strText.GetData(), iTextColor, \
-                &m_rcLinks[m_nLinks], &m_sLinks[m_nLinks], nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+                    &m_rcLinks[m_nLinks], &m_sLinks[m_nLinks], nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+            }
             else
-                CRenderEngine::DrawText(hDC, m_pManager, rcItem, strText.GetData(), iTextColor, \
-                pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+            {
+                if (m_pManager->IsBackgroundTransparent())
+                {
+                    CRenderEngine::DrawTextEx(hDC, m_pManager, rcItem, strText.GetData(), iTextColor, \
+                        pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+                }
+                else
+                {
+                    CRenderEngine::DrawText(hDC, m_pManager, rcItem, strText.GetData(), iTextColor, \
+                        pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+                }
+            }
 
             m_nLinks += nLinks;
             nLinks = lengthof(m_rcLinks) - m_nLinks;

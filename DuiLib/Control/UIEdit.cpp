@@ -728,11 +728,25 @@ namespace DuiLib
 
         if (IsEnabled())
         {
-            CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
         }
         else
         {
-            CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(hDC, m_pManager, rc, sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(hDC, m_pManager, rc, sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+            }
         }
     }
 }

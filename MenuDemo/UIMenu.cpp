@@ -525,12 +525,24 @@ void CMenuElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
     rcText.top += pInfo->rcTextPadding.top;
     rcText.bottom -= pInfo->rcTextPadding.bottom;
 
-    if( pInfo->bShowHtml )
+    if (pInfo->bShowHtml)
+    {
         CRenderEngine::DrawHtmlText(hDC, m_pManager, rcText, m_sText, iTextColor, \
-        NULL, NULL, nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+            NULL, NULL, nLinks, DT_SINGLELINE | pInfo->uTextStyle);
+    }
     else
-        CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, iTextColor, \
-        pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+    {
+        if (m_pManager->IsBackgroundTransparent())
+        {
+            CRenderEngine::DrawTextEx(hDC, m_pManager, rcText, m_sText, iTextColor, \
+                pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+        }
+        else
+        {
+            CRenderEngine::DrawText(hDC, m_pManager, rcText, m_sText, iTextColor, \
+                pInfo->nFont, DT_SINGLELINE | pInfo->uTextStyle);
+        }
+    }
 }
 
 
@@ -562,12 +574,21 @@ SIZE CMenuElementUI::EstimateSize(SIZE szAvailable)
 		RECT rcText = { 0, 0, MAX(szAvailable.cx, m_cxyFixed.cx), 9999 };
 		rcText.left += pInfo->rcTextPadding.left;
 		rcText.right -= pInfo->rcTextPadding.right;
-		if( pInfo->bShowHtml ) {   
+		if( pInfo->bShowHtml )
+        {   
 			int nLinks = 0;
 			CRenderEngine::DrawHtmlText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, iTextColor, NULL, NULL, nLinks, DT_CALCRECT | pInfo->uTextStyle);
 		}
-		else {
-			CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, iTextColor, pInfo->nFont, DT_CALCRECT | pInfo->uTextStyle);
+		else
+        {
+            if (m_pManager->IsBackgroundTransparent())
+            {
+                CRenderEngine::DrawTextEx(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, iTextColor, pInfo->nFont, DT_CALCRECT | pInfo->uTextStyle);
+            }
+            else
+            {
+                CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, iTextColor, pInfo->nFont, DT_CALCRECT | pInfo->uTextStyle);
+            }
 		}
 		cXY.cx = rcText.right - rcText.left + pInfo->rcTextPadding.left + pInfo->rcTextPadding.right + 20;
 		cXY.cy = rcText.bottom - rcText.top + pInfo->rcTextPadding.top + pInfo->rcTextPadding.bottom;

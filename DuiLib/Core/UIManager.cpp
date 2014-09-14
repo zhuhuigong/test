@@ -557,6 +557,11 @@ namespace DuiLib {
         m_bAlphaBackground = bTrans;
     }
 
+    bool CPaintManagerUI::IsBackgroundTransparent() const
+    {
+        return m_bAlphaBackground;
+    }
+
     bool CPaintManagerUI::IsShowUpdateRect() const
     {
         return m_bShowUpdateRect;

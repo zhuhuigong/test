@@ -358,16 +358,38 @@ namespace DuiLib
             if (IsEnabled())
             {
                 if (m_bShowHtml)
+                {
                     CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwTextColor, NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+                }
                 else
-                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                {
+                    if (m_pManager->IsBackgroundTransparent())
+                    {
+                        CRenderEngine::DrawTextEx(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    }
+                    else
+                    {
+                        CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    }
+                }
             }
             else 
             {
                 if (m_bShowHtml)
+                {
                     CRenderEngine::DrawHtmlText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, NULL, NULL, nLinks, DT_SINGLELINE | m_uTextStyle);
+                }
                 else
-                    CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                {
+                    if (m_pManager->IsBackgroundTransparent())
+                    { 
+                        CRenderEngine::DrawTextEx(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    }
+                    else
+                    {
+                        CRenderEngine::DrawText(hDC, m_pManager, rc, m_sText, m_dwDisabledTextColor, m_iFont, DT_SINGLELINE | m_uTextStyle);
+                    }
+                }
             }
         }
         else

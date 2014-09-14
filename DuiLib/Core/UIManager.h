@@ -186,6 +186,7 @@ namespace DuiLib {
         int GetTransparent() const;
         void SetTransparent(int nOpacity);
         void SetBackgroundTransparent(bool bTrans);
+        bool IsBackgroundTransparent() const;
         bool IsShowUpdateRect() const;
         void SetShowUpdateRect(bool show);
 
