@@ -168,6 +168,12 @@
     <ClInclude Include="..\DuiLib\Control\UIRadioButton.h">
       <Filter>头文件\Control</Filter>
     </ClInclude>
+    <ClInclude Include="..\DuiLib\Control\observer_impl_base.hpp">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DuiLib\Control\UIMenu.h">
+      <Filter>头文件\Control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DuiLib\Utils\flash11.tlh">
@@ -291,6 +297,9 @@
     </ClCompile>
     <ClCompile Include="..\DuiLib\Utils\Utils.cpp">
       <Filter>源文件\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DuiLib\Control\UIMenu.cpp">
+      <Filter>源文件\Control</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

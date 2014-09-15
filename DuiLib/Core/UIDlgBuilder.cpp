@@ -439,6 +439,7 @@ namespace DuiLib {
                     if (lstrcmpi(pstrClass, DUI_CTR_EDIT) == 0)                   pControl = new CEditUI;
                     else if (lstrcmpi(pstrClass, DUI_CTR_LIST) == 0)              pControl = new CListUI;
                     else if (lstrcmpi(pstrClass, DUI_CTR_TEXT) == 0)              pControl = new CTextUI;
+                    else if (lstrcmpi(pstrClass, _T("Menu")) == 0)                pControl = new CMenuUI;
                     break;
                 case 5:
                     if (lstrcmpi(pstrClass, DUI_CTR_COMBO) == 0)                  pControl = new CComboUI;
