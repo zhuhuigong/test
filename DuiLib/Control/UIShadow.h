@@ -65,6 +65,9 @@ namespace DuiLib
         
         void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
+        HWND GetShadowWindow();
+        CShadowWindow* GetShadowWindow() const;
+
         POINT GetOffset() const;
         LONG GetOffsetX() const;
         LONG GetOffsetY() const;

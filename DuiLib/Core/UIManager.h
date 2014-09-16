@@ -167,6 +167,7 @@ namespace DuiLib {
 
         HDC GetPaintDC() const;
         HWND GetPaintWindow() const;
+        HWND GetShadowWindow();
         HWND GetTooltipWindow() const;
 
         POINT GetMousePos() const;

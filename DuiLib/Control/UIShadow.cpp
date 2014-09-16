@@ -24,7 +24,7 @@ namespace DuiLib
 
     LPCTSTR CShadowWindow::GetWindowClassName() const
     {
-        return _T("DirectUIShadowWindow");
+        return _T("UIShadowWindow");
     }
 
     void CShadowWindow::OnFinalMessage(HWND hWnd)
@@ -286,6 +286,19 @@ namespace DuiLib
         {
             ::EnableWindow(m_pWindow->GetHWND(), bEnabled);
         }
+    }
+
+    HWND CShadowUI::GetShadowWindow()
+    {
+        if (m_pWindow != NULL)
+            return m_pWindow->GetHWND();
+
+        return NULL;
+    }
+
+    CShadowWindow* CShadowUI::GetShadowWindow() const
+    {
+        return m_pWindow;
     }
 
     POINT CShadowUI::GetOffset() const
