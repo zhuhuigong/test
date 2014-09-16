@@ -1,6 +1,8 @@
 ﻿#ifndef __WIN_IMPL_BASE_H__
 #define __WIN_IMPL_BASE_H__
 
+#pragma once
+
 namespace DuiLib
 {
 

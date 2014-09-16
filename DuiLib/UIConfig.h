@@ -10,6 +10,8 @@
 #ifndef __UICONFIG_H__
 #define __UICONFIG_H__
 
+#pragma once
+
 // 是否使用ATL中的CenterWindow
 #define UILIB_USE_ATL_CENTERWINDOW 1
 

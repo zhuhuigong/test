@@ -1,4 +1,8 @@
-﻿#pragma once
+﻿#ifndef __UIDEFINE_H__
+#define __UIDEFINE_H__
+
+#pragma once
+
 //////////////BEGIN消息映射宏定义////////////////////////////////////////////////////
 ///
 
@@ -272,3 +276,4 @@ protected:                                                                \
 
 }// namespace DuiLib
 
+#endif // !define __UIDEFINE_H__

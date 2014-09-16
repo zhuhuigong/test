@@ -1,10 +1,10 @@
-﻿#ifndef UITreeView_h__
-#define UITreeView_h__
+﻿#ifndef __UITREEVIEW_H__
+#define __UITREEVIEW_H__
+
+#pragma once
 
 #include <vector>
 using namespace std;
-
-#pragma once
 
 namespace DuiLib
 {
@@ -138,4 +138,4 @@ namespace DuiLib
 }
 
 
-#endif // UITreeView_h__
+#endif // __UITREEVIEW_H__

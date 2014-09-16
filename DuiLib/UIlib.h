@@ -27,6 +27,11 @@
 // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef __UILIB_H__
+#define __UILIB_H__
+
+#pragma once
+
 #ifndef UILIB_STATIC
 #if defined(UILIB_EXPORTS)
 #if defined(_MSC_VER)
@@ -116,3 +121,4 @@
 #include "Control/UIWebBrowser.h"
 //#include "Control/UIFlash.h"
 
+#endif  // !define __UILIB_H__
