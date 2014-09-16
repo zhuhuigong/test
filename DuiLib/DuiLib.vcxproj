@@ -323,7 +323,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Control\observer_impl_base.hpp" />
     <ClInclude Include="Control\UIActiveX.h" />
     <ClInclude Include="Control\UIButton.h" />
     <ClInclude Include="Control\UICheckBox.h" />
@@ -361,6 +360,7 @@
     <ClInclude Include="UIConfig.h" />
     <ClInclude Include="UIlib.h" />
     <ClInclude Include="Utils\downloadmgr.h" />
+    <ClInclude Include="Utils\observer_impl_base.h" />
     <ClInclude Include="Utils\FlashEventHandler.h" />
     <ClInclude Include="Utils\UIDelegate.h" />
     <ClInclude Include="Utils\Utils.h" />

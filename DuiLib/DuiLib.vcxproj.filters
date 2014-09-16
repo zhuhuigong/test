@@ -281,8 +281,8 @@
     <ClInclude Include="Control\UIRadioButton.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\observer_impl_base.hpp">
-      <Filter>Header Files\Control</Filter>
+    <ClInclude Include="Utils\observer_impl_base.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Control\UIMenu.h">
       <Filter>Header Files\Control</Filter>

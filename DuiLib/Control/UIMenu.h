@@ -1,11 +1,9 @@
 ﻿#ifndef __UIMENU_H__
 #define __UIMENU_H__
 
-#ifdef _MSC_VER
 #pragma once
-#endif
 
-#include "observer_impl_base.hpp"
+#include "Utils\observer_impl_base.h"
 
 #define WM_CUSTOMMENU_CLICK     (WM_USER + 0x100)
 
@@ -35,7 +33,7 @@ typedef class ReceiverImpl<BOOL, ContextMenuParam> ContextMenuReceiver;
 class CContextMenuObServerHwnd : public ContextMenuObserver
 {
 public:
-    CContextMenuObServerHwnd():m_hMainHwnd(NULL){};
+    CContextMenuObServerHwnd() : m_hMainHwnd(NULL){};
     ~CContextMenuObServerHwnd(){};
 
 public:
@@ -47,10 +45,8 @@ private:
 
 extern CContextMenuObServerHwnd gContextMenuObServer;
 
-// MenuUI
-extern const TCHAR* const kMenuUIClassName;// = _T("MenuUI");
-extern const TCHAR* const kMenuUIInterfaceName;// = _T("Menu");
-
+/////////////////////////////////////////////////////////////////////////////////////
+// 菜单控件
 class CListUI;
 class CMenuUI : public CListUI
 {
@@ -82,18 +78,13 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
-//
-
-// MenuElementUI
-extern const TCHAR* const kMenuElementUIClassName;// = _T("MenuElementUI");
-extern const TCHAR* const kMenuElementUIInterfaceName;// = _T("MenuElement);
-
-class CMenuElementUI;
+// 菜单窗口
+class CMenuItemUI;
 class CMenuWnd : public CWindowWnd, public ContextMenuReceiver, public INotifyUI
 {
 public:
     CMenuWnd(HWND hParent = NULL);
-    void Init(CMenuElementUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point);
+    void Init(CMenuItemUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point);
     LPCTSTR GetWindowClassName() const;
     void OnFinalMessage(HWND hWnd);
 
@@ -113,19 +104,21 @@ public:
     STRINGorID m_xml;
     CDuiString m_sType;
     CPaintManagerUI m_pm;
-    CMenuElementUI* m_pOwner;
+    CMenuItemUI* m_pOwner;
     CMenuUI* m_pLayout;
    // CWndShadow m_WndShadow;
 };
 
+/////////////////////////////////////////////////////////////////////////////////////
+// 菜单项控件
 class CListContainerElementUI;
-class CMenuElementUI : public CListContainerElementUI
+class CMenuItemUI : public CListContainerElementUI
 {
     friend CMenuWnd;
 
 public:
-    CMenuElementUI();
-    ~CMenuElementUI();
+    CMenuItemUI();
+    ~CMenuItemUI();
 
     LPCTSTR GetClass() const;
     LPVOID GetInterface(LPCTSTR pstrName);
@@ -144,7 +137,7 @@ public:
 
     void CreateMenuWnd();
     void DoInit();
-    VOID SetAllSubMenuItemVisible(bool bVisible = true);
+    void SetAllSubMenuItemVisible(bool bVisible = true);
     void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
     void SetRightWidth(int nWidth);
     void SetLeftWidth(int nWidth);
@@ -161,14 +154,13 @@ protected:
 private:
     int m_LeftWidth;
     int m_RightWidth;
+    int m_nSeparatorHeight;
     CDuiString m_strLeftIcon;
     CDuiString m_strRightArrow;
     CSize m_LeftIconSize; 
     CSize m_RightArrowSize;
     BOOL m_bHasSubMenu;
     BOOL m_bIsSeparator;
-
-    int m_nSeparatorHeight;
 };
 
 } // namespace DuiLib

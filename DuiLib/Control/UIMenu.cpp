@@ -1,5 +1,4 @@
 ﻿#include "StdAfx.h"
-//#include "UICrack.h"
 #include "UIMenu.h"
 
 namespace DuiLib {
@@ -8,9 +7,6 @@ namespace DuiLib {
     //
     CContextMenuObServerHwnd gContextMenuObServer;
 
-    // MenuUI
-    const TCHAR* const kMenuUIClassName = _T("MenuUI");
-    const TCHAR* const kMenuUIInterfaceName = _T("Menu");
 
     CMenuUI::CMenuUI()
         : m_bShowShadow(FALSE)
@@ -26,12 +22,12 @@ namespace DuiLib {
 
     LPCTSTR CMenuUI::GetClass() const
     {
-        return kMenuUIClassName;
+        return _T("MenuUI");
     }
 
     LPVOID CMenuUI::GetInterface(LPCTSTR pstrName)
     {
-        if (lstrcmpi(pstrName, kMenuUIInterfaceName) == 0)
+        if (lstrcmpi(pstrName, DUI_CTR_MENU) == 0)
             return static_cast<CMenuUI*>(this);
 
         return CListUI::GetInterface(pstrName);
@@ -44,7 +40,7 @@ namespace DuiLib {
 
     bool CMenuUI::Add(CControlUI* pControl)
     {
-        CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
+        CMenuItemUI* pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
         if (pMenuItem == NULL)
             return false;
 
@@ -54,10 +50,10 @@ namespace DuiLib {
             CControlUI *pControl = pMenuItem->GetItemAt(i);
             if (pControl != NULL)
             {
-                CMenuElementUI *pMenuElementUI = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
-                if (pMenuElementUI != NULL)
+                CMenuItemUI *pSubMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                if (pSubMenuItem != NULL)
                 {
-                    pMenuElementUI->SetInternVisible(false);
+                    pSubMenuItem->SetInternVisible(false);
                 }
             }
         }
@@ -67,15 +63,21 @@ namespace DuiLib {
 
     bool CMenuUI::AddAt(CControlUI* pControl, int iIndex)
     {
-        CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
+        CMenuItemUI* pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
         if (pMenuItem == NULL)
             return false;
 
-        for (int i = 0; i < pMenuItem->GetCount(); ++i)
+        int count = pMenuItem->GetCount();
+        for (int i = 0; i < count; ++i)
         {
-            if (pMenuItem->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL)
+            CControlUI *pControl = pMenuItem->GetItemAt(i);
+            if (pControl != NULL)
             {
-                (static_cast<CMenuElementUI*>(pMenuItem->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))->SetInternVisible(false);
+                CMenuItemUI *pSubMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                if (pSubMenuItem != NULL)
+                {
+                    pSubMenuItem->SetInternVisible(false);
+                }
             }
         }
 
@@ -84,7 +86,7 @@ namespace DuiLib {
 
     int CMenuUI::GetItemIndex(CControlUI* pControl) const
     {
-        CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
+        CMenuItemUI* pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
         if (pMenuItem == NULL)
             return -1;
 
@@ -93,7 +95,7 @@ namespace DuiLib {
 
     bool CMenuUI::SetItemIndex(CControlUI* pControl, int iIndex)
     {
-        CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
+        CMenuItemUI* pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
         if (pMenuItem == NULL)
             return false;
 
@@ -102,7 +104,7 @@ namespace DuiLib {
 
     bool CMenuUI::Remove(CControlUI* pControl)
     {
-        CMenuElementUI* pMenuItem = static_cast<CMenuElementUI*>(pControl->GetInterface(kMenuElementUIInterfaceName));
+        CMenuItemUI* pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
         if (pMenuItem == NULL)
             return false;
 
@@ -114,12 +116,19 @@ namespace DuiLib {
         int cxFixed = 0;
         int cyFixed = 0;
 
-        for (int it = 0; it < GetCount(); it++)
+        int count = GetCount();
+        for (int i = 0; i < count; i++)
         {
-            CControlUI* pControl = static_cast<CControlUI*>(GetItemAt(it));
-            if (!pControl->IsVisible()) continue;
+            CControlUI* pControl = static_cast<CControlUI*>(GetItemAt(i));
+
+            ASSERT(pControl != NULL);
+
+            if (!pControl->IsVisible())
+                continue;
+
             SIZE sz = pControl->EstimateSize(szAvailable);
             cyFixed += sz.cy;
+
             if (cxFixed < sz.cx)
                 cxFixed = sz.cx;
         }
@@ -151,19 +160,20 @@ namespace DuiLib {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
-    //
+    // 用于创建菜单控件、菜单项控件的回调函数，有了这个，不加在UIDlgBuilder.cpp中加new了！
     class CMenuBuilderCallback : public IDialogBuilderCallback
     {
         CControlUI* CreateControl(LPCTSTR pstrClass)
         {
-            if (lstrcmpi(pstrClass, kMenuUIInterfaceName) == 0)
+            if (lstrcmpi(pstrClass, DUI_CTR_MENU) == 0)
             {
                 return new CMenuUI();
             }
-            else if (lstrcmpi(pstrClass, kMenuElementUIInterfaceName) == 0)
+            else if (lstrcmpi(pstrClass, DUI_CTR_MENUITEM) == 0)
             {
-                return new CMenuElementUI();
+                return new CMenuItemUI();
             }
+
             return NULL;
         }
     };
@@ -185,18 +195,18 @@ namespace DuiLib {
             Close();
             break;
         case 2:
-        {
-            HWND hParent = GetParent(m_hWnd);
-            while (hParent != NULL)
             {
-                if (hParent == param.hWnd)
+                HWND hParent = GetParent(m_hWnd);
+                while (hParent != NULL)
                 {
-                    Close();
-                    break;
+                    if (hParent == param.hWnd)
+                    {
+                        Close();
+                        break;
+                    }
+                    hParent = GetParent(hParent);
                 }
-                hParent = GetParent(hParent);
             }
-        }
             break;
         default:
             break;
@@ -207,26 +217,22 @@ namespace DuiLib {
 
     void CMenuWnd::Notify(TNotifyUI& msg)
     {
-        if (msg.sType == TEXT("itemclick"))
+        if (msg.sType == _T("itemclick"))
         {
-            DUITRACE(TEXT("%s Click"), msg.pSender->GetText());
+            DUITRACE(_T("%s Click"), msg.pSender->GetText());
 
-            //
             // 发送消息到主窗口
-            //
-
             if (!msg.pSender->GetName().IsEmpty())
             {
-
-                CDuiString *MenuName = new CDuiString(msg.pSender->GetName());
-                ::PostMessage(gContextMenuObServer.GetMainHwnd(), WM_CUSTOMMENU_CLICK, (WPARAM)MenuName, NULL);
+                // new出来的，记得要delete
+                CDuiString *pMenuName = new CDuiString(msg.pSender->GetName());
+                ::PostMessage(gContextMenuObServer.GetMainHwnd(), WM_CUSTOMMENU_CLICK, (WPARAM)pMenuName, 0);
             }
-
         }
     }
 
 
-    void CMenuWnd::Init(CMenuElementUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point)
+    void CMenuWnd::Init(CMenuItemUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point)
     {
         m_BasedPoint = point;
         m_pOwner = pOwner;
@@ -244,6 +250,7 @@ namespace DuiLib {
 
         gContextMenuObServer.AddReceiver(this);
 
+        //  创建菜单窗口
         Create((m_pOwner == NULL) ? m_hParent : m_pOwner->GetManager()->GetPaintWindow(), NULL, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, CDuiRect());
 
         ::ShowWindow(m_hWnd, SW_SHOW);
@@ -272,14 +279,22 @@ namespace DuiLib {
     void CMenuWnd::OnFinalMessage(HWND hWnd)
     {
         RemoveObserver();
+
         if (m_pOwner != NULL)
         {
-            for (int i = 0; i < m_pOwner->GetCount(); i++)
+            int count = m_pOwner->GetCount();
+            for (int i = 0; i < count; i++)
             {
-                if (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)) != NULL) {
-                    (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)))->SetOwner(m_pOwner->GetParent());
-                    (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)))->SetVisible(false);
-                    (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))->SetInternVisible(false);
+                CControlUI *pControl = m_pOwner->GetItemAt(i);
+                if (pControl != NULL)
+                {
+                    CMenuItemUI *pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                    if (pMenuItem != NULL)
+                    {
+                        pMenuItem->SetOwner(m_pOwner->GetParent());
+                        pMenuItem->SetVisible(false);
+                        pMenuItem->SetInternVisible(false);
+                    }
                 }
             }
 
@@ -287,18 +302,19 @@ namespace DuiLib {
             m_pOwner->m_uButtonState &= ~UISTATE_PUSHED;
             m_pOwner->Invalidate();
         }
+
         delete this;
     }
 
     BOOL CMenuWnd::IsRootMenu()
     {
-        return m_pOwner == NULL;
+        return (m_pOwner == NULL);
     }
 
     BOOL CMenuWnd::GetCurrentMonitorWorkRect(LPRECT Rect)
     {
 #if defined(WIN32) && !defined(UNDER_CE)
-        MONITORINFO oMonitor = {};
+        MONITORINFO oMonitor = { 0 };
         oMonitor.cbSize = sizeof(oMonitor);
         ::GetMonitorInfo(::MonitorFromWindow(*this, MONITOR_DEFAULTTOPRIMARY), &oMonitor);
         *Rect = oMonitor.rcWork;
@@ -314,34 +330,27 @@ namespace DuiLib {
         {
             if (!IsRootMenu())
             {
-
-                //
                 // 去掉窗口标题栏
-                //
-
-                LONG styleValue = ::GetWindowLong(*this, GWL_STYLE);
+                LONG styleValue = ::GetWindowLong(m_hWnd, GWL_STYLE);
                 styleValue &= ~WS_CAPTION;
-                ::SetWindowLong(*this, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+                ::SetWindowLong(m_hWnd, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
                 RECT rcClient;
-                ::GetClientRect(*this, &rcClient);
-                ::SetWindowPos(*this, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
+                ::GetClientRect(m_hWnd, &rcClient);
+                ::SetWindowPos(m_hWnd, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
                     rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
 
                 m_pm.Init(m_hWnd);
                 m_pm.SetRoundCorner(1, 1);
 
-                //
                 // The trick is to add the items to the new container. Their owner gets
                 // reassigned by this operation - which is why it is important to reassign
                 // the items back to the righfull owner/manager when the window closes.
                 // 创建一个新的CMenuUI..要设置其属性.一般菜单的样式要写在Default里面
-                //
-
                 m_pLayout = new CMenuUI();
                 m_pm.UseParentResource(m_pOwner->GetManager());
                 m_pLayout->SetManager(&m_pm, NULL, true);
-                LPCTSTR pDefaultAttributes = m_pOwner->GetManager()->GetDefaultAttributeList(kMenuUIInterfaceName);
-                if (pDefaultAttributes)
+                LPCTSTR pDefaultAttributes = m_pOwner->GetManager()->GetDefaultAttributeList(DUI_CTR_MENU);
+                if (pDefaultAttributes != NULL)
                 {
                     m_pLayout->ApplyAttributeList(pDefaultAttributes);
                 }
@@ -353,38 +362,34 @@ namespace DuiLib {
                 m_pLayout->EnableScrollBar();*/
                 m_pLayout->SetAutoDestroy(false);
 
-                //
                 // 将菜单项加载进layout中去
-                //
-
-                for (int i = 0; i < m_pOwner->GetCount(); i++)
+                int count = m_pOwner->GetCount();
+                for (int i = 0; i < count; i++)
                 {
-                    if (m_pOwner->GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL)
+                    CControlUI *pControl = m_pOwner->GetItemAt(i);
+                    if (pControl != NULL)
                     {
-                        (static_cast<CMenuElementUI*>(m_pOwner->GetItemAt(i)))->SetOwner(m_pLayout);
-                        m_pLayout->Add(static_cast<CControlUI*>(m_pOwner->GetItemAt(i)));
+                        CMenuItemUI *pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                        if (pMenuItem != NULL)
+                            pMenuItem->SetOwner(m_pLayout);
+
+                        m_pLayout->Add(pControl);
                     }
                 }
 
                 m_pm.AttachDialog(m_pLayout);
                 m_pm.AddNotifier(this);
 
-                //
-                // Position the popup window in absolute space
-                //
 
+                // Position the popup window in absolute space
                 CDuiRect rcOwner = m_pOwner->GetPos();
 
-                //
                 // 因为continer已经减去的内边距我们这里还的加上.
-                //
-
                 rcOwner.top -= m_pLayout->GetInset().top;
                 rcOwner.bottom += m_pLayout->GetInset().bottom;
                 rcOwner.left -= m_pLayout->GetInset().left;
                 rcOwner.right += m_pLayout->GetInset().right;
 
-                CDuiRect rc = rcOwner;
 
                 int cxFixed = 0;
                 int cyFixed = 0;
@@ -394,10 +399,7 @@ namespace DuiLib {
 
                 SIZE szAvailable = { rcWork.GetWidth(), rcWork.GetHeight() };
 
-                //
                 // 获取所有菜单项的高度和和最大宽度
-                //
-
                 /*for( int it = 0; it < m_pOwner->GetCount(); it++ ) {
                     if(m_pOwner->GetItemAt(it)->GetInterface(kMenuElementUIInterfaceName) != NULL ){
                     CControlUI* pControl = static_cast<CControlUI*>(m_pOwner->GetItemAt(it));
@@ -413,10 +415,7 @@ namespace DuiLib {
                 cyFixed = szAvailable1.cy;
                 cxFixed = szAvailable1.cx;
 
-                //
                 // 加上内边距
-                //
-
                 cyFixed += m_pLayout->GetInset().bottom;
                 cyFixed += m_pLayout->GetInset().top;
                 cxFixed += m_pLayout->GetInset().left;
@@ -428,55 +427,38 @@ namespace DuiLib {
                 RECT rcWindow;
                 GetWindowRect(m_pOwner->GetManager()->GetPaintWindow(), &rcWindow);
 
-                //
                 // 子菜单的top和父菜单相同
-                //
-
+                CDuiRect rc = rcOwner;
                 rc.top = rcOwner.top;
                 rc.bottom = rc.top + cyFixed;
 
                 ::MapWindowRect(m_pOwner->GetManager()->GetPaintWindow(), HWND_DESKTOP, &rc);
 
-                //
                 // 设置子菜单的左侧位于父菜单的右侧
-                //
-
                 rc.left = rcWindow.right;
                 rc.right = rc.left + cxFixed;
                 rc.right += 2;
 
-                //
                 // 超出显示器的底部。向上移动
-                //
-
                 if (rc.bottom > rcWork.bottom)
                 {
                     rc.Offset(0, -(rc.GetHeight() - rcOwner.GetHeight()));
                 }
 
-                //
                 // 超出显示器的右边。向走移动
-                //
-
                 if (rc.right > rcWork.right)
                 {
                     rc.Offset(-(rcOwner.GetWidth() + rc.GetWidth()), 0);
                 }
 
-                //
                 // 超出显示器顶部，向下移动
-                //
-
                 if (rc.top < rcWork.top)
                 {
                     rc.top = rcOwner.top;
                     rc.bottom = rc.top + cyFixed;
                 }
 
-                //
                 // 超出显示器左边，向右移动
-                //
-
                 if (rc.left < rcWork.left)
                 {
                     rc.left = rcWindow.right;
@@ -484,15 +466,10 @@ namespace DuiLib {
                 }
 
                 MoveWindow(m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, FALSE);
-
             }
             else
             {
-
-                //
                 // 根菜单创建
-                //
-
                 m_pm.Init(m_hWnd);
                 m_pm.SetRoundCorner(1, 1);
 
@@ -553,11 +530,7 @@ namespace DuiLib {
         {
             if (m_pOwner != NULL)
             {
-
-                //
                 // 父菜单获取焦点
-                //
-
                 m_pOwner->SetManager(m_pOwner->GetManager(), m_pOwner->GetParent(), false);
                 m_pOwner->SetPos(m_pOwner->GetPos());
                 m_pOwner->SetFocus();
@@ -618,18 +591,15 @@ namespace DuiLib {
         }
 
         LRESULT lRes = 0;
-        if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes)) return lRes;
+        if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes))
+            return lRes;
+
         return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
-
-    // MenuElementUI
-    const TCHAR* const kMenuElementUIClassName = _T("MenuElementUI");
-    const TCHAR* const kMenuElementUIInterfaceName = _T("MenuElement");
-
-    CMenuElementUI::CMenuElementUI()
+    CMenuItemUI::CMenuItemUI()
         : m_pWindow(NULL)
         , m_bHasSubMenu(FALSE)
         , m_RightWidth(10)
@@ -641,25 +611,25 @@ namespace DuiLib {
         //SetMouseChildEnabled(false);
     }
 
-    CMenuElementUI::~CMenuElementUI()
+    CMenuItemUI::~CMenuItemUI()
     {
 
     }
 
-    LPCTSTR CMenuElementUI::GetClass() const
+    LPCTSTR CMenuItemUI::GetClass() const
     {
-        return kMenuElementUIClassName;
+        return _T("MenuItemUI");
     }
 
-    LPVOID CMenuElementUI::GetInterface(LPCTSTR pstrName)
+    LPVOID CMenuItemUI::GetInterface(LPCTSTR pstrName)
     {
-        if (lstrcmpi(pstrName, kMenuElementUIInterfaceName) == 0)
-            return static_cast<CMenuElementUI*>(this);
+        if (lstrcmpi(pstrName, DUI_CTR_MENUITEM) == 0)
+            return static_cast<CMenuItemUI*>(this);
 
         return CListContainerElementUI::GetInterface(pstrName);
     }
 
-    void CMenuElementUI::DoPaint(HDC hDC, const RECT& rcPaint)
+    void CMenuItemUI::DoPaint(HDC hDC, const RECT& rcPaint)
     {
         if (!::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem))
             return;
@@ -672,10 +642,7 @@ namespace DuiLib {
 
         int nItemHeight = m_rcItem.bottom - m_rcItem.top;
 
-        //
         // 绘制左边背景
-        //
-
         if (m_LeftWidth)
         {
             DWORD dwBkColor1 = 0xFF7FAEE4;
@@ -690,11 +657,7 @@ namespace DuiLib {
 
         if (m_bIsSeparator)
         {
-
-            //
             // 直接画一条线.
-            //
-
             //CDuiRect LineRect = m_rcItem;
 
             //LineRect.top = m_rcItem.top + (m_rcItem.bottom - m_rcItem.top - 1) / 2;
@@ -724,28 +687,18 @@ namespace DuiLib {
             CRenderEngine::DrawGradient(hDC, LineRect, GetAdjustColor(dwBkColor2), GetAdjustColor(dwBkColor1), false, 16);
 
             return;
-
         }
 
-        //
         // 绘制背景
-        //
+        CMenuItemUI::DrawItemBk(hDC, m_rcItem);
 
-        CMenuElementUI::DrawItemBk(hDC, m_rcItem);
-
-        //
         // 绘制左边的图标.
-        //
-
-        if (!m_strLeftIcon.IsEmpty()){
-
+        if (!m_strLeftIcon.IsEmpty())
+        {
             CDuiString strModify;
             CDuiRect destRect(0, 0, m_LeftWidth, nItemHeight);
 
-            //
             // 调整icon的位置
-            //
-
             if (m_LeftWidth > m_LeftIconSize.cx)
             {
                 destRect.left = (m_LeftWidth - m_LeftIconSize.cx) / 2;
@@ -762,20 +715,13 @@ namespace DuiLib {
             DrawImage(hDC, (LPCTSTR)m_strLeftIcon, (LPCTSTR)strModify);
         }
 
-        //
         // 绘制右侧箭头
-        //
-
         if (m_bHasSubMenu && !m_strRightArrow.IsEmpty())
         {
-
             CDuiString strModify;
             CDuiRect destRect(m_rcItem.right - m_RightWidth, 0, m_rcItem.right, nItemHeight);
 
-            //
             // 调整icon的位置
-            //
-
             if (m_RightWidth > m_RightArrowSize.cx)
             {
                 destRect.left += (m_RightWidth - m_RightArrowSize.cx) / 2;
@@ -790,13 +736,9 @@ namespace DuiLib {
 
             strModify.SmallFormat(_T("dest='%d,%d,%d,%d'"), destRect.left, destRect.top, destRect.right, destRect.bottom);
             DrawImage(hDC, (LPCTSTR)m_strRightArrow, (LPCTSTR)strModify);
-
         }
 
-        //
         // 绘制文本
-        //
-
         CDuiRect textRect = m_rcItem;
 
         textRect.left += m_LeftWidth;
@@ -804,54 +746,53 @@ namespace DuiLib {
 
         DrawItemText(hDC, textRect);
 
-        //
         // 子控件的绘制
-        //
-
-        for (int i = 0; i < GetCount(); ++i)
+        int count = GetCount();
+        for (int i = 0; i < count; ++i)
         {
-            if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) == NULL)
-                GetItemAt(i)->DoPaint(hDC, rcPaint);
+            CControlUI *pControl = GetItemAt(i);
+            if (pControl != NULL && pControl->GetInterface(DUI_CTR_MENUITEM) == NULL)
+                pControl->DoPaint(hDC, rcPaint);
         }
     }
 
-    void CMenuElementUI::SetLeftIconImage(LPCTSTR lpszLeftIcon)
+    void CMenuItemUI::SetLeftIconImage(LPCTSTR lpszLeftIcon)
     {
         m_strLeftIcon = lpszLeftIcon;
     }
 
-    void CMenuElementUI::SetRightArrowImage(LPCTSTR lpszIcon)
+    void CMenuItemUI::SetRightArrowImage(LPCTSTR lpszIcon)
     {
         m_strRightArrow = lpszIcon;
     }
 
-    void CMenuElementUI::SetRightArrowSize(SIZE Size)
+    void CMenuItemUI::SetRightArrowSize(SIZE Size)
     {
         m_RightArrowSize = Size;
     }
 
-    void CMenuElementUI::SetLeftIconSize(SIZE Size)
+    void CMenuItemUI::SetLeftIconSize(SIZE Size)
     {
         m_LeftIconSize = Size;
     }
 
-    void CMenuElementUI::SetLeftWidth(int nWidth)
+    void CMenuItemUI::SetLeftWidth(int nWidth)
     {
         m_LeftWidth = nWidth;
     }
 
-    void CMenuElementUI::SetRightWidth(int nWidth)
+    void CMenuItemUI::SetRightWidth(int nWidth)
     {
         m_RightWidth = nWidth;
     }
 
-    void CMenuElementUI::SetIsSeparator(bool bSeparator)
+    void CMenuItemUI::SetIsSeparator(bool bSeparator)
     {
         m_bIsSeparator = bSeparator;
         SetEnabled(false);
     }
 
-    void CMenuElementUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
+    void CMenuItemUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
         if (lstrcmpi(pstrName, _T("left")) == 0)
         {
@@ -895,7 +836,7 @@ namespace DuiLib {
         }
     }
 
-    void CMenuElementUI::DrawItemText(HDC hDC, const RECT& rcItem)
+    void CMenuItemUI::DrawItemText(HDC hDC, const RECT& rcItem)
     {
         if (m_sText.IsEmpty())
             return;
@@ -906,28 +847,19 @@ namespace DuiLib {
         TListInfoUI* pInfo = m_pOwner->GetListInfo();
         DWORD iTextColor = pInfo->dwTextColor;
 
-        //
         // 热点文本颜色
-        //
-
         if ((m_uButtonState & UISTATE_HOT) != 0)
         {
             iTextColor = pInfo->dwHotTextColor;
         }
 
-        //
         // 选中文本颜色
-        //
-
         if (IsSelected())
         {
             iTextColor = pInfo->dwSelectedTextColor;
         }
 
-        //
         // 禁用文本颜色
-        //
-
         if (!IsEnabled())
         {
             iTextColor = pInfo->dwDisabledTextColor;
@@ -935,20 +867,14 @@ namespace DuiLib {
 
         int nLinks = 0;
 
-        //
         // 计算绘制的位置
-        //
-
         RECT rcText = rcItem;
         rcText.left += pInfo->rcTextPadding.left;
         rcText.right -= pInfo->rcTextPadding.right;
         rcText.top += pInfo->rcTextPadding.top;
         rcText.bottom -= pInfo->rcTextPadding.bottom;
 
-        //
         // 绘制文字
-        //
-
         if (pInfo->bShowHtml)
         {
             CRenderEngine::DrawHtmlText(hDC, m_pManager, rcText, m_sText, iTextColor,
@@ -962,20 +888,24 @@ namespace DuiLib {
     }
 
 
-    SIZE CMenuElementUI::EstimateSize(SIZE szAvailable)
+    SIZE CMenuItemUI::EstimateSize(SIZE szAvailable)
     {
         SIZE cXY = { 0 };
 
-        //
         // 获取子控件的最大宽度,并计算所有子控件的高度和
-        //
-
-        for (int it = 0; it < GetCount(); it++)
+        int count = GetCount();
+        for (int i = 0; i < count; i++)
         {
-            CControlUI* pControl = static_cast<CControlUI*>(GetItemAt(it));
-            if (!pControl->IsVisible()) continue;
+            CControlUI* pControl = GetItemAt(i);
+
+            ASSERT(pControl != NULL);
+
+            if (!pControl->IsVisible())
+                continue;
+
             SIZE sz = pControl->EstimateSize(szAvailable);
             cXY.cy += sz.cy;
+
             if (cXY.cx < sz.cx)
                 cXY.cx = sz.cx;
         }
@@ -986,19 +916,12 @@ namespace DuiLib {
             return cXY;
         }
 
-        //
         // 高度没有设置则,根据文本信息来获取菜单项的高度
-        //
-
         if (cXY.cy == 0)
         {
-
             TListInfoUI* pInfo = m_pOwner->GetListInfo();
 
-            //
             // 设置绘制颜色
-            //
-
             DWORD iTextColor = pInfo->dwTextColor;
             if ((m_uButtonState & UISTATE_HOT) != 0)
             {
@@ -1018,24 +941,15 @@ namespace DuiLib {
             RECT rcText = { 0, 0, max(szAvailable.cx, m_cxyFixed.cx), 9999 };
             rcText.left += pInfo->rcTextPadding.left;
 
-            //
             // 加上leftSize
-            //
-
             rcText.left += m_LeftWidth;
 
             rcText.right -= pInfo->rcTextPadding.right;
 
-            //
             // 去掉右边的长度.
-            //
-
             rcText.right -= m_RightWidth;
 
-            //
             // 通过DT_CALCRECT获取绘制宽度/高度
-            //
-
             if (pInfo->bShowHtml)
             {
                 int nLinks = 0;
@@ -1046,10 +960,7 @@ namespace DuiLib {
                 CRenderEngine::DrawText(m_pManager->GetPaintDC(), m_pManager, rcText, m_sText, iTextColor, pInfo->nFont, DT_CALCRECT | pInfo->uTextStyle);
             }
 
-            //
             // 设置高度宽度
-            //
-
             cXY.cx = rcText.right - rcText.left + pInfo->rcTextPadding.left + pInfo->rcTextPadding.right + m_LeftWidth + m_RightWidth;
             cXY.cy = rcText.bottom - rcText.top + pInfo->rcTextPadding.top + pInfo->rcTextPadding.bottom;
         }
@@ -1064,77 +975,65 @@ namespace DuiLib {
             cXY.cy = m_LeftIconSize.cy;
         }
 
-        //
         // 如果有固定高度则使用固定高度
-        //
-
         if (m_cxyFixed.cy != 0)
             cXY.cy = m_cxyFixed.cy;
 
         return cXY;
     }
 
-    void CMenuElementUI::DoInit()
+    void CMenuItemUI::DoInit()
     {
-
-        //
         // 控件加载完成.判断其是否有子节点
-        //
-
-        for (int i = 0; i < GetCount(); ++i)
+        int count = GetCount();
+        for (int i = 0; i < count; ++i)
         {
-
-            //
             // 将MenuElement中的子控件都设置为可见
-            //
-
-            if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL)
+            CControlUI *pControl = GetItemAt(i);
+            if (pControl->GetInterface(DUI_CTR_MENUITEM) != NULL)
             {
                 m_bHasSubMenu = TRUE;
                 break;
             }
         }
 
-        //
         // 从默认属性列表中加载右侧箭头的属性
-        //
-
-        LPCTSTR pDefaultAttributes = m_pManager->GetDefaultAttributeList(TEXT("MenuArrow"));
-        ApplyAttributeList(pDefaultAttributes);
-
+        LPCTSTR pDefaultAttributes = m_pManager->GetDefaultAttributeList(_T("MenuArrow"));
+        if (pDefaultAttributes != NULL)
+            ApplyAttributeList(pDefaultAttributes);
     }
 
-    VOID CMenuElementUI::SetAllSubMenuItemVisible(bool bVisible)
+    void CMenuItemUI::SetAllSubMenuItemVisible(bool bVisible)
     {
-        for (int i = 0; i < GetCount(); ++i)
+        int count = GetCount();
+        for (int i = 0; i < count; ++i)
         {
-            if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL)
+            CControlUI *pControl = GetItemAt(i);
+            if (pControl != NULL)
             {
-                (static_cast<CMenuElementUI*>(GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))->SetVisible(bVisible);
-                (static_cast<CMenuElementUI*>(GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))->SetInternVisible(bVisible);
+                CMenuItemUI *pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                if (pMenuItem != NULL)
+                {
+                    pMenuItem->SetVisible(bVisible);
+                    pMenuItem->SetInternVisible(bVisible);
+                }
             }
         }
     }
 
-    void CMenuElementUI::DoEvent(TEventUI& event)
+    void CMenuItemUI::DoEvent(TEventUI& event)
     {
         if (event.Type == UIEVENT_MOUSEENTER)
         {
             CListContainerElementUI::DoEvent(event);
 
-            //
             // 如果子菜单项已经创建了,则不进行处理
-            //
-
-            if (m_pWindow)
+            if (m_pWindow != NULL)
                 return;
 
             SetAllSubMenuItemVisible();
 
-            //
             // 如果有子菜单则创建之,否则通知有子菜单项的菜单项关闭子菜单
-            //
-
             if (m_bHasSubMenu)
             {
                 m_pOwner->SelectItem(GetIndex(), true);
@@ -1142,11 +1041,7 @@ namespace DuiLib {
             }
             else
             {
-
-                //
                 // 通知关闭平级菜单上的子菜单
-                //
-
                 ContextMenuParam param;
                 param.hWnd = m_pManager->GetPaintWindow();
                 param.wParam = 2;
@@ -1162,7 +1057,7 @@ namespace DuiLib {
             {
                 CListContainerElementUI::DoEvent(event);
 
-                if (m_pWindow)
+                if (m_pWindow != NULL)
                     return;
 
                 SetAllSubMenuItemVisible();
@@ -1185,11 +1080,12 @@ namespace DuiLib {
         CListContainerElementUI::DoEvent(event);
     }
 
-    bool CMenuElementUI::Activate()
+    bool CMenuItemUI::Activate()
     {
         if (CListContainerElementUI::Activate() && m_bSelected)
         {
-            if (m_pWindow) return true;
+            if (m_pWindow != NULL)
+                return true;
 
             SetAllSubMenuItemVisible();
 
@@ -1211,24 +1107,25 @@ namespace DuiLib {
         return false;
     }
 
-    CMenuWnd* CMenuElementUI::GetMenuWnd()
+    CMenuWnd* CMenuItemUI::GetMenuWnd()
     {
         return m_pWindow;
     }
 
-    void CMenuElementUI::CreateMenuWnd()
+    void CMenuItemUI::CreateMenuWnd()
     {
-        if (m_pWindow) return;
+        if (m_pWindow != NULL)
+            return;
 
         m_pWindow = new CMenuWnd(m_pManager->GetPaintWindow());
-        ASSERT(m_pWindow);
+        ASSERT(m_pWindow != NULL);
 
         ContextMenuParam param;
         param.hWnd = m_pManager->GetPaintWindow();
         param.wParam = 2;
         gContextMenuObServer.RBroadcast(param);
 
-        m_pWindow->Init(static_cast<CMenuElementUI*>(this), _T(""), _T(""), CPoint());
+        m_pWindow->Init(this, _T(""), _T(""), CPoint());
     }
 
 

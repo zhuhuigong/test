@@ -1,5 +1,7 @@
-﻿#ifndef OBSERVER_IMPL_BASE_HPP
-#define OBSERVER_IMPL_BASE_HPP
+﻿#ifndef __OBSERVER_IMPL_BASE_H__
+#define __OBSERVER_IMPL_BASE_H__
+
+#pragma once
 
 #include <map>
 
@@ -31,15 +33,20 @@ template <typename ReturnT, typename ParamT>
 class ReceiverImpl;
 
 template <typename ReturnT, typename ParamT>
-class ObserverImpl : public ObserverImplBase<ReturnT, ParamT>
+class ObserverImpl : public ObserverImplBase < ReturnT, ParamT >
 {
     template <typename ReturnT, typename ParamT>
     friend class Iterator;
 public:
     ObserverImpl()
-    {}
+    {
 
-    virtual ~ObserverImpl() {}
+    }
+
+    virtual ~ObserverImpl()
+    {
+
+    }
 
     virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver)
     {
@@ -102,31 +109,42 @@ public:
     template <typename ReturnT, typename ParamT>
     class Iterator
     {
-        ObserverImpl<ReturnT, ParamT> & _tbl;
-        DWORD index;
-        ReceiverImplBase<ReturnT, ParamT>* ptr;
     public:
-        Iterator( ObserverImpl & table )
-            : _tbl( table ), index(0), ptr(NULL)
-        {}
+        Iterator(ObserverImpl & table)
+            : _tbl(table)
+            , index(0)
+            , ptr(NULL)
+        {
 
-        Iterator( const Iterator & v )
-            : _tbl( v._tbl ), index(v.index), ptr(v.ptr)
-        {}
+        }
+
+        Iterator(const Iterator & v)
+            : _tbl(v._tbl)
+            , index(v.index)
+            , ptr(v.ptr)
+        {
+
+        }
 
         ReceiverImplBase<ReturnT, ParamT>* next()
         {
-            if ( index >= _tbl.receivers_.size() )
+            if (index >= _tbl.receivers_.size())
                 return NULL;
 
-            for ( ; index < _tbl.receivers_.size(); )
+            for (; index < _tbl.receivers_.size();)
             {
-                ptr = _tbl.receivers_[ index++ ];
-                if ( ptr )
+                ptr = _tbl.receivers_[index++];
+                if (ptr)
                     return ptr;
             }
+
             return NULL;
         }
+
+    private:
+        ObserverImpl<ReturnT, ParamT> & _tbl;
+        DWORD index;
+        ReceiverImplBase<ReturnT, ParamT>* ptr;
     };
 
 protected:
@@ -136,13 +154,18 @@ protected:
 
 
 template <typename ReturnT, typename ParamT>
-class ReceiverImpl : public ReceiverImplBase<ReturnT, ParamT>
+class ReceiverImpl : public ReceiverImplBase < ReturnT, ParamT >
 {
 public:
     ReceiverImpl()
-    {}
+    {
 
-    virtual ~ReceiverImpl() {}
+    }
+
+    virtual ~ReceiverImpl()
+    {
+
+    }
 
     virtual void AddObserver(ObserverImplBase<ReturnT, ParamT>* observer)
     {
@@ -173,4 +196,4 @@ protected:
     ObserversVector observers_;
 };
 
-#endif // OBSERVER_IMPL_BASE_HPP
+#endif // __OBSERVER_IMPL_BASE_H__

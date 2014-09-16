@@ -221,54 +221,56 @@ protected:                                                                \
 //////////////BEGIN控件名称宏定义//////////////////////////////////////////////////
 ///
 
-#define  DUI_CTR_EDIT                            (_T("Edit"))
-#define  DUI_CTR_LIST                            (_T("List"))
-#define  DUI_CTR_TEXT                            (_T("Text"))
+#define DUI_CTR_EDIT                            (_T("Edit"))
+#define DUI_CTR_LIST                            (_T("List"))
+#define DUI_CTR_TEXT                            (_T("Text"))
+#define DUI_CTR_MENU                            (_T("Menu"))
 
-#define  DUI_CTR_COMBO                           (_T("Combo"))
-#define  DUI_CTR_LABEL                           (_T("Label"))
-#define  DUI_CTR_FLASH                           (_T("Flash"))
+#define DUI_CTR_COMBO                           (_T("Combo"))
+#define DUI_CTR_LABEL                           (_T("Label"))
+#define DUI_CTR_FLASH                           (_T("Flash"))
 
-#define  DUI_CTR_BUTTON                          (_T("Button"))
-#define  DUI_CTR_OPTION                          (_T("Option"))
-#define  DUI_CTR_SLIDER                          (_T("Slider"))
-#define  DUI_CTR_SHADOW                          (_T("Shadow"))
+#define DUI_CTR_BUTTON                          (_T("Button"))
+#define DUI_CTR_OPTION                          (_T("Option"))
+#define DUI_CTR_SLIDER                          (_T("Slider"))
+#define DUI_CTR_SHADOW                          (_T("Shadow"))
 
-#define  DUI_CTR_CONTROL                         (_T("Control"))
-#define  DUI_CTR_ACTIVEX                         (_T("ActiveX"))
+#define DUI_CTR_CONTROL                         (_T("Control"))
+#define DUI_CTR_ACTIVEX                         (_T("ActiveX"))
 
-#define  DUI_CTR_LISTITEM                        (_T("ListItem"))
-#define  DUI_CTR_PROGRESS                        (_T("Progress"))
-#define  DUI_CTR_RICHEDIT                        (_T("RichEdit"))
-#define  DUI_CTR_CHECKBOX                        (_T("CheckBox"))
-#define  DUI_CTR_COMBOBOX                        (_T("ComboBox"))
-#define  DUI_CTR_DATETIME                        (_T("DateTime"))
-#define  DUI_CTR_TREEVIEW                        (_T("TreeView"))
-#define  DUI_CTR_TREENODE                        (_T("TreeNode"))
+#define DUI_CTR_LISTITEM                        (_T("ListItem"))
+#define DUI_CTR_PROGRESS                        (_T("Progress"))
+#define DUI_CTR_RICHEDIT                        (_T("RichEdit"))
+#define DUI_CTR_CHECKBOX                        (_T("CheckBox"))
+#define DUI_CTR_COMBOBOX                        (_T("ComboBox"))
+#define DUI_CTR_DATETIME                        (_T("DateTime"))
+#define DUI_CTR_TREEVIEW                        (_T("TreeView"))
+#define DUI_CTR_TREENODE                        (_T("TreeNode"))
+#define DUI_CTR_MENUITEM                        (_T("MenuItem"))
 
-#define  DUI_CTR_CONTAINER                       (_T("Container"))
-#define  DUI_CTR_TABLAYOUT                       (_T("TabLayout"))
-#define  DUI_CTR_SCROLLBAR                       (_T("ScrollBar"))
+#define DUI_CTR_CONTAINER                       (_T("Container"))
+#define DUI_CTR_TABLAYOUT                       (_T("TabLayout"))
+#define DUI_CTR_SCROLLBAR                       (_T("ScrollBar"))
 
-#define  DUI_CTR_LISTHEADER                      (_T("ListHeader"))
-#define  DUI_CTR_TILELAYOUT                      (_T("TileLayout"))
-#define  DUI_CTR_WEBBROWSER                      (_T("WebBrowser"))
+#define DUI_CTR_LISTHEADER                      (_T("ListHeader"))
+#define DUI_CTR_TILELAYOUT                      (_T("TileLayout"))
+#define DUI_CTR_WEBBROWSER                      (_T("WebBrowser"))
 
-#define  DUI_CTR_CHILDLAYOUT                     (_T("ChildLayout"))
-#define  DUI_CTR_LISTELEMENT                     (_T("ListElement"))
-#define  DUI_CTR_RADIOBUTTON                     (_T("RadioButton"))
+#define DUI_CTR_CHILDLAYOUT                     (_T("ChildLayout"))
+#define DUI_CTR_LISTELEMENT                     (_T("ListElement"))
+#define DUI_CTR_RADIOBUTTON                     (_T("RadioButton"))
 
-#define  DUI_CTR_DIALOGLAYOUT                    (_T("DialogLayout"))
+#define DUI_CTR_DIALOGLAYOUT                    (_T("DialogLayout"))
 
-#define  DUI_CTR_VERTICALLAYOUT                  (_T("VerticalLayout"))
-#define  DUI_CTR_LISTHEADERITEM                  (_T("ListHeaderItem"))
+#define DUI_CTR_VERTICALLAYOUT                  (_T("VerticalLayout"))
+#define DUI_CTR_LISTHEADERITEM                  (_T("ListHeaderItem"))
 
-#define  DUI_CTR_LISTTEXTELEMENT                 (_T("ListTextElement"))
+#define DUI_CTR_LISTTEXTELEMENT                 (_T("ListTextElement"))
 
-#define  DUI_CTR_HORIZONTALLAYOUT                (_T("HorizontalLayout"))
-#define  DUI_CTR_LISTLABELELEMENT                (_T("ListLabelElement"))
+#define DUI_CTR_HORIZONTALLAYOUT                (_T("HorizontalLayout"))
+#define DUI_CTR_LISTLABELELEMENT                (_T("ListLabelElement"))
 
-#define  DUI_CTR_LISTCONTAINERELEMENT            (_T("ListContainerElement"))
+#define DUI_CTR_LISTCONTAINERELEMENT            (_T("ListContainerElement"))
 
 ///
 //////////////END控件名称宏定义//////////////////////////////////////////////////
