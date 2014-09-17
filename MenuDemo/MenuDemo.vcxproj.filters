@@ -39,9 +39,6 @@
     <ClInclude Include="main_frame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="observer_impl_base.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,6 +51,9 @@
     <ClInclude Include="resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="observer_impl_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MenuDemo.rc">
@@ -61,10 +61,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="res\menutest.xml">
+    <Xml Include="res\skin.xml">
       <Filter>Resource Files</Filter>
     </Xml>
-    <Xml Include="res\skin.xml">
+    <Xml Include="res\menu.xml">
       <Filter>Resource Files</Filter>
     </Xml>
   </ItemGroup>

@@ -33,10 +33,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 #else
     HRESULT Hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
 #endif
-    if( FAILED(Hr) ) return 0;
+    if (FAILED(Hr)) return 0;
 
     MainFrame* pFrame = new MainFrame();
-    if( pFrame == NULL ) return 0;
+    if (pFrame == NULL) return 0;
 #if defined(WIN32) && !defined(UNDER_CE)
     pFrame->Create(NULL, _T("MenuTest"), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 800);
 #else

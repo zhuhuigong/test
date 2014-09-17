@@ -153,9 +153,6 @@
     <ClCompile Include="Control\UIRadioButton.cpp">
       <Filter>Source Files\Control</Filter>
     </ClCompile>
-    <ClCompile Include="Control\UIMenu.cpp">
-      <Filter>Source Files\Control</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -279,12 +276,6 @@
       <Filter>Header Files\Control</Filter>
     </ClInclude>
     <ClInclude Include="Control\UIRadioButton.h">
-      <Filter>Header Files\Control</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils\observer_impl_base.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Control\UIMenu.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
   </ItemGroup>

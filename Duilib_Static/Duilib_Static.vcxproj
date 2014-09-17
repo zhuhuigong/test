@@ -149,7 +149,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\DuiLib\Control\observer_impl_base.hpp" />
     <ClInclude Include="..\DuiLib\Control\UIActiveX.h" />
     <ClInclude Include="..\DuiLib\Control\UIButton.h" />
     <ClInclude Include="..\DuiLib\Control\UICheckBox.h" />
@@ -160,7 +159,6 @@
     <ClInclude Include="..\DuiLib\Control\UIFlash.h" />
     <ClInclude Include="..\DuiLib\Control\UILabel.h" />
     <ClInclude Include="..\DuiLib\Control\UIList.h" />
-    <ClInclude Include="..\DuiLib\Control\UIMenu.h" />
     <ClInclude Include="..\DuiLib\Control\UIOption.h" />
     <ClInclude Include="..\DuiLib\Control\UIProgress.h" />
     <ClInclude Include="..\DuiLib\Control\UIRadioButton.h" />
@@ -208,7 +206,6 @@
     <ClCompile Include="..\DuiLib\Control\UIFlash.cpp" />
     <ClCompile Include="..\DuiLib\Control\UILabel.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIList.cpp" />
-    <ClCompile Include="..\DuiLib\Control\UIMenu.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIOption.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIProgress.cpp" />
     <ClCompile Include="..\DuiLib\Control\UIRadioButton.cpp" />

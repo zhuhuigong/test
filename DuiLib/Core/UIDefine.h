@@ -224,7 +224,6 @@ protected:                                                                \
 #define DUI_CTR_EDIT                            (_T("Edit"))
 #define DUI_CTR_LIST                            (_T("List"))
 #define DUI_CTR_TEXT                            (_T("Text"))
-#define DUI_CTR_MENU                            (_T("Menu"))
 
 #define DUI_CTR_COMBO                           (_T("Combo"))
 #define DUI_CTR_LABEL                           (_T("Label"))
@@ -246,7 +245,6 @@ protected:                                                                \
 #define DUI_CTR_DATETIME                        (_T("DateTime"))
 #define DUI_CTR_TREEVIEW                        (_T("TreeView"))
 #define DUI_CTR_TREENODE                        (_T("TreeNode"))
-#define DUI_CTR_MENUITEM                        (_T("MenuItem"))
 
 #define DUI_CTR_CONTAINER                       (_T("Container"))
 #define DUI_CTR_TABLAYOUT                       (_T("TabLayout"))

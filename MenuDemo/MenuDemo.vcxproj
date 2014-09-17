@@ -276,7 +276,7 @@
   <ItemGroup>
     <ClInclude Include="debug.hpp" />
     <ClInclude Include="main_frame.hpp" />
-    <ClInclude Include="observer_impl_base.hpp" />
+    <ClInclude Include="observer_impl_base.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="UICrack.h" />
@@ -286,7 +286,7 @@
     <ResourceCompile Include="MenuDemo.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="res\menutest.xml" />
+    <Xml Include="res\menu.xml" />
     <Xml Include="res\skin.xml" />
   </ItemGroup>
   <ItemGroup>

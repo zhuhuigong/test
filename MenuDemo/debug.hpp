@@ -42,14 +42,14 @@ extern int      g_iDebugLevel;
 extern bool     g_bSaveLogFile;
 extern TCHAR    g_bLogSavePath[MAX_PATH];
 
-BOOL DbgPrint(__in LPCTSTR lpszFormatString,...);
+BOOL DbgPrint(__in LPCTSTR lpszFormatString, ...);
 
 #define DBGMSG(level, prefix, msg) { \
     INT dbgLevel = level; \
     if (g_iDebugLevel <= (dbgLevel)) { \
     DbgPrint(_T("%s\t\tFILE:%s\t\tLINE:%d\t\t"), prefix, __TFILE__, __LINE__);\
     DbgPrint(msg); \
-    } \
+            } \
 }
 
 #define DBGPRINT(level, msg) { \
@@ -57,7 +57,7 @@ BOOL DbgPrint(__in LPCTSTR lpszFormatString,...);
     if (g_iDebugLevel <= (dbgLevel)) { \
     DbgPrint(_T("FILE:%s\t\tLINE:%d\t\t"), __TFILE__, __LINE__);\
     DbgPrint(msg); \
-    } \
+            } \
 }
 
 #ifdef _DEBUG

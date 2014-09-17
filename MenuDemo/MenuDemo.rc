@@ -27,21 +27,21 @@ LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE
 BEGIN
-    "resource.h\0"
+"resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE
 BEGIN
-    "#include ""afxres.h""\r\n"
-    "\0"
+"#include ""afxres.h""\r\n"
+"\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE
 BEGIN
-    "\r\n"
-    "\0"
+"\r\n"
+"\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -51,50 +51,53 @@ END
 //
 // XML
 //
-IDR_SKINXML             XML              "res\\skin.xml"
-IDR_XML_MENU             XML              "res\\menutest.xml"
+IDR_SKINXML                     XML                 "res\\skin.xml"
+IDR_XML_MENU                    XML                 "res\\menu.xml"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // PNG
 //
-IDR_PNG_MINIMIZE				PNG              "res\\minimize.png"
-IDR_PNG_MINIMIZE_H				PNG              "res\\minimize_h.png"
-IDR_PNG_MINIMIZE_P				PNG              "res\\minimize_p.png"
+IDR_PNG_MINIMIZE0               PNG                 "res\\minimize0.png"
+IDR_PNG_MINIMIZE1               PNG                 "res\\minimize1.png"
+IDR_PNG_MINIMIZE2               PNG                 "res\\minimize2.png"
 
-IDR_PNG_MAXIMIZE				PNG              "res\\maximize.png"
-IDR_PNG_MAXIMIZE_H				PNG              "res\\maximize_h.png"
-IDR_PNG_MAXIMIZE_P				PNG              "res\\maximize_p.png"
+IDR_PNG_MAXIMIZE0               PNG                 "res\\maximize0.png"
+IDR_PNG_MAXIMIZE1               PNG                 "res\\maximize1.png"
+IDR_PNG_MAXIMIZE2               PNG                 "res\\maximize2.png"
 
-IDR_PNG_RESTORE	                PNG				"res\\restore.png"
-IDR_PNG_RESTORE_H				PNG				"res\\restore_h.png"
-IDR_PNG_RESTORE_P				PNG				"res\\restore_p.png"
+IDR_PNG_RESTORE0                PNG                 "res\\restore0.png"
+IDR_PNG_RESTORE1                PNG                 "res\\restore1.png"
+IDR_PNG_RESTORE2                PNG                 "res\\restore2.png"
 
-IDR_PNG_CLOSE	                PNG				"res\\close.png"
-IDR_PNG_CLOSE_H					PNG				"res\\close_h.png"
-IDR_PNG_CLOSE_P					PNG				"res\\close_p.png"
+IDR_PNG_CLOSE0                  PNG                 "res\\close0.png"
+IDR_PNG_CLOSE1                  PNG                 "res\\close1.png"
+IDR_PNG_CLOSE2                  PNG                 "res\\close2.png"
 
-IDR_PNG_BUTTON	                PNG				"res\\button.png"
-IDR_PNG_BUTTON_H				PNG				"res\\button_h.png"
-IDR_PNG_BUTTON_P				PNG				"res\\button_p.png"
+IDR_PNG_BUTTON0                 PNG                 "res\\button0.png"
+IDR_PNG_BUTTON1                 PNG                 "res\\button1.png"
+IDR_PNG_BUTTON2                 PNG                 "res\\button2.png"
 
-IDR_PNG_COMBOX					PNG				"res\\combo.png"
+IDR_PNG_COMBOX                  PNG                 "res\\combo.png"
 
-IDR_PNG_SCROLLBAR_V				PNG				"res\\scrollbar_v.png"
+IDR_PNG_SCROLLBAR_V             PNG                 "res\\scrollbar_v.png"
 
-IDR_PNG_MENU_BK						PNG 			"res\menu_bk.png"
-IDR_PNG_MENU_EXPAND				PNG 			"res\\tree_expand.png"
+IDR_PNG_MENU_BK                 PNG                 "res\menu_bk.png"
+IDR_PNG_MENU_EXPAND             PNG                 "res\\tree_expand.png"
 
-IDR_PNG_CHECKBOX					PNG				"res\\checkbox.png"
-IDR_PNG_CHECKBOX_H				PNG				"res\\checkbox_h.png"
-IDR_PNG_CHECKBOX_P				PNG				"res\\checkbox_p.png"
-IDR_PNG_RADIO					PNG						"res\\radio.png"
-IDR_PNG_RADIO_H				PNG						"res\\radio_h.png"
-IDR_PNG_RADIO_P				PNG						"res\\radio_p.png"
+IDR_PNG_CHECKBOX0               PNG                 "res\\checkbox0.png"
+IDR_PNG_CHECKBOX1               PNG                 "res\\checkbox1.png"
+IDR_PNG_CHECKBOX2               PNG                 "res\\checkbox2.png"
+IDR_PNG_RADIO0                  PNG                 "res\\radio0.png"
+IDR_PNG_RADIO1                  PNG                 "res\\radio1.png"
+IDR_PNG_RADIO2                  PNG                 "res\\radio2.png"
 
-IDR_PNG_SLIDER_BG			PNG					"res\\slider_bg.png"
-IDR_PNG_SLIDER_FG			PNG					"res\\slider_fg.png"
-IDR_PNG_SLIDER_THUMB			PNG			"res\\slider_thumb.png"
+IDR_PNG_SLIDER_BG               PNG                 "res\\slider_bg.png"
+IDR_PNG_SLIDER_FG               PNG                 "res\\slider_fg.png"
+IDR_PNG_SLIDER_THUMB            PNG                 "res\\slider_thumb.png"
+IDR_PNG_SHADOW                  PNG                 "res\\shadow.png"
+
+IDR_JPG_BG_IMAGE                JPG                 "res\\bg.jpg"
 
 #endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////

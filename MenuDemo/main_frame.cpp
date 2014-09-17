@@ -58,7 +58,7 @@ void MainFrame::OnFinalMessage(HWND hWnd)
 
 CDuiString MainFrame::GetSkinFile()
 {
-    TCHAR szBuf[MAX_PATH] = {0};
+    TCHAR szBuf[MAX_PATH] = { 0 };
     _stprintf_s(szBuf, MAX_PATH - 1, _T("%d"), IDR_SKINXML);
     return szBuf;
 }
@@ -83,16 +83,16 @@ LRESULT MainFrame::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
         if (!bZoomed)
         {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kMaxButtonControlName));
-            if( pControl ) pControl->SetVisible(false);
+            if (pControl) pControl->SetVisible(false);
             pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kRestoreButtonControlName));
-            if( pControl ) pControl->SetVisible(true);
+            if (pControl) pControl->SetVisible(true);
         }
-        else 
+        else
         {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kMaxButtonControlName));
-            if( pControl ) pControl->SetVisible(true);
+            if (pControl) pControl->SetVisible(true);
             pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kRestoreButtonControlName));
-            if( pControl ) pControl->SetVisible(false);
+            if (pControl) pControl->SetVisible(false);
         }
     }
 #else
@@ -137,7 +137,11 @@ void MainFrame::OnPrepare(TNotifyUI& msg)
 
 void MainFrame::Notify(TNotifyUI& msg)
 {
-    if (_tcsicmp(msg.sType, kWindowInit) == 0)
+    if (lstrcmpi(msg.sType, _T("menu")) == 0)
+    {
+        ShowContextMenu(msg);
+    }
+    else if (_tcsicmp(msg.sType, kWindowInit) == 0)
     {
         OnPrepare(msg);
     }
@@ -179,13 +183,9 @@ void MainFrame::Notify(TNotifyUI& msg)
             SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
 #endif
         }
-        else if (_tcsicmp(msg.pSender->GetName(), _T("btn_menu")) == 0) 
+        else if (_tcsicmp(msg.pSender->GetName(), _T("btn_menu")) == 0)
         {
-            CMenuWnd* pMenu = new CMenuWnd(m_hWnd);
-            CPoint point = msg.ptMouse;
-            ClientToScreen(m_hWnd, &point);
-            STRINGorID xml(IDR_XML_MENU);
-            pMenu->Init(NULL, xml, _T("xml"), point);
+            ShowContextMenu(msg);
         }
     }
     else if (_tcsicmp(msg.sType, kTimer) == 0)
@@ -197,4 +197,13 @@ void MainFrame::Notify(TNotifyUI& msg)
 LRESULT MainFrame::HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     return 0;
+}
+
+void MainFrame::ShowContextMenu(TNotifyUI& msg)
+{
+    CMenuWnd* pMenu = new CMenuWnd(m_hWnd);
+    CPoint point = msg.ptMouse;
+    ClientToScreen(m_hWnd, &point);
+    STRINGorID xml(IDR_XML_MENU);
+    pMenu->Init(NULL, xml, _T("xml"), point);
 }

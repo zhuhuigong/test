@@ -22,13 +22,11 @@
 class MainFrame : public WindowImplBase
 {
 public:
-
     MainFrame();
     ~MainFrame();
 
 public:
-
-    LPCTSTR GetWindowClassName() const; 
+    LPCTSTR GetWindowClassName() const;
     virtual void OnFinalMessage(HWND hWnd);
     virtual void InitWindow();
     virtual LRESULT ResponseDefaultKeyEvent(WPARAM wParam);
@@ -40,12 +38,12 @@ public:
     virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     virtual LRESULT HandleCustomMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-protected:  
-
+protected:
     void Notify(TNotifyUI& msg);
     void OnPrepare(TNotifyUI& msg);
     void OnExit(TNotifyUI& msg);
     void OnTimer(TNotifyUI& msg);
+    void ShowContextMenu(TNotifyUI& msg);
 };
 
 #endif // MAINFRAME_HPP

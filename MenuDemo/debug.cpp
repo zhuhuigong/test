@@ -22,7 +22,7 @@
 
 #if defined(DBG_THREADSAFE)
 
-class OS_CLockable 
+class OS_CLockable
 {
 public:
     // ## Constructor / Destructor
@@ -62,9 +62,9 @@ private:
 
     // ## declarations with no implementations (prevent accidental use)
 
-    OS_CLockable (const OS_CLockable&);
+    OS_CLockable(const OS_CLockable&);
     OS_CLockable& operator= (const OS_CLockable&);
-}; 
+};
 
 // ............................................................................
 // CLASS NAME: OS_CAutoLock
@@ -81,10 +81,12 @@ public:
 
     // ## Constructors
     OS_CAutoLock(OS_CLockable &lockable) : m_lockable(lockable)
-    {lockable.Acquire(); };
+    {
+        lockable.Acquire();
+    };
 
     // ## Destructor
-    ~OS_CAutoLock() { m_lockable.Release();};
+    ~OS_CAutoLock() { m_lockable.Release(); };
 
 private:
 
@@ -93,8 +95,8 @@ private:
 
     // ## declarations with no implementations (prevent accidental use)
 
-    OS_CAutoLock ();
-    OS_CAutoLock (const OS_CAutoLock&);
+    OS_CAutoLock();
+    OS_CAutoLock(const OS_CAutoLock&);
     OS_CAutoLock& operator= (const OS_CAutoLock&);
 };
 
@@ -110,12 +112,12 @@ private:
 // ...........................................................................
 OS_CLockable::OS_CLockable()
 {
-    OSVERSIONINFO osvi = {0};
+    OSVERSIONINFO osvi = { 0 };
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&osvi);
-    dwWindowsMajorVersion =  osvi.dwMajorVersion;
-    dwWindowsMinorVersion =  osvi.dwMinorVersion;
-    if(dwWindowsMajorVersion < 6)
+    dwWindowsMajorVersion = osvi.dwMajorVersion;
+    dwWindowsMinorVersion = osvi.dwMinorVersion;
+    if (dwWindowsMajorVersion < 6)
         ::InitializeCriticalSection(&m_critSec);
 
     return;
@@ -129,7 +131,7 @@ OS_CLockable::OS_CLockable()
 // ...........................................................................
 OS_CLockable::~OS_CLockable()
 {
-    if(dwWindowsMajorVersion < 6)
+    if (dwWindowsMajorVersion < 6)
         ::DeleteCriticalSection(&m_critSec);
 
     return;
@@ -143,7 +145,7 @@ OS_CLockable::~OS_CLockable()
 // ...........................................................................
 void OS_CLockable::Acquire()
 {
-    if(dwWindowsMajorVersion < 6)
+    if (dwWindowsMajorVersion < 6)
         ::EnterCriticalSection(&m_critSec);
 }
 
@@ -155,7 +157,7 @@ void OS_CLockable::Acquire()
 // ...........................................................................
 void OS_CLockable::Release()
 {
-    if(dwWindowsMajorVersion < 6)
+    if (dwWindowsMajorVersion < 6)
         ::LeaveCriticalSection(&m_critSec);
 }
 #endif
@@ -163,16 +165,16 @@ void OS_CLockable::Release()
 #define MAX_LOG_FILE_SIZE   static_cast<int>(1024*1024/2)
 
 #ifdef _DEBUG
-int     g_iDebugLevel   =   DBG_VERBOSE;
+int     g_iDebugLevel = DBG_VERBOSE;
 #else
 int     g_iDebugLevel   =   DBG_ERROR;
 #endif
 
-bool    g_bSaveLogFile  =   false;
+bool    g_bSaveLogFile = false;
 
 TCHAR   g_bLogSavePath[MAX_PATH] = _T("C:\\log");
 
-static  TCHAR           s_szLogFile[MAX_PATH] = {0};
+static  TCHAR           s_szLogFile[MAX_PATH] = { 0 };
 static  bool            s_bLogPathInit = false;
 
 #if defined(DBG_THREADSAFE)
@@ -193,7 +195,7 @@ BOOL DbgPrint(__in LPCTSTR lpszFormatString, ...)
 #endif
         if (!s_bLogPathInit)
         {
-            SYSTEMTIME stime = {0};         
+            SYSTEMTIME stime = { 0 };
             GetLocalTime(&stime);
 #if defined(UNDER_CE)
             _stprintf(s_szLogFile, _T("%s\\log_%04d%02d%02d_%d.log"), g_bLogSavePath, stime.wYear, stime.wMonth, stime.wDay, GetTickCount());
@@ -206,13 +208,13 @@ BOOL DbgPrint(__in LPCTSTR lpszFormatString, ...)
         FILE* pFile = _tfopen(s_szLogFile, _T("a"));
         if (pFile != NULL)
         {
-            fseek(pFile,SEEK_END,0);
+            fseek(pFile, SEEK_END, 0);
             long cbSize = ftell(pFile);
             if (cbSize > MAX_LOG_FILE_SIZE)
             {
                 fclose(pFile);
                 {
-                    SYSTEMTIME stime = {0};         
+                    SYSTEMTIME stime = { 0 };
                     GetLocalTime(&stime);
 #if defined(UNDER_CE)
                     _stprintf(s_szLogFile, _T("%s\\log_%04d%02d%02d_%d.log"), g_bLogSavePath, stime.wYear, stime.wMonth, stime.wDay, GetTickCount());
@@ -238,7 +240,7 @@ BOOL DbgPrint(__in LPCTSTR lpszFormatString, ...)
 #if defined(UNDER_CE)
         _vtprintf(lpszFormatString, VAList);
 #else
-        TCHAR szBuf[MAX_PATH * 2] = {0};
+        TCHAR szBuf[MAX_PATH * 2] = { 0 };
         _vstprintf_s(szBuf, MAX_PATH, lpszFormatString, VAList);
         OutputDebugString(szBuf);
 #endif

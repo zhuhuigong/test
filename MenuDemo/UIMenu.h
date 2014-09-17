@@ -1,124 +1,169 @@
 ﻿#ifndef __UIMENU_H__
 #define __UIMENU_H__
 
-#ifdef _MSC_VER
 #pragma once
-#endif
 
-#include "observer_impl_base.hpp"
+#include "observer_impl_base.h"
+
+#define DUI_CTR_MENU            _T("Menu")
+#define DUI_CTR_MENUITEM        _T("MenuItem")
+#define WM_CUSTOMMENU_CLICK     (WM_USER + 0x100)
 
 namespace DuiLib {
 
-/////////////////////////////////////////////////////////////////////////////////////
-//
-struct ContextMenuParam
-{
-    // 1: remove all
-    // 2: remove the sub menu
-    WPARAM wParam;
-    HWND hWnd;
-};
+    /////////////////////////////////////////////////////////////////////////////////////
+    //
+    struct ContextMenuParam
+    {
+        // 1: remove all
+        // 2: remove the sub menu
+        WPARAM wParam;
+        HWND hWnd;
+    };
 
-enum MenuAlignment
-{
-    eMenuAlignment_Left = 1 << 1,
-    eMenuAlignment_Top = 1 << 2,
-    eMenuAlignment_Right = 1 << 3,
-    eMenuAlignment_Bottom = 1 << 4,
-};
+    enum MenuAlignment
+    {
+        eMenuAlignment_Left = 1 << 1,
+        eMenuAlignment_Top = 1 << 2,
+        eMenuAlignment_Right = 1 << 3,
+        eMenuAlignment_Bottom = 1 << 4,
+    };
 
-typedef class ObserverImpl<BOOL, ContextMenuParam> ContextMenuObserver;
-typedef class ReceiverImpl<BOOL, ContextMenuParam> ContextMenuReceiver;
+    typedef class ObserverImpl<BOOL, ContextMenuParam> ContextMenuObserver;
+    typedef class ReceiverImpl<BOOL, ContextMenuParam> ContextMenuReceiver;
 
-extern ContextMenuObserver s_context_menu_observer;
+    class CContextMenuObServerHwnd : public ContextMenuObserver
+    {
+    public:
+        CContextMenuObServerHwnd() : m_hMainHwnd(NULL){};
+        ~CContextMenuObServerHwnd(){};
 
-// MenuUI
-extern const TCHAR* const kMenuUIClassName;// = _T("MenuUI");
-extern const TCHAR* const kMenuUIInterfaceName;// = _T("Menu");
+    public:
+        HWND GetMainHwnd() { return m_hMainHwnd; }
+        VOID SetMainHwnd(HWND hWnd) { m_hMainHwnd = hWnd; }
+    private:
+        HWND m_hMainHwnd;
+    };
 
-class CListUI;
-class CMenuUI : public CListUI
-{
-public:
-    CMenuUI();
-    ~CMenuUI();
+    extern CContextMenuObServerHwnd gContextMenuObServer;
 
-    LPCTSTR GetClass() const;
-    LPVOID GetInterface(LPCTSTR pstrName);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // 菜单控件
+    class CListUI;
+    class CMenuUI : public CListUI
+    {
+    public:
+        CMenuUI();
+        ~CMenuUI();
 
-    virtual void DoEvent(TEventUI& event);
+        LPCTSTR GetClass() const;
+        LPVOID GetInterface(LPCTSTR pstrName);
 
-    virtual bool Add(CControlUI* pControl);
-    virtual bool AddAt(CControlUI* pControl, int iIndex);
+        virtual void DoEvent(TEventUI& event);
 
-    virtual int GetItemIndex(CControlUI* pControl) const;
-    virtual bool SetItemIndex(CControlUI* pControl, int iIndex);
-    virtual bool Remove(CControlUI* pControl);
+        virtual bool Add(CControlUI* pControl);
+        virtual bool AddAt(CControlUI* pControl, int iIndex);
 
-    SIZE EstimateSize(SIZE szAvailable);
+        virtual int GetItemIndex(CControlUI* pControl) const;
+        virtual bool SetItemIndex(CControlUI* pControl, int iIndex);
+        virtual bool Remove(CControlUI* pControl);
 
-    void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
-};
+        SIZE EstimateSize(SIZE szAvailable);
 
-/////////////////////////////////////////////////////////////////////////////////////
-//
+        void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
-// MenuElementUI
-extern const TCHAR* const kMenuElementUIClassName;// = _T("MenuElementUI");
-extern const TCHAR* const kMenuElementUIInterfaceName;// = _T("MenuElement);
+        bool IsShowShadow();
+        void SetShowShadow(bool bShow = true);
 
-class CMenuElementUI;
-class CMenuWnd : public CWindowWnd, public ContextMenuReceiver
-{
-public:
-    CMenuWnd(HWND hParent = NULL);
-    void Init(CMenuElementUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point);
-    LPCTSTR GetWindowClassName() const;
-    void OnFinalMessage(HWND hWnd);
+    private:
+        bool m_bShowShadow;
+    };
 
-    LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // 菜单窗口
+    class CMenuItemUI;
+    class CMenuWnd : public CWindowWnd, public ContextMenuReceiver, public INotifyUI
+    {
+    public:
+        CMenuWnd(HWND hParent = NULL);
+        void Init(CMenuItemUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point);
+        LPCTSTR GetWindowClassName() const;
+        void OnFinalMessage(HWND hWnd);
 
-    BOOL Receive(ContextMenuParam param);
+        LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-public:
-    HWND m_hParent;
-    POINT m_BasedPoint;
-    STRINGorID m_xml;
-    CDuiString m_sType;
-    CPaintManagerUI m_pm;
-    CMenuElementUI* m_pOwner;
-    CMenuUI* m_pLayout;
-};
+        BOOL Receive(ContextMenuParam param);
+        BOOL IsRootMenu();
+        BOOL GetMonitorWorkRect(LPRECT Rect);
+        BOOL GetCurrentMonitorWorkRect(LPRECT Rect);
 
-class CListContainerElementUI;
-class CMenuElementUI : public CListContainerElementUI
-{
-    friend CMenuWnd;
-public:
-    CMenuElementUI();
-    ~CMenuElementUI();
+    private:
+        void Notify(TNotifyUI& msg);
 
-    LPCTSTR GetClass() const;
-    LPVOID GetInterface(LPCTSTR pstrName);
+    public:
+        HWND m_hParent;
+        POINT m_BasedPoint;
+        STRINGorID m_xml;
+        CDuiString m_sType;
+        CPaintManagerUI m_pm;
+        CMenuItemUI* m_pOwner;
+        CMenuUI* m_pLayout;
+        // CWndShadow m_WndShadow;
+    };
 
-    void DoPaint(HDC hDC, const RECT& rcPaint);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // 菜单项控件
+    class CListContainerElementUI;
+    class CMenuItemUI : public CListContainerElementUI
+    {
+        friend CMenuWnd;
 
-    void DrawItemText(HDC hDC, const RECT& rcItem);
+    public:
+        CMenuItemUI();
+        ~CMenuItemUI();
 
-    SIZE EstimateSize(SIZE szAvailable);
+        LPCTSTR GetClass() const;
+        LPVOID GetInterface(LPCTSTR pstrName);
 
-    bool Activate();
+        void DoPaint(HDC hDC, const RECT& rcPaint);
 
-    void DoEvent(TEventUI& event);
+        void DrawItemText(HDC hDC, const RECT& rcItem);
 
+        SIZE EstimateSize(SIZE szAvailable);
 
-    CMenuWnd* GetMenuWnd();
+        bool Activate();
 
-    void CreateMenuWnd();
+        void DoEvent(TEventUI& event);
 
-protected:
-    CMenuWnd* m_pWindow;
-};
+        CMenuWnd* GetMenuWnd();
+
+        void CreateMenuWnd();
+        void DoInit();
+        void SetAllSubMenuItemVisible(bool bVisible = true);
+        void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
+        void SetRightWidth(int nWidth);
+        void SetLeftWidth(int nWidth);
+        void SetLeftIconSize(SIZE Size);
+        void SetLeftIconImage(LPCTSTR lpszLeftIcon);
+        void SetRightArrowImage(LPCTSTR lpszIcon);
+        void SetRightArrowSize(SIZE Size);
+        void SetIsSeparator(bool bSeparator = true);
+        void Notify(TNotifyUI& msg);
+
+    protected:
+        CMenuWnd* m_pWindow;
+
+    private:
+        int m_LeftWidth;
+        int m_RightWidth;
+        int m_nSeparatorHeight;
+        CDuiString m_strLeftIcon;
+        CDuiString m_strRightArrow;
+        CSize m_LeftIconSize;
+        CSize m_RightArrowSize;
+        BOOL m_bHasSubMenu;
+        BOOL m_bIsSeparator;
+    };
 
 } // namespace DuiLib
 
