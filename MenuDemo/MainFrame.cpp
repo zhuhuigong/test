@@ -23,7 +23,7 @@
 #endif
 
 #include "resource.h"
-#include "main_frame.hpp"
+#include "MainFrame.h"
 #include "UIMenu.h"
 
 const TCHAR* const kTitleControlName = _T("apptitle");
@@ -33,16 +33,18 @@ const TCHAR* const kMaxButtonControlName = _T("maxbtn");
 const TCHAR* const kRestoreButtonControlName = _T("restorebtn");
 
 MainFrame::MainFrame()
-{}
+{
+
+}
 
 MainFrame::~MainFrame()
 {
-    PostQuitMessage(0);
+
 }
 
 LPCTSTR MainFrame::GetWindowClassName() const
 {
-    return _T("TXGuiFoundation");
+    return _T("UIMainFrame");
 }
 
 CControlUI* MainFrame::CreateControl(LPCTSTR pstrClass)
@@ -59,7 +61,7 @@ void MainFrame::OnFinalMessage(HWND hWnd)
 CDuiString MainFrame::GetSkinFile()
 {
     TCHAR szBuf[MAX_PATH] = { 0 };
-    _stprintf_s(szBuf, MAX_PATH - 1, _T("%d"), IDR_SKINXML);
+    wsprintf(szBuf, _T("%d"), IDR_SKINXML);
     return szBuf;
 }
 
@@ -83,16 +85,24 @@ LRESULT MainFrame::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
         if (!bZoomed)
         {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kMaxButtonControlName));
-            if (pControl) pControl->SetVisible(false);
+
+            if (pControl != NULL)
+                pControl->SetVisible(false);
+
             pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kRestoreButtonControlName));
-            if (pControl) pControl->SetVisible(true);
+            if (pControl != NULL)
+                pControl->SetVisible(true);
         }
         else
         {
             CControlUI* pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kMaxButtonControlName));
-            if (pControl) pControl->SetVisible(true);
+
+            if (pControl != NULL)
+                pControl->SetVisible(true);
+
             pControl = static_cast<CControlUI*>(m_PaintManager.FindControl(kRestoreButtonControlName));
-            if (pControl) pControl->SetVisible(false);
+            if (pControl != NULL)
+                pControl->SetVisible(false);
         }
     }
 #else
@@ -104,6 +114,21 @@ LRESULT MainFrame::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 
 LRESULT MainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    if (uMsg == WM_CUSTOMMENU_CLICK)
+    {
+        CDuiString sName = *(CDuiString*)wParam;
+        if (sName == _T("file"))
+        {
+            MessageBox(m_hWnd, _T("打开文件！"), _T("单击菜单项"), MB_OK);
+        }
+        else if (sName == _T("exit"))
+        {
+            OnExit(TNotifyUI());
+        }
+
+        return 0;
+    }
+
     return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
@@ -122,6 +147,7 @@ LRESULT MainFrame::ResponseDefaultKeyEvent(WPARAM wParam)
 
 void MainFrame::OnTimer(TNotifyUI& msg)
 {
+
 }
 
 void MainFrame::OnExit(TNotifyUI& msg)
@@ -130,10 +156,14 @@ void MainFrame::OnExit(TNotifyUI& msg)
 }
 
 void MainFrame::InitWindow()
-{}
+{
+
+}
 
 void MainFrame::OnPrepare(TNotifyUI& msg)
-{}
+{
+
+}
 
 void MainFrame::Notify(TNotifyUI& msg)
 {
@@ -141,17 +171,17 @@ void MainFrame::Notify(TNotifyUI& msg)
     {
         ShowContextMenu(msg);
     }
-    else if (_tcsicmp(msg.sType, kWindowInit) == 0)
+    else if (lstrcmpi(msg.sType, kWindowInit) == 0)
     {
         OnPrepare(msg);
     }
-    else if (_tcsicmp(msg.sType, kClick) == 0)
+    else if (lstrcmpi(msg.sType, kClick) == 0)
     {
-        if (_tcsicmp(msg.pSender->GetName(), kCloseButtonControlName) == 0)
+        if (lstrcmpi(msg.pSender->GetName(), kCloseButtonControlName) == 0)
         {
             OnExit(msg);
         }
-        else if (_tcsicmp(msg.pSender->GetName(), kMinButtonControlName) == 0)
+        else if (lstrcmpi(msg.pSender->GetName(), kMinButtonControlName) == 0)
         {
 #if defined(UNDER_CE)
             ::ShowWindow(m_hWnd, SW_MINIMIZE);
@@ -159,7 +189,7 @@ void MainFrame::Notify(TNotifyUI& msg)
             SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0);
 #endif
         }
-        else if (_tcsicmp(msg.pSender->GetName(), kMaxButtonControlName) == 0)
+        else if (lstrcmpi(msg.pSender->GetName(), kMaxButtonControlName) == 0)
         {
 #if defined(UNDER_CE)
             ::ShowWindow(m_hWnd, SW_MAXIMIZE);
@@ -171,7 +201,7 @@ void MainFrame::Notify(TNotifyUI& msg)
             SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 #endif
         }
-        else if (_tcsicmp(msg.pSender->GetName(), kRestoreButtonControlName) == 0)
+        else if (lstrcmpi(msg.pSender->GetName(), kRestoreButtonControlName) == 0)
         {
 #if defined(UNDER_CE)
             ::ShowWindow(m_hWnd, SW_RESTORE);
@@ -183,12 +213,12 @@ void MainFrame::Notify(TNotifyUI& msg)
             SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
 #endif
         }
-        else if (_tcsicmp(msg.pSender->GetName(), _T("btn_menu")) == 0)
+        else if (lstrcmpi(msg.pSender->GetName(), _T("btn_menu")) == 0)
         {
             ShowContextMenu(msg);
         }
     }
-    else if (_tcsicmp(msg.sType, kTimer) == 0)
+    else if (lstrcmpi(msg.sType, kTimer) == 0)
     {
         return OnTimer(msg);
     }

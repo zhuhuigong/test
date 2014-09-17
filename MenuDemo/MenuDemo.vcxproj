@@ -268,14 +268,14 @@
   <ItemGroup>
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_frame.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="UICrack.cpp" />
     <ClCompile Include="UIMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="debug.hpp" />
-    <ClInclude Include="main_frame.hpp" />
+    <ClInclude Include="debug.h" />
+    <ClInclude Include="MainFrame.h" />
     <ClInclude Include="observer_impl_base.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />

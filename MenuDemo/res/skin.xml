@@ -6,23 +6,22 @@
     <Default name="VScrollBar" value="button1normalimage=&quot;res='119' restype='png' source='0,0,16,16'&quot; button1hotimage=&quot;res='119' restype='png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;res='119' restype='png' source='32,0,48,16'&quot; button2normalimage=&quot;res='119' restype='png' source='0,32,16,48'&quot; button2hotimage=&quot;res='119' restype='png' source='16,32,32,48'&quot; button2pushedimage=&quot;res='119' restype='png' source='32,32,48,48'&quot; thumbnormalimage=&quot;res='119' restype='png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;res='119' restype='png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;res='119' restype='png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;res='119' restype='png' source='0,16,16,32'&quot;" />
 
     <VerticalLayout bkcolor="#FFFFFFFF" menu="false">
-        <HorizontalLayout name="header" height="30" bkcolor="#FF4775CC">
+        <HorizontalLayout name="header" height="30" bkcolor="RGB(39,140,222)">
             <HorizontalLayout>
                 <HorizontalLayout width="10">
+                    <!-- 阴影窗口控件有点问题，会影响控件的布局，解决办法是放到起“占位”作用的布局控件下！ -->
                     <Shadow offset="7,7" width="814" height="614" activeimage="res='135' restype='png' corner='20,18,20,18'" />
                 </HorizontalLayout>
                 <Label name="apptitle" text="Duilib菜单示例程序" font="1" textcolor="#FFFFFFFF" />
             </HorizontalLayout>
-            <HorizontalLayout height="25" width="96">
-                <Button name="minbtn" tooltip="最小化" height="18" width="26" normalimage="res='103' restype='png'" hotimage="res='104' restype='png'" pushedimage="res='105' restype='png'"/>
-                <Button name="maxbtn" tooltip="最大化" height="18" width="25" normalimage="res='106' restype='png'" hotimage="res='107' restype='png'" pushedimage="res='108' restype='png'"/>
-                <Button name="restorebtn" visible="false" tooltip="恢复" height="18" width="25" normalimage="res='109' restype='png'" hotimage="res='110' restype='png'" pushedimage="res='111' restype='png'"/>
-                <Button name="closebtn" tooltip="关闭" height="18" width="43" normalimage="res='112' restype='png'" hotimage="res='113' restype='png'" pushedimage="res='114' restype='png'"/>
+            <HorizontalLayout height="25" width="60">
+                <Button name="minbtn" tooltip="最小化" width="30" height="25" normalimage="res='103' restype='png'" hotimage="res='104' restype='png'" pushedimage="res='105' restype='png'"/>
+                <Button name="closebtn" tooltip="关闭" width="30" height="25" normalimage="res='112' restype='png'" hotimage="res='113' restype='png'" pushedimage="res='114' restype='png'"/>
             </HorizontalLayout>
         </HorizontalLayout>
 
         <HorizontalLayout name="body">
-            <VerticalLayout width="350">
+            <VerticalLayout>
                 <HorizontalLayout padding="10,10,10,10" height="100">
                     <Button name="btn_menu" text="菜单测试"  width="84" height="26" normalimage="res='115' restype='png'" hotimage="res='116' restype='png'" pushedimage="res='117' restype='png'"/>
                 </HorizontalLayout>
@@ -31,8 +30,9 @@
                 </HorizontalLayout>
             </VerticalLayout>
 
-            <VerticalLayout bkimage="res='200' restype='jpg' fade='255'" menu="true">
-
+            <!-- 指定menu为true即可处理menu事件，弹出右键菜单！ -->
+            <VerticalLayout width="500" menu="true">
+                <Control bkimage="res='200' restype='jpg' fade='255' source='0,0,500,570'" />
             </VerticalLayout>
         </HorizontalLayout>
     </VerticalLayout>

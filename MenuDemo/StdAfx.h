@@ -1,6 +1,5 @@
-﻿
-#if !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
-#define AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_
+﻿#ifndef __STDAFX_H__
+#define __STDAFX_H__
 
 #pragma once
 
@@ -46,7 +45,7 @@ using namespace DuiLib;
 using namespace std;
 #endif
 
-#include "debug.hpp"
+#include "debug.h"
 
 #include <olectl.h>
 
@@ -70,7 +69,5 @@ using namespace std;
 #   endif
 #endif
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
-#endif // !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
+#endif // __STDAFX_H__

@@ -18,7 +18,7 @@
 
 #include "stdafx.h"
 #include "..\DuiLib\Utils\WinImplBase.h"
-#include "main_frame.hpp"
+#include "MainFrame.h"
 
 #if defined(WIN32) && !defined(UNDER_CE)
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int nCmdShow)
@@ -38,9 +38,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
     MainFrame* pFrame = new MainFrame();
     if (pFrame == NULL) return 0;
 #if defined(WIN32) && !defined(UNDER_CE)
-    pFrame->Create(NULL, _T("MenuTest"), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 800);
+    pFrame->Create(NULL, _T("Duilib菜单示例程序"), UI_WNDSTYLE_DIALOG, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 800, 600);
 #else
-    pFrame->Create(NULL, _T("MenuTest"), UI_WNDSTYLE_FRAME, WS_EX_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+    pFrame->Create(NULL, _T("Duilib菜单示例程序"), UI_WNDSTYLE_DIALOG, WS_EX_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 #endif
     pFrame->CenterWindow();
     ::ShowWindow(*pFrame, SW_SHOW);

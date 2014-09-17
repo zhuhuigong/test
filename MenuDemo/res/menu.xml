@@ -8,7 +8,7 @@
 
   <Menu>
     <MenuItem text="添加音乐" >
-		<MenuItem text="文件" />
+		<MenuItem name="file" text="文件" />
 		<MenuItem text="文件夹(包含子目录)" />
 		<MenuItem text="文件夹" />
 	</MenuItem>
@@ -38,6 +38,6 @@
 	<MenuItem text="查看新特性" />
 	<MenuItem text="选项设置" icon="tray\setting_normal.png" />
 	<MenuItem separator="true" />
-	<MenuItem text="退出" icon="tray\close_normal.png" />
+	<MenuItem name="exit" text="退出" icon="tray\close_normal.png" />
   </Menu>
 </Window>

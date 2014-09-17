@@ -23,15 +23,17 @@ namespace DuiLib {
 
     enum MenuAlignment
     {
-        eMenuAlignment_Left = 1 << 1,
-        eMenuAlignment_Top = 1 << 2,
-        eMenuAlignment_Right = 1 << 3,
+        eMenuAlignment_Left =   1 << 1,
+        eMenuAlignment_Top =    1 << 2,
+        eMenuAlignment_Right =  1 << 3,
         eMenuAlignment_Bottom = 1 << 4,
     };
 
     typedef class ObserverImpl<BOOL, ContextMenuParam> ContextMenuObserver;
     typedef class ReceiverImpl<BOOL, ContextMenuParam> ContextMenuReceiver;
 
+    /////////////////////////////////////////////////////////////////////////////////////
+    // 右键菜单观察者，主要用于把点击菜单项的事件发给主窗口处理！
     class CContextMenuObServerHwnd : public ContextMenuObserver
     {
     public:
@@ -48,7 +50,7 @@ namespace DuiLib {
     extern CContextMenuObServerHwnd gContextMenuObServer;
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // 菜单控件
+    // 菜单控件，从列表控件继承而来！
     class CListUI;
     class CMenuUI : public CListUI
     {
@@ -80,7 +82,7 @@ namespace DuiLib {
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // 菜单窗口
+    // 菜单窗口，可响应消息
     class CMenuItemUI;
     class CMenuWnd : public CWindowWnd, public ContextMenuReceiver, public INotifyUI
     {

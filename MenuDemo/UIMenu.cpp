@@ -153,14 +153,18 @@ namespace DuiLib {
 
     void CMenuUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        //if (_tcscmp(pstrName, _T("showshadow")) == 0)
-        //    SetShowShadow(_tcscmp(pstrValue, _T("true")) == 0);
-        //else
-        CListUI::SetAttribute(pstrName, pstrValue);
+        if (lstrcmpi(pstrName, _T("showshadow")) == 0)
+        {
+            SetShowShadow(lstrcmpi(pstrValue, _T("true")) == 0);
+        }
+        else
+        {
+            CListUI::SetAttribute(pstrName, pstrValue);
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
-    // 用于创建菜单控件、菜单项控件的回调函数，有了这个，不加在UIDlgBuilder.cpp中加new了！
+    // 用于创建菜单控件、菜单项控件的回调函数，有了这个，不用在UIDlgBuilder.cpp中加new了！
     class CMenuBuilderCallback : public IDialogBuilderCallback
     {
         CControlUI* CreateControl(LPCTSTR pstrClass)
@@ -243,6 +247,7 @@ namespace DuiLib {
 
         m_xml = xml;
 
+        // 主窗口调用时的init，pOwner一般都是空，此时设置接收点击菜单项的窗口
         if (m_pOwner == NULL)
         {
             gContextMenuObServer.SetMainHwnd(m_hParent);
@@ -346,6 +351,7 @@ namespace DuiLib {
                 // reassigned by this operation - which is why it is important to reassign
                 // the items back to the righfull owner/manager when the window closes.
                 // 创建一个新的CMenuUI..要设置其属性.一般菜单的样式要写在Default里面
+                // 子菜单不用再解析xml了，可直接使用之前已经解析过的xml
                 m_pLayout = new CMenuUI();
                 m_pm.UseParentResource(m_pOwner->GetManager());
                 m_pLayout->SetManager(&m_pm, NULL, true);
@@ -380,7 +386,6 @@ namespace DuiLib {
                 m_pm.AttachDialog(m_pLayout);
                 m_pm.AddNotifier(this);
 
-
                 // Position the popup window in absolute space
                 CDuiRect rcOwner = m_pOwner->GetPos();
 
@@ -389,7 +394,6 @@ namespace DuiLib {
                 rcOwner.bottom += m_pLayout->GetInset().bottom;
                 rcOwner.left -= m_pLayout->GetInset().left;
                 rcOwner.right += m_pLayout->GetInset().right;
-
 
                 int cxFixed = 0;
                 int cyFixed = 0;

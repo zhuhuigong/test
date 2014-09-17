@@ -16,8 +16,8 @@
 // Beware of bugs.
 //
 
-#ifndef MAINFRAME_HPP
-#define MAINFRAME_HPP
+#ifndef __MAINFRAME_H__
+#define __MAINFRAME_H__
 
 class MainFrame : public WindowImplBase
 {
@@ -46,4 +46,4 @@ protected:
     void ShowContextMenu(TNotifyUI& msg);
 };
 
-#endif // MAINFRAME_HPP
+#endif // __MAINFRAME_H__
