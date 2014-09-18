@@ -278,7 +278,7 @@ namespace DuiLib {
 
     LPCTSTR CMenuWnd::GetWindowClassName() const
     {
-        return _T("MenuWnd");
+        return _T("UIMenuWindow");
     }
 
     void CMenuWnd::OnFinalMessage(HWND hWnd)
