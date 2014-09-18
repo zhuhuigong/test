@@ -661,7 +661,7 @@ namespace DuiLib {
             LeftBkRect.left = 0;
             LeftBkRect.right = min(m_LeftWidth, 20);
 
-            CRenderEngine::DrawGradient(hDC, LeftBkRect, GetAdjustColor(dwBkColor1), GetAdjustColor(dwBkColor2), false, 16);
+          //  CRenderEngine::DrawGradient(hDC, LeftBkRect, GetAdjustColor(dwBkColor1), GetAdjustColor(dwBkColor2), false, 16);
         }
 
         if (m_bIsSeparator)

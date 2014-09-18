@@ -1,47 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Window>
+<Window alpha="245">
     <Font name="微软雅黑" size="12" bold="false" default="true" />
     <Font name="微软雅黑" size="12" bold="true" />
-    <Default name="Menu" value="bordersize=&quot;1&quot; bordercolor=&quot;#FFB5B5B5&quot; inset=&quot;2,3,2,3&quot; bkcolor=&quot;#FFFFFFFE&quot; itemselectedbkcolor=&quot;#FF4D78B3&quot; itemselectedtextcolor=&quot;#FFFFFFFF&quot;" />
-    <Default name="MenuArrow" value="arrowicon=&quot;menu\arrow_normal.png&quot; arrowsize=&quot;16,15&quot; right=&quot;40&quot;" />
-    <Default name="MenuItem" value="left=&quot;30&quot; height=&quot;25&quot; iconsize=&quot;16,16&quot;" />
+    <Default name="Menu" value="inset=&quot;1,1,1,1&quot; bkcolor=&quot;RGB(255,255,255)&quot; itemselectedbkcolor=&quot;RGB(51,127,209)&quot; itemselectedtextcolor=&quot;RGB(254,254,254)&quot;" />
+    <!--<Default name="MenuArrow" value="arrowicon=&quot;menu\arrow_normal.png&quot; arrowsize=&quot;16,15&quot; right=&quot;40&quot;" />-->
+    <Default name="MenuItem" value="left=&quot;26&quot; height=&quot;22&quot; align=&quot;center&quot;" />
 
-    <Menu>
-        <MenuItem text="添加音乐" >
+    <Menu bkimage="res='149' restype='png' corner='30,4,4,4'">
+        <MenuItem text="  我在线上" icon="res='141' restype='png'" iconsize="15,15">
             <HorizontalLayout>
                 <!-- 阴影窗口控件有点问题，会影响控件的布局，解决办法是放到起“占位”作用的布局控件下！ -->
                 <Shadow offset="7,7" activeimage="res='135' restype='png' corner='20,18,20,18'" />
             </HorizontalLayout>
-            <MenuItem name="file" text="文件" />
-            <MenuItem text="文件夹(包含子目录)" />
-            <MenuItem text="文件夹" />
         </MenuItem>
-        <MenuItem text="播放控制" >
-            <MenuItem text="播放" icon="tray\play_normal.png"/>
-            <MenuItem text="快进" icon="tray\forward_normal.png"/>
-            <MenuItem text="后退" icon="tray\rewind_normal.png"/>
-            <MenuItem text="上一首" icon="tray\previous_normal.png"/>
-            <MenuItem text="下一首" icon="tray\next_normal.png"/>
-        </MenuItem>
-        <MenuItem text="播放模式" icon="tray\playmode_normal.png">
-            <MenuItem text="单曲循环" />
-            <MenuItem text="顺序播放" />
-            <MenuItem text="列表循环" />
-            <MenuItem text="随机排序" />
-        </MenuItem>
-        <MenuItem separator="true" />
-        <MenuItem text="均衡器" />
-        <MenuItem text="格式转换" >
-            <MenuItem text="格式转换器" />
-            <MenuItem text="任务管理器" />
-        </MenuItem>
-        <MenuItem separator="true" />
-        <MenuItem text="显示歌词" />
-        <MenuItem text="锁定歌词" icon="tray\lock_normal.png"/>
-        <MenuItem separator="true" />
-        <MenuItem text="查看新特性" />
-        <MenuItem text="选项设置" icon="tray\setting_normal.png" />
-        <MenuItem separator="true" />
-        <MenuItem name="exit" text="退出" icon="tray\close_normal.png" />
+        <MenuItem text="  Q我吧" icon="res='142' restype='png'" iconsize="15,15" />
+        <MenuItem text="  离开" icon="res='143' restype='png'" iconsize="15,15" />
+        <MenuItem text="  忙碌" icon="res='144' restype='png'" iconsize="15,15" />
+        <MenuItem text="  请勿打扰" icon="res='145' restype='png'" iconsize="15,15" />
+        <MenuItem text="  隐身" icon="res='146' restype='png'" iconsize="15,15" />
+        <MenuItem text="  离线" icon="res='147' restype='png'" iconsize="13,13" />
+        <MenuItem text="  添加状态信息" />
+        <MenuItem separator="true" height="4"/>
+        <MenuItem text="  关闭所有声音" />
+        <MenuItem text="  关闭头像闪动" />
+        <MenuItem separator="true" height="4"/>
+        <MenuItem text="  锁定QQ    Ctrl + Alt + L" icon="res='148' restype='png'" iconsize="14,14" />
+        <MenuItem separator="true" height="4"/>
+        <MenuItem text="  打开主面板" />
+        <MenuItem separator="true" height="4"/>
+        <MenuItem name="exit" text="退出" />
     </Menu>
 </Window>

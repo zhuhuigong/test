@@ -39,6 +39,16 @@
 #define IDR_PNG_RATING                      133
 #define IDR_PNG_RATING_D                    134
 #define IDR_PNG_SHADOW                      135
+#define IDR_PNG_ICON1                       141
+#define IDR_PNG_ICON2                       142
+#define IDR_PNG_ICON3                       143
+#define IDR_PNG_ICON4                       144
+#define IDR_PNG_ICON5                       145
+#define IDR_PNG_ICON6                       146
+#define IDR_PNG_ICON7                       147
+#define IDR_PNG_ICON8                       148
+#define IDR_PNG_MENUBG                      149
+
 
 #define IDR_JPG_BG_IMAGE                    200
 
