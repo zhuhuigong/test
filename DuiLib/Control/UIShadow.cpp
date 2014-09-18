@@ -107,10 +107,38 @@ namespace DuiLib
 
     void CShadowWindow::MoveWindowWithOwner(int lParam)
     {
+        // 有一些奇怪的参数为0的WM_MOVE消息，不处理，直接返回！
+        if (lParam == 0)
+            return;
+
         // 计算阴影窗口的位置（左上角）
         int x = (int)(short) LOWORD(lParam) - m_pShadowUI->GetOffsetX();
         int y = (int)(short) HIWORD(lParam) - m_pShadowUI->GetOffsetY();
         ::SetWindowPos(m_hWnd, m_hWndOwner, x, y, -1, -1, SWP_NOSIZE | SWP_NOREDRAW | SWP_NOACTIVATE);
+
+        // 阴影窗口初始宽高，即给定的width和height值
+        int w = m_pShadowUI->GetFixedWidth();
+        int h = m_pShadowUI->GetFixedHeight();
+
+        // 没有指定width和height属性时，自动计算！
+        if (w == 0 && h == 0)
+        {
+            SIZE sz = m_pShadowUI->GetManager()->GetInitSize();
+
+            // 计算阴影窗口的大小
+            int width = sz.cx + m_pShadowUI->GetOffsetX() * 2;
+            int height = sz.cy + m_pShadowUI->GetOffsetY() * 2;
+
+            // 代码设置width，height属性
+            m_pShadowUI->SetFixedWidth(width);
+            m_pShadowUI->SetFixedHeight(height);
+
+            // 设置阴影窗口大小
+            ::SetWindowPos(m_hWnd, m_hWndOwner, -1, -1, width, height, SWP_NOMOVE | SWP_NOREDRAW | SWP_NOACTIVATE);
+
+            // 显示阴影窗口，注意这会使阴影窗口获得焦点，即其它窗口会失去焦点！！
+            ::ShowWindow(m_hWnd, SW_SHOW);
+        }
     }
 
     void CShadowWindow::OnOwnerWindowSize(int lParam)

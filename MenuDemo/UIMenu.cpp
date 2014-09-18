@@ -548,28 +548,32 @@ namespace DuiLib {
         {
             HWND hFocusWnd = (HWND)wParam;
 
-            BOOL bInMenuWindowList = FALSE;
-            ContextMenuParam param;
-            param.hWnd = GetHWND();
-
-            ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
-            ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
-            while (pReceiver != NULL)
+            // 获得焦点的窗口如果是阴影窗口（或NULL）时不算，此时不销毁菜单窗口！
+            if (hFocusWnd != m_pm.GetShadowWindow())
             {
-                CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-                if (pContextMenu != NULL && pContextMenu->GetHWND() == hFocusWnd)
+                BOOL bInMenuWindowList = FALSE;
+                ContextMenuParam param;
+                param.hWnd = GetHWND();
+
+                ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
+                ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
+                while (pReceiver != NULL)
                 {
-                    bInMenuWindowList = TRUE;
-                    break;
+                    CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+                    if (pContextMenu != NULL && pContextMenu->GetHWND() == hFocusWnd)
+                    {
+                        bInMenuWindowList = TRUE;
+                        break;
+                    }
+                    pReceiver = iterator.next();
                 }
-                pReceiver = iterator.next();
-            }
 
-            if (!bInMenuWindowList)
-            {
-                param.wParam = 1;
-                gContextMenuObServer.RBroadcast(param);
-                return 0;
+                if (!bInMenuWindowList)
+                {
+                    param.wParam = 1;
+                    gContextMenuObServer.RBroadcast(param);
+                    return 0;
+                }
             }
         }
         else if (uMsg == WM_KEYDOWN)
