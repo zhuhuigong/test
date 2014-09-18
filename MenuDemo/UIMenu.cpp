@@ -546,11 +546,11 @@ namespace DuiLib {
         }
         else if (uMsg == WM_KILLFOCUS)
         {
-            HWND hFocusWnd = (HWND)wParam;
+            HWND hWndFocusd = (HWND)wParam;
             HWND hWndShadow = m_pm.GetShadowWindow();
 
             // 获得焦点的窗口如果是阴影窗口（或NULL）时不算，此时不销毁菜单窗口！
-            if (hWndShadow == NULL || hWndShadow != hFocusWnd)
+            if (hWndShadow == NULL || hWndShadow != hWndFocusd)
             {
                 BOOL bInMenuWindowList = FALSE;
                 ContextMenuParam param;
@@ -561,7 +561,7 @@ namespace DuiLib {
                 while (pReceiver != NULL)
                 {
                     CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-                    if (pContextMenu != NULL && pContextMenu->GetHWND() == hFocusWnd)
+                    if (pContextMenu != NULL && pContextMenu->GetHWND() == hWndFocusd)
                     {
                         bInMenuWindowList = TRUE;
                         break;
