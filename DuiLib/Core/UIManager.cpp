@@ -409,7 +409,7 @@ namespace DuiLib {
 
     HWND CPaintManagerUI::GetShadowWindow()
     {
-        CShadowUI *pShadowUI = static_cast<CShadowUI*>(FindSubControlByClass(NULL, DUI_CTR_SHADOW));
+        CShadowUI *pShadowUI = static_cast<CShadowUI*>(FindSubControlByClass(NULL, _T("ShadowUI")));
 
         if (pShadowUI != NULL)
             return pShadowUI->GetShadowWindow();
