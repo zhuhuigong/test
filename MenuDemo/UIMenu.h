@@ -81,7 +81,7 @@ namespace DuiLib {
     class CMenuWnd : public CWindowWnd, public ContextMenuReceiver, public INotifyUI
     {
     public:
-        CMenuWnd(HWND hParent = NULL);
+        CMenuWnd(HWND hWndParent = NULL);
         void Init(CMenuItemUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point);
         LPCTSTR GetWindowClassName() const;
         void OnFinalMessage(HWND hWnd);
@@ -95,10 +95,16 @@ namespace DuiLib {
 
     private:
         void Notify(TNotifyUI& msg);
+        LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+        LRESULT OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
     public:
-        HWND m_hParent;
-        POINT m_BasedPoint;
+        HWND m_hWndParent;
+        POINT m_ptBase;
         STRINGorID m_xml;
         CDuiString m_sType;
         CPaintManagerUI m_pm;
@@ -120,20 +126,17 @@ namespace DuiLib {
         LPCTSTR GetClass() const;
         LPVOID GetInterface(LPCTSTR pstrName);
 
+        void DoInit();
+        void DoEvent(TEventUI& event);
         void DoPaint(HDC hDC, const RECT& rcPaint);
 
         void DrawItemText(HDC hDC, const RECT& rcItem);
-
         SIZE EstimateSize(SIZE szAvailable);
-
         bool Activate();
-
-        void DoEvent(TEventUI& event);
 
         CMenuWnd* GetMenuWnd();
 
         void CreateMenuWnd();
-        void DoInit();
         void SetAllSubMenuItemVisible(bool bVisible = true);
         void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
         void SetRightWidth(int nWidth);
@@ -143,7 +146,6 @@ namespace DuiLib {
         void SetRightArrowImage(LPCTSTR lpszIcon);
         void SetRightArrowSize(SIZE Size);
         void SetIsSeparator(bool bSeparator = true);
-        void Notify(TNotifyUI& msg);
 
     protected:
         CMenuWnd* m_pWindow;

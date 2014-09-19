@@ -33,7 +33,7 @@ template <typename ReturnT, typename ParamT>
 class ReceiverImpl;
 
 template <typename ReturnT, typename ParamT>
-class ObserverImpl : public ObserverImplBase < ReturnT, ParamT >
+class ObserverImpl : public ObserverImplBase<ReturnT, ParamT>
 {
     template <typename ReturnT, typename ParamT>
     friend class Iterator;
@@ -154,7 +154,7 @@ protected:
 
 
 template <typename ReturnT, typename ParamT>
-class ReceiverImpl : public ReceiverImplBase < ReturnT, ParamT >
+class ReceiverImpl : public ReceiverImplBase<ReturnT, ParamT>
 {
 public:
     ReceiverImpl()

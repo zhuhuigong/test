@@ -164,8 +164,8 @@ namespace DuiLib {
         }
     };
 
-    CMenuWnd::CMenuWnd(HWND hParent)
-        : m_hParent(hParent)
+    CMenuWnd::CMenuWnd(HWND hWndParent)
+        : m_hWndParent(hWndParent)
         , m_pOwner(NULL)
         , m_pLayout()
         , m_xml(_T(""))
@@ -182,15 +182,15 @@ namespace DuiLib {
             break;
         case 2:
             {
-                HWND hParent = GetParent(m_hWnd);
-                while (hParent != NULL)
+                HWND hWndParent = GetParent(m_hWnd);
+                while (hWndParent != NULL)
                 {
-                    if (hParent == param.hWnd)
+                    if (hWndParent == param.hWnd)
                     {
                         Close();
                         break;
                     }
-                    hParent = GetParent(hParent);
+                    hWndParent = GetParent(hWndParent);
                 }
             }
             break;
@@ -217,28 +217,28 @@ namespace DuiLib {
         }
     }
 
-
     void CMenuWnd::Init(CMenuItemUI* pOwner, STRINGorID xml, LPCTSTR pSkinType, POINT point)
     {
-        m_BasedPoint = point;
+        m_xml = xml;
+        m_ptBase = point;
         m_pOwner = pOwner;
         m_pLayout = NULL;
 
+        // XML资源类型，NULL代表不使用资源中的
         if (pSkinType != NULL)
             m_sType = pSkinType;
 
-        m_xml = xml;
-
         // 主窗口调用时的init，pOwner一般都是空，此时设置接收点击菜单项的窗口
         if (m_pOwner == NULL)
-        {
-            gContextMenuObServer.SetMainHwnd(m_hParent);
-        }
+            gContextMenuObServer.SetMainHwnd(m_hWndParent);
 
+        // 添加接收者，本类接收（即Receive成员函数）
         gContextMenuObServer.AddReceiver(this);
 
-        //  创建菜单窗口
-        Create((m_pOwner == NULL) ? m_hParent : m_pOwner->GetManager()->GetPaintWindow(), NULL, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, CDuiRect());
+        // 创建菜单窗口，一级菜单的Owner窗口为传入的hWndParent的值，二级以上菜单使用上一级
+        // 菜单窗口为Owner窗口，菜单窗口格式为弹出窗口，并且在任务栏没有图标！
+        Create((m_pOwner != NULL) ? m_pOwner->GetManager()->GetPaintWindow() : m_hWndParent,
+            NULL, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, CDuiRect());
 
         ::ShowWindow(m_hWnd, SW_SHOW);
 
@@ -306,280 +306,320 @@ namespace DuiLib {
 
     LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        if (uMsg == WM_CREATE)
-        {
-            if (!IsRootMenu())
-            {
-                // 去掉窗口标题栏
-                LONG styleValue = ::GetWindowLong(m_hWnd, GWL_STYLE);
-                styleValue &= ~WS_CAPTION;
-                ::SetWindowLong(m_hWnd, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-                RECT rcClient;
-                ::GetClientRect(m_hWnd, &rcClient);
-                ::SetWindowPos(m_hWnd, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
-                    rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
-
-                m_pm.Init(m_hWnd);
-                m_pm.SetRoundCorner(1, 1);
-
-                // The trick is to add the items to the new container. Their owner gets
-                // reassigned by this operation - which is why it is important to reassign
-                // the items back to the righfull owner/manager when the window closes.
-                // 创建一个新的CMenuUI..要设置其属性.一般菜单的样式要写在Default里面
-                // 子菜单不用再解析xml了，可直接使用之前已经解析过的xml
-                m_pLayout = new CMenuUI();
-                m_pm.UseParentResource(m_pOwner->GetManager());
-                m_pLayout->SetManager(&m_pm, NULL, true);
-                LPCTSTR pDefaultAttributes = m_pOwner->GetManager()->GetDefaultAttributeList(DUI_CTR_MENU);
-                if (pDefaultAttributes != NULL)
-                {
-                    m_pLayout->ApplyAttributeList(pDefaultAttributes);
-                }
-
-                /*m_pLayout->SetBkColor(0xFFFFFFFF);
-                m_pLayout->SetBorderColor(0xFF85E4FF);
-                m_pLayout->SetBorderSize(0);
-                m_pLayout->SetAutoDestroy(false);
-                m_pLayout->EnableScrollBar();*/
-                m_pLayout->SetAutoDestroy(false);
-
-                // 将菜单项加载进layout中去
-                int count = m_pOwner->GetCount();
-                for (int i = 0; i < count; i++)
-                {
-                    CControlUI *pControl = m_pOwner->GetItemAt(i);
-                    if (pControl != NULL)
-                    {
-                        CMenuItemUI *pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
-                        if (pMenuItem != NULL)
-                            pMenuItem->SetOwner(m_pLayout);
-
-                        m_pLayout->Add(pControl);
-                    }
-                }
-
-                m_pm.AttachDialog(m_pLayout);
-                m_pm.AddNotifier(this);
-
-                // Position the popup window in absolute space
-                CDuiRect rcOwner = m_pOwner->GetPos();
-
-                // 因为continer已经减去的内边距我们这里还的加上.
-                rcOwner.top -= m_pLayout->GetInset().top;
-                rcOwner.bottom += m_pLayout->GetInset().bottom;
-                rcOwner.left -= m_pLayout->GetInset().left;
-                rcOwner.right += m_pLayout->GetInset().right;
-
-                int cxFixed = 0;
-                int cyFixed = 0;
-
-                CDuiRect rcWork;
-                GetCurrentMonitorWorkRect(&rcWork);
-
-                SIZE szAvailable = { rcWork.GetWidth(), rcWork.GetHeight() };
-
-                // 获取所有菜单项的高度和和最大宽度
-                /*for( int it = 0; it < m_pOwner->GetCount(); it++ ) {
-                    if(m_pOwner->GetItemAt(it)->GetInterface(kMenuElementUIInterfaceName) != NULL ){
-                    CControlUI* pControl = static_cast<CControlUI*>(m_pOwner->GetItemAt(it));
-                    SIZE sz = pControl->EstimateSize(szAvailable);
-                    cyFixed += sz.cy;
-
-                    if( cxFixed < sz.cx )
-                    cxFixed = sz.cx;
-                    }
-                    }*/
-
-                CSize szAvailable1 = m_pLayout->EstimateSize(szAvailable);
-                cyFixed = szAvailable1.cy;
-                cxFixed = szAvailable1.cx;
-
-                // 加上内边距
-                cyFixed += m_pLayout->GetInset().bottom;
-                cyFixed += m_pLayout->GetInset().top;
-                cxFixed += m_pLayout->GetInset().left;
-                cxFixed += m_pLayout->GetInset().right;
-
-                //cyFixed += 4;
-                //cxFixed += 4;
-
-                RECT rcWindow;
-                GetWindowRect(m_pOwner->GetManager()->GetPaintWindow(), &rcWindow);
-
-                // 子菜单的top和父菜单相同
-                CDuiRect rc = rcOwner;
-                rc.top = rcOwner.top;
-                rc.bottom = rc.top + cyFixed;
-
-                ::MapWindowRect(m_pOwner->GetManager()->GetPaintWindow(), HWND_DESKTOP, &rc);
-
-                // 设置子菜单的左侧位于父菜单的右侧
-                rc.left = rcWindow.right;
-                rc.right = rc.left + cxFixed;
-                rc.right += 2;
-
-                // 超出显示器的底部。向上移动
-                if (rc.bottom > rcWork.bottom)
-                {
-                    rc.Offset(0, -(rc.GetHeight() - rcOwner.GetHeight()));
-                }
-
-                // 超出显示器的右边。向走移动
-                if (rc.right > rcWork.right)
-                {
-                    rc.Offset(-(rcOwner.GetWidth() + rc.GetWidth()), 0);
-                }
-
-                // 超出显示器顶部，向下移动
-                if (rc.top < rcWork.top)
-                {
-                    rc.top = rcOwner.top;
-                    rc.bottom = rc.top + cyFixed;
-                }
-
-                // 超出显示器左边，向右移动
-                if (rc.left < rcWork.left)
-                {
-                    rc.left = rcWindow.right;
-                    rc.right = rc.left + cxFixed;
-                }
-
-                MoveWindow(m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, FALSE);
-            }
-            else
-            {
-                // 根菜单创建
-                m_pm.Init(m_hWnd);
-                m_pm.SetRoundCorner(1, 1);
-
-                CDialogBuilder builder;
-                CMenuBuilderCallback menuCallback;
-
-                CControlUI* pRoot = builder.Create(m_xml, m_sType.GetData(), &menuCallback, &m_pm);
-                m_pm.AttachDialog(pRoot);
-                m_pm.AddNotifier(this);
-
-                CDuiRect rcWork;
-                GetCurrentMonitorWorkRect(&rcWork);
-
-                SIZE szAvailable = { rcWork.GetWidth(), rcWork.GetHeight() };
-                szAvailable = pRoot->EstimateSize(szAvailable);
-
-                m_pLayout = static_cast<CMenuUI*>(pRoot);
-                szAvailable.cy += m_pLayout->GetInset().bottom;
-                szAvailable.cy += m_pLayout->GetInset().top;
-                szAvailable.cx += m_pLayout->GetInset().left;
-                szAvailable.cx += m_pLayout->GetInset().right;
-
-                m_pm.SetInitSize(szAvailable.cx, szAvailable.cy);
-
-                SIZE szInit = m_pm.GetInitSize();
-                CDuiRect rc;
-
-                rc.left = m_BasedPoint.x;
-                rc.top = m_BasedPoint.y;
-                rc.right = rc.left + szInit.cx;
-                rc.bottom = rc.top + szInit.cy;
-
-                /*
-                DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top;
-                int nWidth = rc.GetWidth();
-                int nHeight = rc.GetHeight();
-
-                if (dwAlignment & eMenuAlignment_Right)
-                {
-                rc.right = point.x;
-                rc.left = rc.right - nWidth;
-                }
-
-                if (dwAlignment & eMenuAlignment_Bottom)
-                {
-                rc.bottom = point.y;
-                rc.top = rc.bottom - nHeight;
-                }*/
-
-                SetForegroundWindow(m_hWnd);
-                MoveWindow(m_hWnd, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), FALSE);
-                SetWindowPos(m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), SWP_SHOWWINDOW);
-            }
-
-            return 0;
-        }
-        else if (uMsg == WM_CLOSE)
-        {
-            if (m_pOwner != NULL)
-            {
-                // 父菜单获取焦点
-                m_pOwner->SetManager(m_pOwner->GetManager(), m_pOwner->GetParent(), false);
-                m_pOwner->SetPos(m_pOwner->GetPos());
-                m_pOwner->SetFocus();
-            }
-        }
-        else if (uMsg == WM_RBUTTONDOWN || uMsg == WM_CONTEXTMENU || uMsg == WM_RBUTTONUP || uMsg == WM_RBUTTONDBLCLK)
-        {
-            return 0L;
-        }
-        else if (uMsg == WM_KILLFOCUS)
-        {
-            HWND hWndFocusd = (HWND)wParam;
-            HWND hWndShadow = m_pm.GetShadowWindow();
-
-            // 获得焦点的窗口如果是阴影窗口（或NULL）时不算，此时不销毁菜单窗口！
-            if (hWndShadow == NULL || hWndShadow != hWndFocusd)
-            {
-                BOOL bInMenuWindowList = FALSE;
-                ContextMenuParam param;
-                param.hWnd = GetHWND();
-
-                ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
-                ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
-                while (pReceiver != NULL)
-                {
-                    CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-                    if (pContextMenu != NULL && pContextMenu->GetHWND() == hWndFocusd)
-                    {
-                        bInMenuWindowList = TRUE;
-                        break;
-                    }
-                    pReceiver = iterator.next();
-                }
-
-                if (!bInMenuWindowList)
-                {
-                    param.wParam = 1;
-                    gContextMenuObServer.RBroadcast(param);
-                    return 0;
-                }
-            }
-        }
-        else if (uMsg == WM_KEYDOWN)
-        {
-            if (wParam == VK_ESCAPE)
-            {
-                Close();
-            }
-        }
-        else if (uMsg == WM_SIZE)
-        {
-            SIZE szRoundCorner = m_pm.GetRoundCorner();
-            if (!::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0))
-            {
-                CDuiRect rcWnd;
-                ::GetWindowRect(*this, &rcWnd);
-                rcWnd.Offset(-rcWnd.left, -rcWnd.top);
-                rcWnd.right++; rcWnd.bottom++;
-                HRGN hRgn = ::CreateRoundRectRgn(rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
-                ::SetWindowRgn(*this, hRgn, TRUE);
-                ::DeleteObject(hRgn);
-            }
-        }
-
         LRESULT lRes = 0;
+        BOOL bHandled = TRUE;
+
+        switch (uMsg)
+        {
+        case WM_CREATE:        lRes = OnCreate(uMsg, wParam, lParam, bHandled); break;
+        case WM_CLOSE:         lRes = OnClose(uMsg, wParam, lParam, bHandled); break;
+        case WM_KILLFOCUS:     lRes = OnKillFocus(uMsg, wParam, lParam, bHandled); break;
+        case WM_KEYDOWN:       lRes = OnKeyDown(uMsg, wParam, lParam, bHandled); break;
+        case WM_SIZE:          lRes = OnSize(uMsg, wParam, lParam, bHandled); break;
+        case WM_RBUTTONDOWN:   lRes = OnContextMenu(uMsg, wParam, lParam, bHandled); break;
+        case WM_CONTEXTMENU:   lRes = OnContextMenu(uMsg, wParam, lParam, bHandled); break;
+        case WM_RBUTTONUP:     lRes = OnContextMenu(uMsg, wParam, lParam, bHandled); break;
+        case WM_RBUTTONDBLCLK: lRes = OnContextMenu(uMsg, wParam, lParam, bHandled); break;
+        default:
+            bHandled = FALSE;
+        }
+
+        if (bHandled)
+            return lRes;
+
         if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes))
             return lRes;
 
         return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
     }
+
+    LRESULT CMenuWnd::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        if (IsRootMenu())
+        {
+            // 根菜单创建
+            m_pm.Init(m_hWnd);
+            m_pm.SetRoundCorner(1, 1);
+
+            CDialogBuilder builder;
+            CMenuBuilderCallback menuCallback;
+
+            CControlUI* pRoot = builder.Create(m_xml, m_sType.GetData(), &menuCallback, &m_pm);
+            m_pm.AttachDialog(pRoot);
+            m_pm.AddNotifier(this);
+
+            CDuiRect rcWork;
+            GetCurrentMonitorWorkRect(&rcWork);
+
+            SIZE szAvailable = { rcWork.GetWidth(), rcWork.GetHeight() };
+            szAvailable = pRoot->EstimateSize(szAvailable);
+
+            m_pLayout = static_cast<CMenuUI*>(pRoot);
+            szAvailable.cy += m_pLayout->GetInset().bottom;
+            szAvailable.cy += m_pLayout->GetInset().top;
+            szAvailable.cx += m_pLayout->GetInset().left;
+            szAvailable.cx += m_pLayout->GetInset().right;
+
+            m_pm.SetInitSize(szAvailable.cx, szAvailable.cy);
+
+            SIZE szInit = m_pm.GetInitSize();
+            CDuiRect rc;
+
+            rc.left = m_ptBase.x;
+            rc.top = m_ptBase.y;
+            rc.right = rc.left + szInit.cx;
+            rc.bottom = rc.top + szInit.cy;
+
+            /*
+            DWORD dwAlignment = eMenuAlignment_Left | eMenuAlignment_Top;
+            int nWidth = rc.GetWidth();
+            int nHeight = rc.GetHeight();
+
+            if (dwAlignment & eMenuAlignment_Right)
+            {
+            rc.right = point.x;
+            rc.left = rc.right - nWidth;
+            }
+
+            if (dwAlignment & eMenuAlignment_Bottom)
+            {
+            rc.bottom = point.y;
+            rc.top = rc.bottom - nHeight;
+            }*/
+
+            SetForegroundWindow(m_hWnd);
+            MoveWindow(m_hWnd, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), FALSE);
+            SetWindowPos(m_hWnd, HWND_TOPMOST, rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), SWP_SHOWWINDOW);
+        }
+        else
+        {
+            // 去掉窗口标题栏
+            LONG styleValue = ::GetWindowLong(m_hWnd, GWL_STYLE);
+            styleValue &= ~WS_CAPTION;
+            ::SetWindowLong(m_hWnd, GWL_STYLE, styleValue | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
+            RECT rcClient;
+            ::GetClientRect(m_hWnd, &rcClient);
+            ::SetWindowPos(m_hWnd, NULL, rcClient.left, rcClient.top, rcClient.right - rcClient.left, \
+                rcClient.bottom - rcClient.top, SWP_FRAMECHANGED);
+
+            m_pm.Init(m_hWnd);
+            m_pm.SetRoundCorner(1, 1);
+
+            // The trick is to add the items to the new container. Their owner gets
+            // reassigned by this operation - which is why it is important to reassign
+            // the items back to the righfull owner/manager when the window closes.
+            // 创建一个新的CMenuUI..要设置其属性.一般菜单的样式要写在Default里面
+            // 子菜单不用再解析xml了，可直接使用之前已经解析过的xml
+            m_pLayout = new CMenuUI();
+            m_pm.UseParentResource(m_pOwner->GetManager());
+            m_pLayout->SetManager(&m_pm, NULL, true);
+            LPCTSTR pDefaultAttributes = m_pOwner->GetManager()->GetDefaultAttributeList(DUI_CTR_MENU);
+            if (pDefaultAttributes != NULL)
+            {
+                m_pLayout->ApplyAttributeList(pDefaultAttributes);
+            }
+
+            /*m_pLayout->SetBkColor(0xFFFFFFFF);
+            m_pLayout->SetBorderColor(0xFF85E4FF);
+            m_pLayout->SetBorderSize(0);
+            m_pLayout->SetAutoDestroy(false);
+            m_pLayout->EnableScrollBar();*/
+            m_pLayout->SetAutoDestroy(false);
+
+            // 将菜单项加载进layout中去
+            int count = m_pOwner->GetCount();
+            for (int i = 0; i < count; i++)
+            {
+                CControlUI *pControl = m_pOwner->GetItemAt(i);
+                if (pControl != NULL)
+                {
+                    CMenuItemUI *pMenuItem = static_cast<CMenuItemUI*>(pControl->GetInterface(DUI_CTR_MENUITEM));
+                    if (pMenuItem != NULL)
+                        pMenuItem->SetOwner(m_pLayout);
+
+                    m_pLayout->Add(pControl);
+                }
+            }
+
+            m_pm.AttachDialog(m_pLayout);
+            m_pm.AddNotifier(this);
+
+            // Position the popup window in absolute space
+            CDuiRect rcOwner = m_pOwner->GetPos();
+
+            // 因为continer已经减去的内边距我们这里还的加上.
+            rcOwner.top -= m_pLayout->GetInset().top;
+            rcOwner.bottom += m_pLayout->GetInset().bottom;
+            rcOwner.left -= m_pLayout->GetInset().left;
+            rcOwner.right += m_pLayout->GetInset().right;
+
+            int cxFixed = 0;
+            int cyFixed = 0;
+
+            CDuiRect rcWork;
+            GetCurrentMonitorWorkRect(&rcWork);
+
+            SIZE szAvailable = { rcWork.GetWidth(), rcWork.GetHeight() };
+
+            // 获取所有菜单项的高度和和最大宽度
+            /*for( int it = 0; it < m_pOwner->GetCount(); it++ ) {
+            if(m_pOwner->GetItemAt(it)->GetInterface(kMenuElementUIInterfaceName) != NULL ){
+            CControlUI* pControl = static_cast<CControlUI*>(m_pOwner->GetItemAt(it));
+            SIZE sz = pControl->EstimateSize(szAvailable);
+            cyFixed += sz.cy;
+
+            if( cxFixed < sz.cx )
+            cxFixed = sz.cx;
+            }
+            }*/
+
+            CSize szAvailable1 = m_pLayout->EstimateSize(szAvailable);
+            cyFixed = szAvailable1.cy;
+            cxFixed = szAvailable1.cx;
+
+            // 加上内边距
+            cyFixed += m_pLayout->GetInset().bottom;
+            cyFixed += m_pLayout->GetInset().top;
+            cxFixed += m_pLayout->GetInset().left;
+            cxFixed += m_pLayout->GetInset().right;
+
+            //cyFixed += 4;
+            //cxFixed += 4;
+
+            RECT rcWindow;
+            GetWindowRect(m_pOwner->GetManager()->GetPaintWindow(), &rcWindow);
+
+            // 子菜单的top和父菜单相同
+            CDuiRect rc = rcOwner;
+            rc.top = rcOwner.top;
+            rc.bottom = rc.top + cyFixed;
+
+            ::MapWindowRect(m_pOwner->GetManager()->GetPaintWindow(), HWND_DESKTOP, &rc);
+
+            // 设置子菜单的左侧位于父菜单的右侧
+            rc.left = rcWindow.right;
+            rc.right = rc.left + cxFixed;
+            rc.right += 2;
+
+            // 超出显示器的底部。向上移动
+            if (rc.bottom > rcWork.bottom)
+            {
+                rc.Offset(0, -(rc.GetHeight() - rcOwner.GetHeight()));
+            }
+
+            // 超出显示器的右边。向走移动
+            if (rc.right > rcWork.right)
+            {
+                rc.Offset(-(rcOwner.GetWidth() + rc.GetWidth()), 0);
+            }
+
+            // 超出显示器顶部，向下移动
+            if (rc.top < rcWork.top)
+            {
+                rc.top = rcOwner.top;
+                rc.bottom = rc.top + cyFixed;
+            }
+
+            // 超出显示器左边，向右移动
+            if (rc.left < rcWork.left)
+            {
+                rc.left = rcWindow.right;
+                rc.right = rc.left + cxFixed;
+            }
+
+            MoveWindow(m_hWnd, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, FALSE);
+        }
+
+        // 已处理，不会再交给UIBase或默认窗口函数处理
+        bHandled = TRUE;
+        return 0;
+    }
+
+    LRESULT CMenuWnd::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        if (m_pOwner != NULL)
+        {
+            // 父菜单获取焦点
+            m_pOwner->SetManager(m_pOwner->GetManager(), m_pOwner->GetParent(), false);
+            m_pOwner->SetPos(m_pOwner->GetPos());
+            m_pOwner->SetFocus();
+        }
+
+        bHandled = FALSE;
+        return 0;
+    }
+
+    LRESULT CMenuWnd::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        HWND hWndFocusd = (HWND)wParam;
+        HWND hWndShadow = m_pm.GetShadowWindow();
+
+        // 获得焦点的窗口如果是阴影窗口（或NULL）时不算，此时不销毁菜单窗口！
+        if (hWndShadow == NULL || hWndShadow != hWndFocusd)
+        {
+            BOOL bInMenuWindowList = FALSE;
+            ContextMenuParam param;
+            param.hWnd = GetHWND();
+
+            ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
+            ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
+            while (pReceiver != NULL)
+            {
+                CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+                if (pContextMenu != NULL && pContextMenu->GetHWND() == hWndFocusd)
+                {
+                    bInMenuWindowList = TRUE;
+                    break;
+                }
+                pReceiver = iterator.next();
+            }
+
+            if (!bInMenuWindowList)
+            {
+                param.wParam = 1;
+                gContextMenuObServer.RBroadcast(param);
+            }
+        }
+
+        bHandled = FALSE;
+        return 0;
+    }
+
+    LRESULT CMenuWnd::OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        if (wParam == VK_ESCAPE)
+        {
+            Close();
+        }
+
+        bHandled = FALSE;
+        return 0;
+    }
+
+    LRESULT CMenuWnd::OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        SIZE szRoundCorner = m_pm.GetRoundCorner();
+        if (!::IsIconic(*this) && (szRoundCorner.cx != 0 || szRoundCorner.cy != 0))
+        {
+            CDuiRect rcWnd;
+            ::GetWindowRect(*this, &rcWnd);
+            rcWnd.Offset(-rcWnd.left, -rcWnd.top);
+            rcWnd.right++; rcWnd.bottom++;
+            HRGN hRgn = ::CreateRoundRectRgn(rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, szRoundCorner.cx, szRoundCorner.cy);
+            ::SetWindowRgn(*this, hRgn, TRUE);
+            ::DeleteObject(hRgn);
+        }
+
+        bHandled = FALSE;
+        return 0;
+    }
+
+    LRESULT CMenuWnd::OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+    {
+        bHandled = TRUE;
+        return 0;
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////////////
     //
