@@ -73,12 +73,6 @@ namespace DuiLib {
         SIZE EstimateSize(SIZE szAvailable);
 
         void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
-
-        bool IsShowShadow();
-        void SetShowShadow(bool bShow = true);
-
-    private:
-        bool m_bShowShadow;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +104,6 @@ namespace DuiLib {
         CPaintManagerUI m_pm;
         CMenuItemUI* m_pOwner;
         CMenuUI* m_pLayout;
-        // CWndShadow m_WndShadow;
     };
 
     /////////////////////////////////////////////////////////////////////////////////////

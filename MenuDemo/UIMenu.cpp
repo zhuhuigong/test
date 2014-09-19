@@ -9,7 +9,6 @@ namespace DuiLib {
 
 
     CMenuUI::CMenuUI()
-        : m_bShowShadow(FALSE)
     {
         if (GetHeader() != NULL)
             GetHeader()->SetVisible(false);
@@ -141,26 +140,9 @@ namespace DuiLib {
         return CSize(cxFixed, cyFixed);
     }
 
-    void CMenuUI::SetShowShadow(bool bShow)
-    {
-        m_bShowShadow = bShow;
-    }
-
-    bool CMenuUI::IsShowShadow()
-    {
-        return m_bShowShadow;
-    }
-
     void CMenuUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     {
-        if (lstrcmpi(pstrName, _T("showshadow")) == 0)
-        {
-            SetShowShadow(lstrcmpi(pstrValue, _T("true")) == 0);
-        }
-        else
-        {
-            CListUI::SetAttribute(pstrName, pstrValue);
-        }
+        CListUI::SetAttribute(pstrName, pstrValue);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -199,18 +181,18 @@ namespace DuiLib {
             Close();
             break;
         case 2:
-        {
-            HWND hParent = GetParent(m_hWnd);
-            while (hParent != NULL)
             {
-                if (hParent == param.hWnd)
+                HWND hParent = GetParent(m_hWnd);
+                while (hParent != NULL)
                 {
-                    Close();
-                    break;
+                    if (hParent == param.hWnd)
+                    {
+                        Close();
+                        break;
+                    }
+                    hParent = GetParent(hParent);
                 }
-                hParent = GetParent(hParent);
             }
-        }
             break;
         default:
             break;
@@ -259,13 +241,6 @@ namespace DuiLib {
         Create((m_pOwner == NULL) ? m_hParent : m_pOwner->GetManager()->GetPaintWindow(), NULL, WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, CDuiRect());
 
         ::ShowWindow(m_hWnd, SW_SHOW);
-
-        //if (m_pLayout && m_pLayout->IsShowShadow()){
-        //    m_WndShadow.Initialize(CPaintManagerUI::GetInstance());
-        //    m_WndShadow.Create(m_hWnd);
-        //    m_WndShadow.SetSize(4);
-        //    m_WndShadow.SetPosition(0, 0);
-        //}
 
         // HACK: Don't deselect the parent's caption
         /*HWND hWndParent = m_hWnd;
