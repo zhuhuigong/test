@@ -28,6 +28,6 @@
         <MenuItem separator="true" height="4"/>
         <MenuItem text="  打开主面板" />
         <MenuItem separator="true" height="4"/>
-        <MenuItem name="exit" text="退出" />
+        <MenuItem name="exit" text="  退出" />
     </Menu>
 </Window>
