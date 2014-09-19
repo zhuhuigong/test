@@ -117,9 +117,13 @@ LRESULT MainFrame::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     if (uMsg == WM_CUSTOMMENU_CLICK)
     {
         CDuiString sName = *(CDuiString*)wParam;
-        if (sName == _T("file"))
+        if (sName == _T("item1"))
         {
-            MessageBox(m_hWnd, _T("打开文件！"), _T("单击菜单项"), MB_OK);
+            MessageBox(m_hWnd, _T("点击[我在线上]"), _T("单击菜单项"), MB_OK);
+        }
+        else if (sName == _T("item8"))
+        {
+            MessageBox(m_hWnd, _T("点击[添加状态信息]"), _T("单击菜单项"), MB_OK);
         }
         else if (sName == _T("exit"))
         {

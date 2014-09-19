@@ -7,26 +7,26 @@
     <Default name="MenuItem" value="left=&quot;26&quot; height=&quot;22&quot; align=&quot;center&quot;" />
 
     <Menu bkimage="res='149' restype='png' corner='30,4,4,4'">
-        <MenuItem text="  我在线上" icon="res='141' restype='png'" iconsize="15,15">
+        <MenuItem name="item1" text="  我在线上" icon="res='141' restype='png'" iconsize="15,15">
             <HorizontalLayout>
                 <!-- 阴影窗口控件有点问题，会影响控件的布局，解决办法是放到起“占位”作用的布局控件下！ -->
                 <Shadow offset="7,7" activeimage="res='135' restype='png' corner='20,18,20,18'" />
             </HorizontalLayout>
         </MenuItem>
-        <MenuItem text="  Q我吧" icon="res='142' restype='png'" iconsize="15,15" />
-        <MenuItem text="  离开" icon="res='143' restype='png'" iconsize="15,15" />
-        <MenuItem text="  忙碌" icon="res='144' restype='png'" iconsize="15,15" />
-        <MenuItem text="  请勿打扰" icon="res='145' restype='png'" iconsize="15,15" />
-        <MenuItem text="  隐身" icon="res='146' restype='png'" iconsize="15,15" />
-        <MenuItem text="  离线" icon="res='147' restype='png'" iconsize="13,13" />
-        <MenuItem text="  添加状态信息" />
+        <MenuItem name="item2" text="  Q我吧" icon="res='142' restype='png'" iconsize="15,15" />
+        <MenuItem name="item3" text="  离开" icon="res='143' restype='png'" iconsize="15,15" />
+        <MenuItem name="item4" text="  忙碌" icon="res='144' restype='png'" iconsize="15,15" />
+        <MenuItem name="item5" text="  请勿打扰" icon="res='145' restype='png'" iconsize="15,15" />
+        <MenuItem name="item6" text="  隐身" icon="res='146' restype='png'" iconsize="15,15" />
+        <MenuItem name="item7" text="  离线" icon="res='147' restype='png'" iconsize="13,13" />
+        <MenuItem name="item8" text="  添加状态信息" />
         <MenuItem separator="true" height="4"/>
-        <MenuItem text="  关闭所有声音" />
-        <MenuItem text="  关闭头像闪动" />
+        <MenuItem name="item9" text="  关闭所有声音" />
+        <MenuItem name="item10" text="  关闭头像闪动" />
         <MenuItem separator="true" height="4"/>
-        <MenuItem text="  锁定QQ    Ctrl + Alt + L" icon="res='148' restype='png'" iconsize="14,14" />
+        <MenuItem name="item11" text="  锁定QQ    Ctrl + Alt + L" icon="res='148' restype='png'" iconsize="14,14" />
         <MenuItem separator="true" height="4"/>
-        <MenuItem text="  打开主面板" />
+        <MenuItem name="item12" text="  打开主面板" />
         <MenuItem separator="true" height="4"/>
         <MenuItem name="exit" text="  退出" />
     </Menu>
