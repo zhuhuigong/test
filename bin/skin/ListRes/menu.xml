@@ -1,18 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Window bktrans="true" size="120,82">
- <Font name="宋体" size="13" bold="false"/>
- <Font name="宋体" size="12"/>
-<VerticalLayout bkimage="file='menu_bk.png' corner='40,8,8,8'" hole="false">
-	<List header="hidden" inset="8,8,8,8" itemhotimage="file='menu_hot_bk.png' corner='2,2,2,2'" itemdisabledbkcolor="#FF0000FF">
-		<ListContainerElement name="menu_Open" height="22" inset="40,0,0,0">
-			<Label text="打开" mouse="false"/>
-		</ListContainerElement>
-		<ListContainerElement name="menu_Mark" height="22" inset="40,0,0,0">
-			<Label text="标注" mouse="false"/>
-		</ListContainerElement>
-		<ListContainerElement name="menu_Delete" height="22" inset="40,0,0,0">
-			<Label text="删除" mouse="false"/>
-		</ListContainerElement>
-	</List>
-</VerticalLayout>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window size="120,82">
+    <Font name="微软雅黑" size="12" bold="false" default="true" />
+    <Font name="微软雅黑" size="12" bold="true" />
+    <Default name="Menu" value="inset=&quot;1,1,1,1&quot; bkcolor=&quot;RGB(255,255,255)&quot; itemselectedbkcolor=&quot;RGB(51,127,209)&quot; itemselectedtextcolor=&quot;RGB(254,254,254)&quot;" />
+    <!--<Default name="MenuArrow" value="arrowicon=&quot;menu\arrow_normal.png&quot; arrowsize=&quot;16,15&quot; right=&quot;40&quot;" />-->
+    <Default name="MenuItem" value="left=&quot;26&quot; height=&quot;22&quot; align=&quot;center&quot;" />
+
+    <Menu bkimage="file='menu_bk.png' corner='30,3,3,3'" hole="false">
+        <MenuItem name="menu_Open" text="  打开">
+           <HorizontalLayout>
+                <!-- 阴影窗口控件有点问题，会影响控件的布局，解决办法是放到起“占位”作用的布局控件下！ -->
+                <Shadow offset="5,5" activeimage="file='shadow.png' corner='20,10,20,10'" />
+            </HorizontalLayout>
+        </MenuItem>
+        <MenuItem name="menu_Mark" text="  标注" />
+        <MenuItem name="menu_Delete" text="  删除" />
+    </Menu>
 </Window>
