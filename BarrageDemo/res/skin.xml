@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window bktrans="false" caption="0,0,0,30" roundcorner="5,5" size="800,600" sizebox="6,6,6,6" mininfo="80,60">
+    <Font name="黑体" size="14" bold="true" />
+    <Font name="黑体" size="24" bold="true"/>
+    <Default name="Slider" value="thumbsize=&quot;13,13&quot; bkimage=&quot;res='130' restype='png' corner='6,2,6,2'&quot; foreimage=&quot;res='131' restype='png' corner='6,2,6,2'&quot; thumbimage=&quot;res='132' restype='png'&quot; thumbhotimage=&quot;res='132' restype='png'&quot; " />
+ 
+    <VerticalLayout bkimage="res='115' restype='png' fade='255'" menu="false" bordersize="1,1,2,2" bordercolor="RGB(39,140,222)">
+       <Test />
+       
+       <Label name="aaa" text="静态文本" font="1" float="true" pos="700,300,800,340" />
+       <Label name="bbb" text="可调速度" font="1" float="true" textcolor="RGB(255,255,0)" pos="700,200,800,240" />
+       <Label name="ccc" text="可调速度" font="1" float="true" textcorlor="RGB(0,0,255)" pos="700,400,800,440" />
+       <Button name="alpha" text="透明" width="60" height="23" bkcolor="RGB(200,0,0)" />
+       <Slider name="alpha_controlor" min="0" max="120" value="0"/>
+       <Slider name="alpha_controlor1" min="1" max="10" value="1"/>
+       <Slider name="alpha_controlor2" min="1" max="10" value="1"/>
+    </VerticalLayout>
+</Window>
