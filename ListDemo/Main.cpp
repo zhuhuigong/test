@@ -320,29 +320,34 @@ public:
         RECT rcClient;
         ::GetClientRect(*this, &rcClient);
 
-        if (!::IsZoomed(*this)) {
+        if (!::IsZoomed(*this))
+        {
             RECT rcSizeBox = m_pm.GetSizeBox();
-            if (pt.y < rcClient.top + rcSizeBox.top) {
+            if (pt.y < rcClient.top + rcSizeBox.top)
+            {
                 if (pt.x < rcClient.left + rcSizeBox.left) return HTTOPLEFT;
                 if (pt.x > rcClient.right - rcSizeBox.right) return HTTOPRIGHT;
                 return HTTOP;
             }
-            else if (pt.y > rcClient.bottom - rcSizeBox.bottom) {
+            else if (pt.y > rcClient.bottom - rcSizeBox.bottom)
+            {
                 if (pt.x < rcClient.left + rcSizeBox.left) return HTBOTTOMLEFT;
                 if (pt.x > rcClient.right - rcSizeBox.right) return HTBOTTOMRIGHT;
                 return HTBOTTOM;
             }
+
             if (pt.x < rcClient.left + rcSizeBox.left) return HTLEFT;
             if (pt.x > rcClient.right - rcSizeBox.right) return HTRIGHT;
         }
 
         RECT rcCaption = m_pm.GetCaptionRect();
         if (pt.x >= rcClient.left + rcCaption.left && pt.x < rcClient.right - rcCaption.right \
-            && pt.y >= rcCaption.top && pt.y < rcCaption.bottom) {
+            && pt.y >= rcCaption.top && pt.y < rcCaption.bottom)
+        {
             CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(pt));
-            if (pControl && _tcscmp(pControl->GetClass(), _T("ButtonUI")) != 0 &&
-                _tcscmp(pControl->GetClass(), _T("OptionUI")) != 0 &&
-                _tcscmp(pControl->GetClass(), _T("TextUI")) != 0)
+            if (pControl && lstrcmpi(pControl->GetClass(), _T("ButtonUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("OptionUI")) != 0 &&
+                lstrcmpi(pControl->GetClass(), _T("TextUI")) != 0)
                 return HTCAPTION;
         }
 
@@ -401,20 +406,30 @@ public:
 
         BOOL bZoomed = ::IsZoomed(*this);
         LRESULT lRes = CWindowWnd::HandleMessage(uMsg, wParam, lParam);
-        if (::IsZoomed(*this) != bZoomed) {
-            if (!bZoomed) {
+        if (::IsZoomed(*this) != bZoomed)
+        {
+            if (!bZoomed)
+            {
                 CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("maxbtn")));
-                if (pControl) pControl->SetVisible(false);
+                if (pControl != NULL)
+                    pControl->SetVisible(false);
+
                 pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("restorebtn")));
-                if (pControl) pControl->SetVisible(true);
+                if (pControl != NULL)
+                    pControl->SetVisible(true);
             }
-            else {
+            else
+            {
                 CControlUI* pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("maxbtn")));
-                if (pControl) pControl->SetVisible(true);
+                if (pControl != NULL)
+                    pControl->SetVisible(true);
+
                 pControl = static_cast<CControlUI*>(m_pm.FindControl(_T("restorebtn")));
-                if (pControl) pControl->SetVisible(false);
+                if (pControl != NULL)
+                    pControl->SetVisible(false);
             }
         }
+
         return lRes;
     }
 
@@ -440,8 +455,12 @@ public:
             bHandled = FALSE;
         }
 
-        if (bHandled) return lRes;
-        if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes)) return lRes;
+        if (bHandled)
+            return lRes;
+
+        if (m_pm.MessageHandler(uMsg, wParam, lParam, lRes))
+            return lRes;
+
         return CWindowWnd::HandleMessage(uMsg, wParam, lParam);
     }
 public:
@@ -463,7 +482,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*l
 
     ListMainForm* pFrame = new ListMainForm();
     if (pFrame == NULL) return 0;
-    pFrame->Create(NULL, _T("ListDemo"), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 400);
+    pFrame->Create(NULL, _T("列表控制示例程序"), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 400);
     pFrame->CenterWindow();
     ::ShowWindow(*pFrame, SW_SHOW);
 
