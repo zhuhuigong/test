@@ -137,7 +137,7 @@ namespace DuiLib
             ::SetWindowPos(m_hWnd, m_hWndOwner, -1, -1, width, height, SWP_NOMOVE | SWP_NOREDRAW | SWP_NOACTIVATE);
 
             // 显示阴影窗口，注意这会使阴影窗口获得焦点，即其它窗口会失去焦点！！
-            ::ShowWindow(m_hWnd, SW_SHOW);
+            ::ShowWindow(m_hWnd, SW_SHOWNA);
         }
     }
 
@@ -232,7 +232,7 @@ namespace DuiLib
         switch (uMsg)
         {
         case WM_SHOWWINDOW:
-            ::ShowWindow(pThis->GetHWND(), wParam ? SW_SHOW : SW_HIDE);
+            ::ShowWindow(pThis->GetHWND(), wParam ? SW_SHOWNA : SW_HIDE);
             break;
         case WM_ACTIVATEAPP:
             pThis->DrawShadow(wParam);
@@ -303,7 +303,7 @@ namespace DuiLib
         CControlUI::SetVisible(bVisible);
         if (m_pWindow != NULL)
         {
-            ::ShowWindow(m_pWindow->GetHWND(), bVisible ? SW_SHOW : SW_HIDE);
+            ::ShowWindow(m_pWindow->GetHWND(), bVisible ? SW_SHOWNA : SW_HIDE);
         }
     }
 

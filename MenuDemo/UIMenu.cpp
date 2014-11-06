@@ -552,33 +552,28 @@ namespace DuiLib {
     LRESULT CMenuWnd::OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
     {
         HWND hWndFocusd = (HWND)wParam;
-        HWND hWndShadow = m_pm.GetShadowWindow();
 
-        // 获得焦点的窗口如果是阴影窗口（或NULL）时不算，此时不销毁菜单窗口！
-        if (hWndShadow == NULL || hWndShadow != hWndFocusd)
+        BOOL bInMenuWindowList = FALSE;
+        ContextMenuParam param;
+        param.hWnd = GetHWND();
+
+        ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
+        ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
+        while (pReceiver != NULL)
         {
-            BOOL bInMenuWindowList = FALSE;
-            ContextMenuParam param;
-            param.hWnd = GetHWND();
-
-            ContextMenuObserver::Iterator<BOOL, ContextMenuParam> iterator(gContextMenuObServer);
-            ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
-            while (pReceiver != NULL)
+            CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+            if (pContextMenu != NULL && pContextMenu->GetHWND() == hWndFocusd)
             {
-                CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-                if (pContextMenu != NULL && pContextMenu->GetHWND() == hWndFocusd)
-                {
-                    bInMenuWindowList = TRUE;
-                    break;
-                }
-                pReceiver = iterator.next();
+                bInMenuWindowList = TRUE;
+                break;
             }
+            pReceiver = iterator.next();
+        }
 
-            if (!bInMenuWindowList)
-            {
-                param.wParam = 1;
-                gContextMenuObServer.RBroadcast(param);
-            }
+        if (!bInMenuWindowList)
+        {
+            param.wParam = 1;
+            gContextMenuObServer.RBroadcast(param);
         }
 
         bHandled = FALSE;
