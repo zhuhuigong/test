@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window caption="0,0,0,30" roundcorner="5,5" size="800,600" sizebox="6,6,6,6" mininfo="80,60">
+    <Font name="微软雅黑" size="12" bold="false" default="true" />
+    <Font name="微软雅黑" size="12" bold="true"/>
+    <Default name="Combo" value="normalimage=&quot;res='118' restype='png' source='0,0,100,22' corner='2,2,20,2'&quot; hotimage=&quot;res='118' restype='png' source='0,22,100,44' corner='2,2,22,2'&quot; pushedimage=&quot;res='118' restype='png' source='0,44,100,66' corner='2,2,22,2'&quot;" />
+    <Default name="VScrollBar" value="button1normalimage=&quot;res='119' restype='png' source='0,0,16,16'&quot; button1hotimage=&quot;res='119' restype='png' source='16,0,32,16,16'&quot; button1pushedimage=&quot;res='119' restype='png' source='32,0,48,16'&quot; button2normalimage=&quot;res='119' restype='png' source='0,32,16,48'&quot; button2hotimage=&quot;res='119' restype='png' source='16,32,32,48'&quot; button2pushedimage=&quot;res='119' restype='png' source='32,32,48,48'&quot; thumbnormalimage=&quot;res='119' restype='png' source='0,48,16,64' corner='0,2,0,2'&quot; thumbhotimage=&quot;res='119' restype='png' source='16,48,32,64' corner='0,2,0,2'&quot; thumbpushedimage=&quot;res='119' restype='png' source='32,48,48,64' corner='0,2,0,2'&quot; bknormalimage=&quot;res='119' restype='png' source='0,16,16,32'&quot;" />
+
+    <VerticalLayout bkcolor="#FFFFFFFF" menu="false">
+        <HorizontalLayout name="header" height="30" bkcolor="RGB(39,140,222)">
+            <HorizontalLayout>
+                <HorizontalLayout width="10">
+                    <!-- 阴影窗口控件有点问题，会影响控件的布局，解决办法是放到起“占位”作用的布局控件下！ -->
+                    <Shadow offset="7,7" width="814" height="614" activeimage="file='shadow_active.png' corner='20,18,20,18'" />
+                </HorizontalLayout>
+                <Label name="apptitle" text="Duilib界面库控件示例" font="1" textcolor="#FFFFFFFF" />
+            </HorizontalLayout>
+            <HorizontalLayout height="25" width="60">
+                <Button name="minbtn" tooltip="最小化" width="30" height="25" normalimage="minimize0.png" hotimage="minimize1.png" pushedimage="minimize2.png"/>
+                <Button name="closebtn" tooltip="关闭" width="30" height="25" normalimage="close0.png" hotimage="close1.png" pushedimage="close2.png"/>
+            </HorizontalLayout>
+        </HorizontalLayout>
+
+        <HorizontalLayout name="body">
+            <Control />
+        </HorizontalLayout>
+    </VerticalLayout>
+</Window>

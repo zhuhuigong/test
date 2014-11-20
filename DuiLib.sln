@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Duilib_Static", "Duilib_Sta
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BarrageDemo", "BarrageDemo\BarrageDemo.vcxproj", "{A8951885-39D7-4DD5-A854-BB8ADF2AEFB7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo", "Demo\Demo.vcxproj", "{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -125,6 +127,14 @@ Global
 		{A8951885-39D7-4DD5-A854-BB8ADF2AEFB7}.UnicodeDebug|Win32.Build.0 = UnicodeDebug|Win32
 		{A8951885-39D7-4DD5-A854-BB8ADF2AEFB7}.UnicodeRelease|Win32.ActiveCfg = UnicodeRelease|Win32
 		{A8951885-39D7-4DD5-A854-BB8ADF2AEFB7}.UnicodeRelease|Win32.Build.0 = UnicodeRelease|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.Debug|Win32.Build.0 = Debug|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.Release|Win32.ActiveCfg = Release|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.Release|Win32.Build.0 = Release|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.UnicodeDebug|Win32.ActiveCfg = Debug|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.UnicodeDebug|Win32.Build.0 = Debug|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
+		{BC11526B-A85C-4459-8C61-3C1ADCD82CE4}.UnicodeRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
