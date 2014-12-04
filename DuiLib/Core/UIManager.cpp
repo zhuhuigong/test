@@ -472,7 +472,16 @@ namespace DuiLib {
 
     RECT& CPaintManagerUI::GetCaptionRect()
     {
-        return m_rcCaption;
+        RECT rcCaption = m_rcCaption;
+
+        if (rcCaption.bottom == -1)
+        {
+            RECT rect = { 0 };
+            GetClientRect(m_hWndPaint, &rect);
+            rcCaption.bottom = rect.bottom;
+        }
+
+        return rcCaption;
     }
 
     void CPaintManagerUI::SetCaptionRect(RECT& rcCaption)
