@@ -1004,11 +1004,15 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            SetItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itembkcolor")) == 0)
         {
-            SetItemBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itembkimage")) == 0)
         {
@@ -1020,11 +1024,15 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemselectedtextcolor")) == 0)
         {
-            SetSelectedItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelectedItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemselectedbkcolor")) == 0)
         {
-            SetSelectedItemBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelectedItemBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemselectedimage")) == 0)
         {
@@ -1032,11 +1040,15 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            SetHotItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetHotItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemhotbkcolor")) == 0)
         {
-            SetHotItemBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetHotItemBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemhotimage")) == 0)
         {
@@ -1044,11 +1056,15 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledtextcolor")) == 0)
         {
-            SetDisabledItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetDisabledItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledbkcolor")) == 0)
         {
-            SetDisabledItemBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetDisabledItemBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemdisabledimage")) == 0)
         {
@@ -1056,7 +1072,9 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("itemlinecolor")) == 0)
         {
-            SetItemLineColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemLineColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemshowhtml")) == 0)
         {

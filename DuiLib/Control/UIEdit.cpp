@@ -635,7 +635,9 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("nativebkcolor")) == 0)
         {
-            SetNativeEditBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetNativeEditBkColor(dwColor);
         }
         else
         {

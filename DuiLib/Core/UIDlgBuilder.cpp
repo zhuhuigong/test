@@ -102,7 +102,9 @@ namespace DuiLib {
                     }
                     else if (lstrcmpi(pstrName, _T("mask")) == 0)
                     {
-                        mask = ParseColor(pstrValue);
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            mask = dwColor;
                     }
                 }
 
@@ -258,23 +260,33 @@ namespace DuiLib {
                     }
                     else if (lstrcmpi(pstrName, _T("disabledfontcolor")) == 0)
                     {
-                        pManager->SetDefaultDisabledColor(ParseColor(pstrValue));
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            pManager->SetDefaultDisabledColor(dwColor);
                     }
                     else if (lstrcmpi(pstrName, _T("defaultfontcolor")) == 0)
                     {
-                        pManager->SetDefaultFontColor(ParseColor(pstrValue));
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            pManager->SetDefaultFontColor(dwColor);
                     }
                     else if (lstrcmpi(pstrName, _T("linkfontcolor")) == 0)
                     {
-                        pManager->SetDefaultLinkFontColor(ParseColor(pstrValue));
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            pManager->SetDefaultLinkFontColor(dwColor);
                     }
                     else if (lstrcmpi(pstrName, _T("linkhoverfontcolor")) == 0)
                     {
-                        pManager->SetDefaultLinkHoverFontColor(ParseColor(pstrValue));
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            pManager->SetDefaultLinkHoverFontColor(dwColor);
                     }
                     else if (lstrcmpi(pstrName, _T("selectedcolor")) == 0)
                     {
-                        pManager->SetDefaultSelectedBkColor(ParseColor(pstrValue));
+                        DWORD dwColor = 0;
+                        if (ParseColor(pstrValue, &dwColor))
+                            pManager->SetDefaultSelectedBkColor(dwColor);
                     }
                 }
             }

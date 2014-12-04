@@ -1796,7 +1796,9 @@ namespace DuiLib {
                     }
                     else if (sItem == _T("mask"))
                     {
-                        dwMask = ParseColor(sValue.GetData());
+                        DWORD dwColor = 0;
+                        if (ParseColor(sValue.GetData(), &dwColor))
+                            dwMask = dwColor;
                     }
                     else if (sItem == _T("fade"))
                     {

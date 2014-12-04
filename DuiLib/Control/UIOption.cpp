@@ -271,11 +271,15 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("selectedbkcolor")) == 0)
         {
-            SetSelectedBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelectedBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("selectedtextcolor")) == 0)
         {
-            SetSelectedTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelectedTextColor(dwColor);
         }
         else
         {

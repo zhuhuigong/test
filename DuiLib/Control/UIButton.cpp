@@ -409,31 +409,45 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("hotbkcolor")) == 0)
         {
-            SetHotBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetHotBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("pushedbkcolor")) == 0)
         {
-            SetPushedBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetPushedBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("focusedbkcolor")) == 0)
         {
-            SetFocusedBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetFocusedBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("disabledbkcolor")) == 0)
         {
-            SetDisabledBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetDisabledBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("hottextcolor")) == 0)
         {
-            SetHotTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetHotTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("pushedtextcolor")) == 0)
         {
-            SetPushedTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetPushedTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("focusedtextcolor")) == 0)
         {
-            SetFocusedTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetFocusedTextColor(dwColor);
         }
         else
         {

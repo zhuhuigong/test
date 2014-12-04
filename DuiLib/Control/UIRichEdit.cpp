@@ -2331,7 +2331,9 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
         {
-            SetTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetTextColor(dwColor);
         }
         else
         {

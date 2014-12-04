@@ -6,7 +6,7 @@
 namespace DuiLib {
 
     // 全局函数，解析颜色的
-    DWORD ParseColor(LPCTSTR lpszColor);
+    BOOL ParseColor(LPCTSTR lpszColor, DWORD* dwColor);
 
     /////////////////////////////////////////////////////////////////////////////////////
     //

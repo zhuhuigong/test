@@ -3,55 +3,68 @@
 namespace DuiLib {
 
     //////////////////////////////////////////////////////////////////////////////
-    // 全局函数
-    DWORD ParseColor(LPCTSTR lpszColor)
+    // 全局函数，支持3种形式，RGB(100,100,100)，#FFAABBCC，0xFFAABBCC
+    BOOL ParseColor(LPCTSTR lpszColor, DWORD* dwColor)
     {
-        if (lpszColor[0] == _T('#'))
-            lpszColor = ::CharNext(lpszColor);
+        if (lpszColor == NULL || lpszColor[0] == _T('\0') || dwColor == NULL)
+            return FALSE;
 
-        // 跳过#号后才计算长度
         int len = lstrlen(lpszColor);
+        if (lpszColor[0] == _T('#'))
+        {
+            lpszColor = ::CharNext(lpszColor);
+            len -= 1;
+        }
+        else if (len > 1 && lpszColor[0] == _T('0') &&
+            (lpszColor[1] == _T('x') || lpszColor[1] == _T('X')))
+        {
+            lpszColor = ::CharNext(lpszColor);
+            lpszColor = ::CharNext(lpszColor);
+            len -= 2;
+        }
 
         LPTSTR pstr = NULL;
-        DWORD dwColor = 0xFF000000;
 
         // 这里只有两种写法，一种是#AARRGGBB或#RRGGBB（16进制的）
         // 否则就认为是另一种，即ARGB(A,R,G,B)或RGB(R,G,B)（10进制的，RGB或rgb）
         if (len == 6 || len == 8)
         {
-            dwColor = _tcstoul(lpszColor, &pstr, 16);
+            *dwColor = _tcstoul(lpszColor, &pstr, 16);
 
             // 如果是6个字符的，就表示Alpha的值是255，即FF，加上它
-            dwColor = (len == 6) ? (dwColor | 0xFF000000) : dwColor;
+            *dwColor = (len == 6) ? (*dwColor | 0xFF000000) : *dwColor;
+        }
+        else if (len > 3 && lpszColor[0] == _T('R') && lpszColor[1] == _T('G') &&
+            lpszColor[2] == _T('B') && lpszColor[3] == _T('('))
+        {
+            lpszColor += 4;
+
+            // 属性中的和这里计算的要反过来，R和B对调！
+            int b = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
+            int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+            int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+
+            *dwColor = RGB(r, g, b) | 0xFF000000;
+        }
+        else if (len > 4 && lpszColor[0] == _T('A') && lpszColor[1] == _T('R') &&
+            lpszColor[2] == _T('G') && lpszColor[3] == _T('B') && lpszColor[4] == _T('('))
+        {
+            lpszColor += 5;
+
+            // 属性中的和这里计算的要反过来，R和B对调！
+            int a = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
+            int b = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+            int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+            int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+
+            *dwColor = RGB(r, g, b) | (a << 24);
         }
         else
         {
-            // RGB就偏移4，ARGB就偏移5
-            int pos = (lpszColor[0] == 'R' || lpszColor[0] == 'r') ? 4 : 5;
-            lpszColor += pos;
-
-            if (pos == 4)
-            {
-                // 属性中的和这里计算的要反过来，R和B对调！
-                int b = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
-                int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-                int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-
-                dwColor = RGB(r, g, b) | 0xFF000000;
-            }
-            else
-            {
-                // 属性中的和这里计算的要反过来，R和B对调！
-                int a = _tcstol(lpszColor, &pstr, 10);   ASSERT(pstr);
-                int b = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-                int g = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-                int r = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
-
-                dwColor = RGB(r, g, b) | (a << 24);
-            }
+            return FALSE;
         }
 
-        return dwColor;
+        return TRUE;
     }
 
 
@@ -1028,23 +1041,33 @@ namespace DuiLib {
         }
         else if (lstrcmpi(pstrName, _T("bkcolor")) == 0 || lstrcmpi(pstrName, _T("bkcolor1")) == 0)
         {
-            SetBkColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetBkColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("bkcolor2")) == 0)
         {
-            SetBkColor2(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetBkColor2(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("bkcolor3")) == 0)
         {
-            SetBkColor3(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetBkColor3(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("bordercolor")) == 0)
         {
-            SetBorderColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetBorderColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("focusbordercolor")) == 0)
         {
-            SetFocusBorderColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetFocusBorderColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("colorhsl")) == 0)
         {

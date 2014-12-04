@@ -239,11 +239,15 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("textcolor")) == 0)
         {
-            SetTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("disabledtextcolor")) == 0)
         {
-            SetDisabledTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetDisabledTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("textpadding")) == 0)
         {
@@ -312,19 +316,27 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("textcolor1")) == 0)
         {
-            SetTextColor1(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetTextColor1(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("textshadowcolora")) == 0)
         {
-            SetTextShadowColorA(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetTextShadowColorA(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("textshadowcolorb")) == 0)
         {
-            SetTextShadowColorB(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetTextShadowColorB(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("strokecolor")) == 0)
         {
-            SetStrokeColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetStrokeColor(dwColor);
         }
         else
         {

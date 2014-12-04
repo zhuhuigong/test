@@ -516,19 +516,27 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            SetItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            SetItemHotTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemHotTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
         {
-            SetSelItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
         {
-            SetSelItemHotTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelItemHotTextColor(dwColor);
         }
         else
         {
@@ -1314,19 +1322,27 @@ namespace DuiLib
         }
         else if (lstrcmpi(pstrName, _T("itemtextcolor")) == 0)
         {
-            SetItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("itemhottextcolor")) == 0)
         {
-            SetItemHotTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetItemHotTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("selitemtextcolor")) == 0)
         {
-            SetSelItemTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelItemTextColor(dwColor);
         }
         else if (lstrcmpi(pstrName, _T("selitemhottextcolor")) == 0)
         {
-            SetSelItemHotTextColor(ParseColor(pstrValue));
+            DWORD dwColor = 0;
+            if (ParseColor(pstrValue, &dwColor))
+                SetSelItemHotTextColor(dwColor);
         }
         else
         {
