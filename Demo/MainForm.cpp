@@ -109,7 +109,9 @@ DuiLib::CDuiString CMainForm::GetSkinFolder()
 
 DuiLib::CDuiString CMainForm::GetSkinFile()
 {
-    return _T("MainForm.xml");
+    //return _T("MainForm.xml");
+  //  return _T("1.xml");
+    return _T("11.xml");
 }
 
 UILIB_RESOURCETYPE CMainForm::GetResourceType() const

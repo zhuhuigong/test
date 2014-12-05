@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window size="300,300" sizebox="5,5,5,5">
+    <TileLayout name="demo" bkcolor="#FFFFFFFF" itemsize="200" pos="10,10">
+        <Control width="100" height="100" bkcolor="0xFF111111" padding="0,20,0,0"/>
+        <Control width="100" height="100" bkcolor="0xFF333333" padding="0,20,0,0"/>
+        <Control width="100" height="100" bkcolor="0xFF555555" padding="0,20,0,0"/>
+        <Control width="100" height="100" bkcolor="0xFF777777" padding="0,20,0,0"/>
+        <Control width="100" height="100" bkcolor="0xFF999999" padding="0,20,0,0"/>
+        <Control width="100" height="100" bkcolor="0xFFBBBBBB" padding="0,20,0,0"/>
+    </TileLayout>
+</Window>
