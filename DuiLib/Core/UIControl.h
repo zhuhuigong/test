@@ -43,6 +43,8 @@ namespace DuiLib {
         void SetBkColor3(DWORD dwBackColor);
         LPCTSTR GetBkImage();
         void SetBkImage(LPCTSTR pStrImage);
+        LPCTSTR GetFrameImage();
+        void SetFrameImage(LPCTSTR pStrImage);
         DWORD GetFocusBorderColor() const;
         void SetFocusBorderColor(DWORD dwBorderColor);
         bool IsColorHSL() const;
@@ -158,6 +160,7 @@ namespace DuiLib {
         virtual void DoPaint(HDC hDC, const RECT& rcPaint);
         virtual void PaintBkColor(HDC hDC);
         virtual void PaintBkImage(HDC hDC);
+        virtual void PaintFrameImage(HDC hDC);
         virtual void PaintStatusImage(HDC hDC);
         virtual void PaintText(HDC hDC);
         virtual void PaintBorder(HDC hDC);
@@ -208,6 +211,7 @@ namespace DuiLib {
         DWORD m_dwBackColor2;
         DWORD m_dwBackColor3;
         CDuiString m_sBkImage;
+        CDuiString m_sFrameImage;
         CDuiString m_sForeImage;
         DWORD m_dwBorderColor;
         DWORD m_dwFocusBorderColor;

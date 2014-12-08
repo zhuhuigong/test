@@ -246,6 +246,20 @@ namespace DuiLib {
         Invalidate();
     }
 
+    LPCTSTR CControlUI::GetFrameImage()
+    {
+        return m_sFrameImage;
+    }
+
+    void CControlUI::SetFrameImage(LPCTSTR pStrImage)
+    {
+        if (m_sFrameImage == pStrImage)
+            return;
+
+        m_sFrameImage = pStrImage;
+        Invalidate();
+    }
+
     DWORD CControlUI::GetBorderColor() const
     {
         return m_dwBorderColor;
@@ -1125,6 +1139,10 @@ namespace DuiLib {
         {
             SetBkImage(pstrValue);
         }
+        else if (lstrcmpi(pstrName, _T("frameimage")) == 0)
+        {
+            SetFrameImage(pstrValue);
+        }
         else if (lstrcmpi(pstrName, _T("width")) == 0)
         {
             SetFixedWidth(_ttoi(pstrValue));
@@ -1285,6 +1303,7 @@ namespace DuiLib {
             CRenderClip::GenerateRoundClip(hDC, m_rcPaint, m_rcItem, m_cxyBorderRound.cx, m_cxyBorderRound.cy, roundClip);
             PaintBkColor(hDC);
             PaintBkImage(hDC);
+            PaintFrameImage(hDC);
             PaintStatusImage(hDC);
             PaintText(hDC);
             PaintBorder(hDC);
@@ -1293,6 +1312,7 @@ namespace DuiLib {
         {
             PaintBkColor(hDC);
             PaintBkImage(hDC);
+            PaintFrameImage(hDC);
             PaintStatusImage(hDC);
             PaintText(hDC);
             PaintBorder(hDC);
@@ -1337,6 +1357,15 @@ namespace DuiLib {
 
         if (!DrawImage(hDC, (LPCTSTR)m_sBkImage))
             m_sBkImage.Empty();
+    }
+
+    void CControlUI::PaintFrameImage(HDC hDC)
+    {
+        if (m_sFrameImage.IsEmpty())
+            return;
+
+        if (!DrawImage(hDC, (LPCTSTR)m_sFrameImage))
+            m_sFrameImage.Empty();
     }
 
     void CControlUI::PaintStatusImage(HDC hDC)
